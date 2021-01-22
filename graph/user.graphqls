@@ -1,0 +1,20 @@
+type User {
+    id: ID!
+    profileName: String!
+    realName: String!
+    email: String!
+    password: String!
+    balance: Float!
+    customURL: String!
+    profilePicture: String!
+    countryId: String!
+    country: Country!
+
+    createdAt: Int!
+    updatedAt: Int!
+    deletedAt: Int!
+}
+
+extend type Query {
+    users: [User!]!
+}

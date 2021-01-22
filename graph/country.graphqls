@@ -1,0 +1,12 @@
+type Country {
+    id: ID!
+    name: String!
+
+    createdAt: Int!
+    updatedAt: Int!
+    deletedAt: Int!
+}
+
+extend type Query {
+    countries: [Country!]!
+}
