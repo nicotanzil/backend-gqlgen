@@ -67,15 +67,15 @@ func GenerateToken(user model.User) (*model.TokenDetail, error) {
 	return td, nil
 }
 
-//func ParseToken(td *model.TokenDetail) (int, error) {
-//	token, err := jwt.Parse(td.AccessToken, func(token *jwt.Token) (interface{}, error) {
-//		return os.Getenv("ACCESS_KEY"), nil
-//	})
-//
-//	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-//		id := claims["accountId"].(string)
-//		return id, nil
-//	} else {
-//		return 0, err
-//	}
-//}
+func ParseToken(tokenParam string) (string, error) {
+	token, err := jwt.Parse(tokenParam, func(token *jwt.Token) (interface{}, error) {
+		return os.Getenv("ACCESS_KEY"), nil
+	})
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		id := claims["accountId"].(string)
+		return id, nil
+	} else {
+		return "", err
+	}
+}

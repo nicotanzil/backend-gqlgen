@@ -23,9 +23,10 @@ func main() {
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &resolver.Resolver{}}))
 
-	wrapped := middleware.CorsMiddleware(srv)
+	wrapped_cors := middleware.CorsMiddleware(srv)
+	wrapped_auth := middleware.AuthMiddleware(wrapped_cors)
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", wrapped)
+	http.Handle("/query", wrapped_auth)
 
 	database.Migrate()
 	database.Seed()

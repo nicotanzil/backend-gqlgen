@@ -133,7 +133,6 @@ type ComplexityRoot struct {
 		Developers         func(childComplexity int) int
 		Games              func(childComplexity int) int
 		Genres             func(childComplexity int) int
-		GetGameGenres      func(childComplexity int, gameID string) int
 		GetOtpByCode       func(childComplexity int, code *string) int
 		GetUserByID        func(childComplexity int, input *string) int
 		GetVotesByReviewID func(childComplexity int, input *string) int
@@ -232,7 +231,6 @@ type QueryResolver interface {
 	Countries(ctx context.Context) ([]*model.Country, error)
 	Developers(ctx context.Context) ([]*model.Developer, error)
 	Games(ctx context.Context) ([]*model.Game, error)
-	GetGameGenres(ctx context.Context, gameID string) ([]*model.Genre, error)
 	Genres(ctx context.Context) ([]*model.Genre, error)
 	Otps(ctx context.Context) ([]*model.Otp, error)
 	GetOtpByCode(ctx context.Context, code *string) (*model.Otp, error)
@@ -739,18 +737,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Genres(childComplexity), true
-
-	case "Query.getGameGenres":
-		if e.complexity.Query.GetGameGenres == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getGameGenres_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetGameGenres(childComplexity, args["gameId"].(string)), true
 
 	case "Query.getOtpByCode":
 		if e.complexity.Query.GetOtpByCode == nil {
@@ -1311,7 +1297,6 @@ input NewGame {
 
 extend type Query {
     games: [Game!]!
-    getGameGenres(gameId: String!): [Genre!]!
 }
 
 extend type Mutation {
@@ -1645,21 +1630,6 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getGameGenres_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["gameId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameId"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["gameId"] = arg0
 	return args, nil
 }
 
@@ -4019,48 +3989,6 @@ func (ec *executionContext) _Query_games(ctx context.Context, field graphql.Coll
 	res := resTmp.([]*model.Game)
 	fc.Result = res
 	return ec.marshalNGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_getGameGenres(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getGameGenres_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetGameGenres(rctx, args["gameId"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Genre)
-	fc.Result = res
-	return ec.marshalNGenre2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGenreᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_genres(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -8044,20 +7972,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_games(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "getGameGenres":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getGameGenres(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

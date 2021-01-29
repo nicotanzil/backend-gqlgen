@@ -5,8 +5,11 @@ package resolver
 
 import (
 	"context"
+	"net/http"
+	"time"
 
 	"github.com/nicotanzil/backend-gqlgen/app/errorlist"
+	"github.com/nicotanzil/backend-gqlgen/app/middleware"
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
@@ -38,6 +41,16 @@ func (r *mutationResolver) Login(ctx context.Context, input *model.Login) (*mode
 	if error != nil {
 		return nil, error
 	}
+
+	cookie := &http.Cookie{
+		Name:     "auth",
+		Value:    td.AccessToken,
+		Expires:  time.Time{},
+		HttpOnly: true,
+	}
+
+	w := *middleware.WForContext(ctx)
+	http.SetCookie(w, cookie)
 
 	// Send the JWT token
 	return td, nil
