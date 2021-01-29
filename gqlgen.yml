@@ -54,9 +54,36 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
-  User:
-    model:
-      - github.com/nicotanzil/backend-gqlgen/graph/model.User
-  Country:
-    model:
-      - github.com/nicotanzil/backend-gqlgen/graph/model.Country
+#  User:
+#    model:
+#      - github.com/nicotanzil/backend-gqlgen/graph/model.User
+#  Otp:
+#    model:
+#      - github.com/nicotanzil/backend-gqlgen/graph/model.Otp
+#  Country:
+#    model:
+#      - github.com/nicotanzil/backend-gqlgen/graph/model.Country
+#  Developer:
+#    model:
+#      - github.com/nicotanzil/backend-gqlgen/graph/model.Developer
+#  Genre:
+#    model:
+#      - github.com/nicotanzil/backend-gqlgen/graph/model.Genre
+#  Game:
+#    model:
+#      - github.com/nicotanzil/backend-gqlgen/graph/model.Game
+#  Publisher:
+#    model:
+#      - github.com/nicotanzil/backend-gqlgen/graph/model.Publisher
+#  Review:
+#    model:
+#      - github.com/nicotanzil/backend-gqlgen/graph/model.Review
+#  ReviewVote:
+#    model:
+#      - github.com/nicotanzil/backend-gqlgen/graph/model.ReviewVote
+#  System:
+#    model:
+#      - github.com/nicotanzil/backend-gqlgen/graph/model.System
+#  Tag:
+#    model:
+#      - github.com/nicotanzil/backend-gqlgen/graph/model.Tag

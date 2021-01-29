@@ -1,0 +1,19 @@
+type Publisher {
+    id: Int!
+    name: String!
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input NewPublisher {
+    name: String!
+}
+
+extend type Query {
+    publishers: [Publisher!]!
+}
+
+extend type Mutation {
+    createPublisher(input: NewPublisher!): Publisher!
+}

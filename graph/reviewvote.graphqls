@@ -1,0 +1,13 @@
+type ReviewVote {
+    id: Int!
+    userId: Int!
+    reviewId: Int!
+    voteStatus: Boolean!
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    getVotesByReviewId(input: String): [ReviewVote!]!
+}

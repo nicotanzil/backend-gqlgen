@@ -1,0 +1,40 @@
+type Game {
+    id: Int!
+    name: String!
+    description: String!
+    releaseDate: Time!
+    genres: [Genre!]!
+    tags: [Tag!]!
+    originalPrice: Float!
+    onSale: Boolean!
+    discountPercentage: Int!
+    gamePlayHour: Float!
+    gameReviews: [Review!]!
+    developers: [Developer!]!
+    publisher: Publisher!
+    system: System!
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input NewGame {
+    name: String!
+    description: String!
+    genres: [NewGenre!]!
+    tags: [NewTag!]!
+    originalPrice: Float!
+    onSale: Boolean!
+    discountPercentage: Int!
+    developers: [NewDeveloper!]!
+    publisher: NewPublisher!
+    system: NewSystem!
+}
+
+extend type Query {
+    games: [Game!]!
+}
+
+extend type Mutation {
+    createGame(input: NewGame!): Game!
+}

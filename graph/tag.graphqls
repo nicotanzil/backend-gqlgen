@@ -1,0 +1,19 @@
+type Tag {
+    id: Int!
+    name: String!
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input NewTag {
+    name: String!
+}
+
+extend type Query {
+    tags: [Tag!]!
+}
+
+extend type Mutation {
+    createTag(input: NewTag!): Tag!
+}

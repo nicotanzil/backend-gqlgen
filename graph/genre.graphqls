@@ -1,0 +1,22 @@
+type Genre {
+    id: Int!
+    name: String!
+    description: String!
+    games: [Game!]!
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input NewGenre {
+    name: String!
+    description: String!
+}
+
+extend type Query {
+    genres: [Genre!]!
+}
+
+extend type Mutation {
+    createGenre(input: NewGenre!): Genre!
+}

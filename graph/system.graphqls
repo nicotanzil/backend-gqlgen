@@ -1,0 +1,21 @@
+type System {
+    id: Int!
+    os: String!
+    memory: Int!
+    graphics: String!
+    storage: Int!
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input NewSystem {
+    os: String!
+    memory: Int!
+    graphics: String!
+    storage: Int!
+}
+
+extend type Query {
+    systems: [System!]!
+}

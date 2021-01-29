@@ -1,0 +1,14 @@
+type Review {
+    id: Int!
+    userId: ID!
+    content: String!
+    upvote: ID!
+    downvote: ID!
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    reviews: [Review!]!
+}

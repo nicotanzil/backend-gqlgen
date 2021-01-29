@@ -1,0 +1,20 @@
+type Developer {
+    id: Int!,
+    name: String!
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input NewDeveloper {
+    name: String!
+}
+
+extend type Query {
+    developers: [Developer!]!
+}
+
+extend type Mutation {
+    createDeveloper(input: NewDeveloper!): Developer!
+}
+

@@ -1,0 +1,25 @@
+type Otp {
+    id: Int!
+    code: String!
+    email: String!
+    countryId: Int!
+    validUntil: Time!
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input NewOtp {
+    email: String!
+    countryId: Int!
+}
+
+extend type Query {
+    otps: [Otp!]!
+    getOtpByCode(code: String): Otp!
+}
+
+extend type Mutation {
+    createOtp(input: NewOtp!): Otp!
+    updateOtp(code: String!): Otp!
+}

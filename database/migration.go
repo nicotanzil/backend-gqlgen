@@ -1,13 +1,14 @@
-package migration
+package database
 
 import (
 	"fmt"
-	"github.com/nicotanzil/backend-gqlgen/database"
+	"github.com/nicotanzil/backend-gqlgen/graph/model"
+	"gorm.io/gorm"
 )
 
 func Migrate() {
 
-	db, err := database.Connect()
+	db, err := Connect()
 	if err != nil {
 		panic(err)
 	}
@@ -19,54 +20,58 @@ func Migrate() {
 	db.Exec("DROP TABLE game_reviews")
 	db.Exec("DROP TABLE game_tags")
 
+	UserMigrate(db)
+	GameMigrate(db)
+
 	fmt.Println("[INFO] MIGRATED.")
 }
 
-//func UserMigrate(db *gorm.DB) {
-//	// DROPPING ALL TABLE
-//	db.Migrator().DropTable(
-//		&model.User{},
-//		&model.Country{},
-//		&model.Otp{},
-//	)
-//
-//	// CREATING ALL TABLE
-//	db.AutoMigrate(
-//		&model.User{},
-//		&model.Country{},
-//		&model.Otp{},
-//		)
-//
-//}
-//
-//func GameMigrate(db *gorm.DB) {
-//
-//	// DROPPING ALL TABLE
-//	db.Exec("DROP TABLE game_developers")
-//	db.Exec("DROP TABLE game_genres")
-//	db.Exec("DROP TABLE game_reviews")
-//	db.Exec("DROP TABLE game_tags")
-//	db.Migrator().DropTable(
-//		&model.Game{},
-//		&model.Developer{},
-//		&model.Genre{},
-//		&model.Publisher{},
-//		&model.ReviewVote{},
-//		&model.Review{},
-//		&model.System{},
-//		&model.Tag{},
-//	)
-//
-//	// CREATING ALL TABLE
-//	db.AutoMigrate(
-//		&model.Developer{},
-//		&model.Game{},
-//		&model.Genre{},
-//		&model.Publisher{},
-//		&model.ReviewVote{},
-//		&model.Review{},
-//		&model.System{},
-//		&model.Tag{},
-//	)
-//}
+func UserMigrate(db *gorm.DB) {
+	// DROPPING ALL TABLE
+	db.Migrator().DropTable(
+		&model.User{},
+		&model.Country{},
+		&model.Otp{},
+	)
+
+	// CREATING ALL TABLE
+	db.AutoMigrate(
+		&model.Country{},
+		&model.User{},
+		&model.Otp{},
+	)
+
+}
+
+func GameMigrate(db *gorm.DB) {
+
+	// DROPPING ALL TABLE
+	db.Exec("DROP TABLE game_developers")
+	db.Exec("DROP TABLE game_genres")
+	db.Exec("DROP TABLE game_reviews")
+	db.Exec("DROP TABLE game_tags")
+	db.Migrator().DropTable(
+		&model.Game{},
+		&model.Developer{},
+		&model.Genre{},
+		&model.Publisher{},
+		&model.ReviewVote{},
+		&model.Review{},
+		&model.System{},
+		&model.Tag{},
+	)
+
+	// CREATING ALL TABLE
+	db.AutoMigrate(
+		&model.Tag{},
+		&model.System{},
+		&model.Review{},
+		&model.ReviewVote{},
+		&model.Publisher{},
+		&model.Genre{},
+		&model.Game{},
+		&model.Developer{},
+
+	)
+}
 

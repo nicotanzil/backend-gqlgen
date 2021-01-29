@@ -1,5 +1,8 @@
+scalar Time
+
 type User {
-    id: ID!
+    id: Int!
+    accountName: String!
     profileName: String!
     realName: String!
     email: String!
@@ -7,14 +10,22 @@ type User {
     balance: Float!
     customURL: String!
     profilePicture: String!
-    countryId: String!
     country: Country!
-
-    createdAt: Int!
-    updatedAt: Int!
-    deletedAt: Int!
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
 }
 
-extend type Query {
+input NewUser {
+    accountName: String!
+    password: String!
+}
+
+type Query {
     users: [User!]!
+    getUserById(input: String): User!
+}
+
+type Mutation {
+    createUser(user: NewUser, otp: NewOtp): Boolean!
 }
