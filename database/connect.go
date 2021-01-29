@@ -1,8 +1,8 @@
-package database
+package connect
 
 import(
-"github.com/jinzhu/gorm"
-_"github.com/jinzhu/gorm/dialects/postgres"
+	"gorm.io/gorm"
+	"gorm.io/driver/postgres"
 )
 
 const DB_NAME="staem"
@@ -13,5 +13,6 @@ const DB_PASS="password"	//password on installation
 
 func Connect()(*gorm.DB, error){
 
-	return gorm.Open("postgres","host="+DB_HOST+" port="+DB_PORT+" user="+DB_USER+" dbname="+DB_NAME+" password="+DB_PASS+" sslmode=disable")
+	dsn := "host=127.0.0.1 user=postgres password=password dbname=staem port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
 }
