@@ -6,8 +6,6 @@ import (
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 	"net/http"
-	"strconv"
-
 )
 
 var userCtxKey = &contextKey{"user"}
@@ -26,13 +24,15 @@ type wContextKey struct {
 // Middleware decodes the share session cookie and packs the session into context
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		header, err := r.Cookie("auth")
 
+		header, err := r.Cookie("access_token")
+
+		// put http.ResponseWriter in context for later use
 		wCtx := context.WithValue(r.Context(), wCtxKey, &w)
 		r = r.WithContext(wCtx)
 
 		// Allow unauthenticated users in
-		if err != nil {
+		if err != nil || header == nil {
 			fmt.Println("[INFO] Unauthenticated user")
 			next.ServeHTTP(w, r)
 			return
@@ -48,13 +48,13 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		// create user and check if user exists in db
-		userId, _ := strconv.Atoi(id)
+		userId := int(id)
 		user := model.User{ID: userId}
 
 		// put it in context
 		ctx := context.WithValue(r.Context(), userCtxKey, &user)
 
-		//fmt.Println("[INFO] Authenticated user: " + ForContext(ctx).AccountName)
+		fmt.Println("[INFO] Authenticated user")
 
 		// and call the next with our new context
 		r = r.WithContext(ctx)
@@ -73,3 +73,4 @@ func WForContext(ctx context.Context) *http.ResponseWriter {
 	raw, _ := ctx.Value(wCtxKey).(*http.ResponseWriter)
 	return raw
 }
+

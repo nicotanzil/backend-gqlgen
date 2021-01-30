@@ -16,32 +16,3 @@ type NewDeveloper struct {
 	Name string `json:"name"`
 }
 
-//func init() {
-//
-//	db, err := database.Connect()
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	db.Migrator().DropTable(&Developer{})
-//	db.AutoMigrate(&Developer{})
-//
-//	SeedDevelopers()
-//}
-//
-//func SeedDevelopers() {
-//	db, err := database.Connect()
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	developers := []Developer {
-//		{
-//			Name: "Valve",
-//		},
-//	}
-//
-//	for _, developer := range developers {
-//		db.Create(&developer)
-//	}
-//}

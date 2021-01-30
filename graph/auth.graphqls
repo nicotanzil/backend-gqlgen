@@ -3,20 +3,15 @@ input Login {
     password: String!
 }
 
+#input RefreshTokenInput {
+#    token: String!
+#}
+
+extend type Query {
+    getUserAuth: User!
+}
+
 extend type Mutation {
-    login(input: Login): TokenDetail!
-}
-
-type AccessDetails {
-    accessUuid: String!
-    userId: Int!
-}
-
-type TokenDetail {
-    accessToken: String!
-    refreshToken: String!
-    accessUuid: String!
-    refreshUuid: String!
-    accessExpires: Int!
-    refreshExpires: Int!
+    login(input: Login): String!
+#    refreshToken(input: RefreshTokenInput!): String!
 }

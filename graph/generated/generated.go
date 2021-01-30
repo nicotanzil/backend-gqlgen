@@ -46,11 +46,6 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	AccessDetails struct {
-		AccessUUID func(childComplexity int) int
-		UserID     func(childComplexity int) int
-	}
-
 	Country struct {
 		CreatedAt func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
@@ -134,6 +129,7 @@ type ComplexityRoot struct {
 		Games              func(childComplexity int) int
 		Genres             func(childComplexity int) int
 		GetOtpByCode       func(childComplexity int, code *string) int
+		GetUserAuth        func(childComplexity int) int
 		GetUserByID        func(childComplexity int, input *string) int
 		GetVotesByReviewID func(childComplexity int, input *string) int
 		Otps               func(childComplexity int) int
@@ -184,15 +180,6 @@ type ComplexityRoot struct {
 		UpdatedAt func(childComplexity int) int
 	}
 
-	TokenDetail struct {
-		AccessExpires  func(childComplexity int) int
-		AccessToken    func(childComplexity int) int
-		AccessUUID     func(childComplexity int) int
-		RefreshExpires func(childComplexity int) int
-		RefreshToken   func(childComplexity int) int
-		RefreshUUID    func(childComplexity int) int
-	}
-
 	User struct {
 		AccountName    func(childComplexity int) int
 		Balance        func(childComplexity int) int
@@ -216,7 +203,7 @@ type GameResolver interface {
 }
 type MutationResolver interface {
 	CreateUser(ctx context.Context, user *model.NewUser, otp *model.NewOtp) (bool, error)
-	Login(ctx context.Context, input *model.Login) (*model.TokenDetail, error)
+	Login(ctx context.Context, input *model.Login) (string, error)
 	CreateDeveloper(ctx context.Context, input model.NewDeveloper) (*model.Developer, error)
 	CreateGame(ctx context.Context, input model.NewGame) (*model.Game, error)
 	CreateGenre(ctx context.Context, input model.NewGenre) (*model.Genre, error)
@@ -228,6 +215,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
 	GetUserByID(ctx context.Context, input *string) (*model.User, error)
+	GetUserAuth(ctx context.Context) (*model.User, error)
 	Countries(ctx context.Context) ([]*model.Country, error)
 	Developers(ctx context.Context) ([]*model.Developer, error)
 	Games(ctx context.Context) ([]*model.Game, error)
@@ -258,20 +246,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
-
-	case "AccessDetails.accessUuid":
-		if e.complexity.AccessDetails.AccessUUID == nil {
-			break
-		}
-
-		return e.complexity.AccessDetails.AccessUUID(childComplexity), true
-
-	case "AccessDetails.userId":
-		if e.complexity.AccessDetails.UserID == nil {
-			break
-		}
-
-		return e.complexity.AccessDetails.UserID(childComplexity), true
 
 	case "Country.createdAt":
 		if e.complexity.Country.CreatedAt == nil {
@@ -750,6 +724,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetOtpByCode(childComplexity, args["code"].(*string)), true
 
+	case "Query.getUserAuth":
+		if e.complexity.Query.GetUserAuth == nil {
+			break
+		}
+
+		return e.complexity.Query.GetUserAuth(childComplexity), true
+
 	case "Query.getUserById":
 		if e.complexity.Query.GetUserByID == nil {
 			break
@@ -1012,48 +993,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Tag.UpdatedAt(childComplexity), true
 
-	case "TokenDetail.accessExpires":
-		if e.complexity.TokenDetail.AccessExpires == nil {
-			break
-		}
-
-		return e.complexity.TokenDetail.AccessExpires(childComplexity), true
-
-	case "TokenDetail.accessToken":
-		if e.complexity.TokenDetail.AccessToken == nil {
-			break
-		}
-
-		return e.complexity.TokenDetail.AccessToken(childComplexity), true
-
-	case "TokenDetail.accessUuid":
-		if e.complexity.TokenDetail.AccessUUID == nil {
-			break
-		}
-
-		return e.complexity.TokenDetail.AccessUUID(childComplexity), true
-
-	case "TokenDetail.refreshExpires":
-		if e.complexity.TokenDetail.RefreshExpires == nil {
-			break
-		}
-
-		return e.complexity.TokenDetail.RefreshExpires(childComplexity), true
-
-	case "TokenDetail.refreshToken":
-		if e.complexity.TokenDetail.RefreshToken == nil {
-			break
-		}
-
-		return e.complexity.TokenDetail.RefreshToken(childComplexity), true
-
-	case "TokenDetail.refreshUuid":
-		if e.complexity.TokenDetail.RefreshUUID == nil {
-			break
-		}
-
-		return e.complexity.TokenDetail.RefreshUUID(childComplexity), true
-
 	case "User.accountName":
 		if e.complexity.User.AccountName == nil {
 			break
@@ -1214,23 +1153,19 @@ var sources = []*ast.Source{
     password: String!
 }
 
+#input RefreshTokenInput {
+#    token: String!
+#}
+
+extend type Query {
+    getUserAuth: User!
+}
+
 extend type Mutation {
-    login(input: Login): TokenDetail!
+    login(input: Login): String!
+#    refreshToken(input: RefreshTokenInput!): String!
 }
-
-type AccessDetails {
-    accessUuid: String!
-    userId: Int!
-}
-
-type TokenDetail {
-    accessToken: String!
-    refreshToken: String!
-    accessUuid: String!
-    refreshUuid: String!
-    accessExpires: Int!
-    refreshExpires: Int!
-}`, BuiltIn: false},
+`, BuiltIn: false},
 	{Name: "graph/country.graphqls", Input: `type Country {
     id: Int!
     name: String!
@@ -1448,6 +1383,7 @@ type User {
     balance: Float!
     customURL: String!
     profilePicture: String!
+#    profilePicture: Upload!
     country: Country!
     createdAt: Time!
     updatedAt: Time!
@@ -1715,76 +1651,6 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
-
-func (ec *executionContext) _AccessDetails_accessUuid(ctx context.Context, field graphql.CollectedField, obj *model.AccessDetails) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AccessDetails",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AccessUUID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AccessDetails_userId(ctx context.Context, field graphql.CollectedField, obj *model.AccessDetails) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AccessDetails",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UserID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
 
 func (ec *executionContext) _Country_id(ctx context.Context, field graphql.CollectedField, obj *model.Country) (ret graphql.Marshaler) {
 	defer func() {
@@ -3055,9 +2921,9 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.TokenDetail)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNTokenDetail2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTokenDetail(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createDeveloper(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3870,6 +3736,41 @@ func (ec *executionContext) _Query_getUserById(ctx context.Context, field graphq
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().GetUserByID(rctx, args["input"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getUserAuth(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetUserAuth(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5334,216 +5235,6 @@ func (ec *executionContext) _Tag_deletedAt(ctx context.Context, field graphql.Co
 	res := resTmp.(*time.Time)
 	fc.Result = res
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _TokenDetail_accessToken(ctx context.Context, field graphql.CollectedField, obj *model.TokenDetail) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "TokenDetail",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AccessToken, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _TokenDetail_refreshToken(ctx context.Context, field graphql.CollectedField, obj *model.TokenDetail) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "TokenDetail",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RefreshToken, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _TokenDetail_accessUuid(ctx context.Context, field graphql.CollectedField, obj *model.TokenDetail) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "TokenDetail",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AccessUUID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _TokenDetail_refreshUuid(ctx context.Context, field graphql.CollectedField, obj *model.TokenDetail) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "TokenDetail",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RefreshUUID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _TokenDetail_accessExpires(ctx context.Context, field graphql.CollectedField, obj *model.TokenDetail) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "TokenDetail",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AccessExpires, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int64)
-	fc.Result = res
-	return ec.marshalNInt2int64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _TokenDetail_refreshExpires(ctx context.Context, field graphql.CollectedField, obj *model.TokenDetail) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "TokenDetail",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RefreshExpires, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int64)
-	fc.Result = res
-	return ec.marshalNInt2int64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -7404,38 +7095,6 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 
 // region    **************************** object.gotpl ****************************
 
-var accessDetailsImplementors = []string{"AccessDetails"}
-
-func (ec *executionContext) _AccessDetails(ctx context.Context, sel ast.SelectionSet, obj *model.AccessDetails) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, accessDetailsImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("AccessDetails")
-		case "accessUuid":
-			out.Values[i] = ec._AccessDetails_accessUuid(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "userId":
-			out.Values[i] = ec._AccessDetails_userId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var countryImplementors = []string{"Country"}
 
 func (ec *executionContext) _Country(ctx context.Context, sel ast.SelectionSet, obj *model.Country) graphql.Marshaler {
@@ -7935,6 +7594,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "getUserAuth":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getUserAuth(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "countries":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -8318,58 +7991,6 @@ func (ec *executionContext) _Tag(ctx context.Context, sel ast.SelectionSet, obj 
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Tag_deletedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var tokenDetailImplementors = []string{"TokenDetail"}
-
-func (ec *executionContext) _TokenDetail(ctx context.Context, sel ast.SelectionSet, obj *model.TokenDetail) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tokenDetailImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("TokenDetail")
-		case "accessToken":
-			out.Values[i] = ec._TokenDetail_accessToken(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "refreshToken":
-			out.Values[i] = ec._TokenDetail_refreshToken(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "accessUuid":
-			out.Values[i] = ec._TokenDetail_accessUuid(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "refreshUuid":
-			out.Values[i] = ec._TokenDetail_refreshUuid(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "accessExpires":
-			out.Values[i] = ec._TokenDetail_accessExpires(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "refreshExpires":
-			out.Values[i] = ec._TokenDetail_refreshExpires(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -8989,21 +8610,6 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) unmarshalNInt2int64(ctx context.Context, v interface{}) (int64, error) {
-	res, err := graphql.UnmarshalInt64(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNInt2int64(ctx context.Context, sel ast.SelectionSet, v int64) graphql.Marshaler {
-	res := graphql.MarshalInt64(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
-}
-
 func (ec *executionContext) unmarshalNNewDeveloper2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewDeveloper(ctx context.Context, v interface{}) (model.NewDeveloper, error) {
 	res, err := ec.unmarshalInputNewDeveloper(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -9469,20 +9075,6 @@ func (ec *executionContext) marshalNTime2ᚖtimeᚐTime(ctx context.Context, sel
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) marshalNTokenDetail2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTokenDetail(ctx context.Context, sel ast.SelectionSet, v model.TokenDetail) graphql.Marshaler {
-	return ec._TokenDetail(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNTokenDetail2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTokenDetail(ctx context.Context, sel ast.SelectionSet, v *model.TokenDetail) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._TokenDetail(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNUser2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {

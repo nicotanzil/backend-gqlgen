@@ -21,15 +21,14 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user *model.NewUser, 
 	var newUser model.User
 
 	newUser = model.User{
-		AccountName:    user.AccountName,
-		ProfileName:    user.AccountName,
-		RealName:       "",
-		Email:          otp.Email,
-		Password:       providers.HashPassword(user.Password),
-		Balance:        0,
-		CustomURL:      user.AccountName,
-		ProfilePicture: "",
-		CountryID:      otp.CountryId,
+		AccountName: user.AccountName,
+		ProfileName: user.AccountName,
+		RealName:    "",
+		Email:       otp.Email,
+		Password:    providers.HashPassword(user.Password),
+		Balance:     0,
+		CustomURL:   user.AccountName,
+		CountryID:   otp.CountryId,
 	}
 
 	db.Create(&newUser)

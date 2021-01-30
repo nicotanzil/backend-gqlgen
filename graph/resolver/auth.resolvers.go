@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -15,7 +16,7 @@ import (
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 )
 
-func (r *mutationResolver) Login(ctx context.Context, input *model.Login) (*model.TokenDetail, error) {
+func (r *mutationResolver) Login(ctx context.Context, input *model.Login) (string, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
@@ -23,28 +24,34 @@ func (r *mutationResolver) Login(ctx context.Context, input *model.Login) (*mode
 
 	var user model.User
 
+	fmt.Println(input.AccountName, input.Password)
+
 	// Get user by profile name
 	db.Where("account_name = ?", input.AccountName).First(&user)
 
-	if user.ProfileName == "" {
-		return nil, errorlist.Auth_Invalid //user not found
+	if user.AccountName == "" {
+		fmt.Println("User not found")
+		return "", errorlist.Auth_Invalid //user not found
 	}
 
 	// Compare password
 	if !providers.CheckPasswordHash(input.Password, user.Password) {
-		return nil, errorlist.Auth_Invalid //invalid password
+		fmt.Println("Invalid password")
+		return "", errorlist.Auth_Invalid //invalid password
 	}
 
 	//Create JWT Token
-	td, error := providers.GenerateToken(user)
+	token, err2 := providers.GenerateToken(user)
 
-	if error != nil {
-		return nil, error
+	if err2 != nil {
+		fmt.Println("Generate token error")
+		return "", err2
 	}
 
 	cookie := &http.Cookie{
-		Name:     "auth",
-		Value:    td.AccessToken,
+		Name:  "access_token",
+		Value: token,
+		//Expires:  time.Now().Add(time.Minute * 5), // expiration time 5 minutes
 		Expires:  time.Time{},
 		HttpOnly: true,
 	}
@@ -53,5 +60,24 @@ func (r *mutationResolver) Login(ctx context.Context, input *model.Login) (*mode
 	http.SetCookie(w, cookie)
 
 	// Send the JWT token
-	return td, nil
+	return token, nil
+}
+
+func (r *queryResolver) GetUserAuth(ctx context.Context) (*model.User, error) {
+	user := middleware.ForContext(ctx)
+
+	if user == nil {
+		return &model.User{}, nil //user not found login as guest
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var fetchUser model.User
+
+	db.Where("id = ?", user.ID).First(&fetchUser)
+
+	return &fetchUser, nil
 }

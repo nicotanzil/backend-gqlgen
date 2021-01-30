@@ -10,6 +10,7 @@ type User {
     balance: Float!
     customURL: String!
     profilePicture: String!
+#    profilePicture: Upload!
     country: Country!
     createdAt: Time!
     updatedAt: Time!
