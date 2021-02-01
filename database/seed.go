@@ -5,6 +5,7 @@ import (
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 	"gorm.io/gorm"
 	"time"
+	"github.com/nicotanzil/backend-gqlgen/app/firebase-data"
 )
 
 func Seed() {
@@ -441,6 +442,8 @@ func SeedUser(db *gorm.DB) {
 			Balance: 100,
 			CustomURL: "nico",
 			Summary: "No information given.",
+			Avatar: firebase_data.Avatar,
+			ProfileBackground: firebase_data.ProfileBackground,
 			Country: &model.Country{ID: 102},
 			Games: []*model.Game {
 				{
@@ -458,6 +461,8 @@ func SeedUser(db *gorm.DB) {
 			Balance: 100,
 			CustomURL: "william",
 			Summary: "No information given.",
+			Avatar: firebase_data.Avatar,
+			ProfileBackground: firebase_data.ProfileBackground,
 			Country: &model.Country{ID: 2},
 		},
 		{
@@ -469,6 +474,8 @@ func SeedUser(db *gorm.DB) {
 			Balance: 100,
 			CustomURL: "rick",
 			Summary: "No information given.",
+			Avatar: firebase_data.Avatar,
+			ProfileBackground: firebase_data.ProfileBackground,
 			Country: &model.Country{ID: 3},
 		},
 	}

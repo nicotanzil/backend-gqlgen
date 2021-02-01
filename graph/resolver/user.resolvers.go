@@ -5,10 +5,12 @@ package resolver
 
 import (
 	"context"
+
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/generated"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
+	"github.com/nicotanzil/backend-gqlgen/app/firebase-data"
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, user *model.NewUser, otp *model.NewOtp) (bool, error) {
@@ -22,13 +24,15 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user *model.NewUser, 
 	newUser = model.User{
 		AccountName: user.AccountName,
 		ProfileName: user.AccountName,
-		RealName:    "",
-		Email:       otp.Email,
-		Password:    providers.HashPassword(user.Password),
-		Balance:     0,
-		CustomURL:   user.AccountName,
-		Summary:     "No information given.",
-		Country:     &model.Country{ID: otp.CountryId},
+		RealName: "",
+		Email: otp.Email,
+		Password: providers.HashPassword(user.Password),
+		Balance: 0,
+		CustomURL: user.AccountName,
+		Summary: "No information given.",
+		Avatar: firebase_data.Avatar,
+		ProfileBackground: firebase_data.ProfileBackground,
+		Country: &model.Country{ID: otp.CountryId},
 	}
 
 	db.Create(&newUser)
@@ -84,4 +88,3 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-

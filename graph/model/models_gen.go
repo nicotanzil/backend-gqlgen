@@ -54,4 +54,3 @@ type UploadFile struct {
 	ID   int            `json:"id"`
 	File graphql.Upload `json:"file"`
 }
-

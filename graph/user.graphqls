@@ -11,8 +11,6 @@ type User {
     customURL: String!
     summary: String!
 
-    profilePicture: String!
-#    profilePicture: Upload!
     avatar: String!
     avatarFrames: String!
     profileBackground: String!

@@ -12,12 +12,13 @@ type User struct {
 	Balance               float64   `json:"balance"`
 	CustomURL             string    `json:"customURL"`
 	Summary               string    `json:"summary"`
-	ProfilePicture        string    `json:"profilePicture"`
+
 	Avatar                string    `json:"avatar"`
 	AvatarFrames          string    `json:"avatarFrames"`
 	ProfileBackground     string    `json:"profileBackground"`
 	MiniProfileBackground string    `json:"miniProfileBackground"`
 	Theme                 string    `json:"theme"`
+
 	CountryID      		  int 		`json:"countryId"`
 	Country               *Country  `json:"country" gorm:"foreignKey:CountryID"`
 	Games                 []*Game   `json:"games" gorm:"many2many:game_users;"`
