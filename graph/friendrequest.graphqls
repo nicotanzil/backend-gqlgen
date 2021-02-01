@@ -1,0 +1,6 @@
+type FriendRequest {
+    id: Int!
+    requester: User!
+    requested: User!
+    status: String!
+}

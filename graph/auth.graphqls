@@ -13,5 +13,6 @@ extend type Query {
 
 extend type Mutation {
     login(input: Login): String!
+    logout: Boolean!
 #    refreshToken(input: RefreshTokenInput!): String!
 }

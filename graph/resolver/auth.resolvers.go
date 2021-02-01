@@ -63,6 +63,20 @@ func (r *mutationResolver) Login(ctx context.Context, input *model.Login) (strin
 	return token, nil
 }
 
+func (r *mutationResolver) Logout(ctx context.Context) (bool, error) {
+	cookie := &http.Cookie{
+		Name:     "access_token",
+		Value:    "",
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+	}
+
+	w := *middleware.WForContext(ctx)
+	http.SetCookie(w, cookie)
+
+	return true, nil
+}
+
 func (r *queryResolver) GetUserAuth(ctx context.Context) (*model.User, error) {
 	user := middleware.ForContext(ctx)
 

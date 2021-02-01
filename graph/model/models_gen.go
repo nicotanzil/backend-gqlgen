@@ -2,6 +2,16 @@
 
 package model
 
+import (
+	"github.com/99designs/gqlgen/graphql"
+)
+
+type File struct {
+	ID      int    `json:"id"`
+	Name    string `json:"name"`
+	Content string `json:"content"`
+}
+
 type NewGame struct {
 	Name               string          `json:"name"`
 	Description        string          `json:"description"`
@@ -39,3 +49,9 @@ type NewUser struct {
 	AccountName string `json:"accountName"`
 	Password    string `json:"password"`
 }
+
+type UploadFile struct {
+	ID   int            `json:"id"`
+	File graphql.Upload `json:"file"`
+}
+

@@ -9,9 +9,22 @@ type User {
     password: String!
     balance: Float!
     customURL: String!
+    summary: String!
+
     profilePicture: String!
 #    profilePicture: Upload!
+    avatar: String!
+    avatarFrames: String!
+    profileBackground: String!
+    miniProfileBackground: String!
+    theme: String!
+
     country: Country!
+    games: [Game!]!
+    friends: [User!]!
+
+    experience: Int!
+
     createdAt: Time!
     updatedAt: Time!
     deletedAt: Time!
@@ -25,6 +38,7 @@ input NewUser {
 type Query {
     users: [User!]!
     getUserById(input: String): User!
+    getUserByUrl(input: String): User!
 }
 
 type Mutation {

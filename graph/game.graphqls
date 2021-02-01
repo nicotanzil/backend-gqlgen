@@ -13,6 +13,7 @@ type Game {
     developers: [Developer!]!
     publisher: Publisher!
     system: System!
+    users: [User!]!
     createdAt: Time!
     updatedAt: Time!
     deletedAt: Time!

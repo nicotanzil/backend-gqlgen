@@ -3,7 +3,7 @@ package model
 import "time"
 
 type ReviewVote struct {
-	ID         	int 		`json:"id"`
+	ID         	int 		`json:"id" gorm:"primaryKey"`
 	UserID     	int 		`json:"userId"`
 	ReviewID   	int 		`json:"reviewId"`
 	VoteStatus 	bool   		`json:"voteStatus"`

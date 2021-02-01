@@ -15,6 +15,7 @@ func Migrate() {
 
 	fmt.Println("[INFO] MIGRATING...")
 	// MIGRATE ALL TABLE
+	db.Exec("DROP TABLE game_users")
 	db.Exec("DROP TABLE game_developers")
 	db.Exec("DROP TABLE game_genres")
 	db.Exec("DROP TABLE game_reviews")
@@ -29,6 +30,8 @@ func Migrate() {
 func UserMigrate(db *gorm.DB) {
 	// DROPPING ALL TABLE
 	db.Migrator().DropTable(
+		&model.FriendRequest{},
+		&model.UserComment{},
 		&model.User{},
 		&model.Country{},
 		&model.Otp{},
@@ -38,18 +41,14 @@ func UserMigrate(db *gorm.DB) {
 	db.AutoMigrate(
 		&model.Country{},
 		&model.User{},
+		&model.UserComment{},
+		&model.FriendRequest{},
 		&model.Otp{},
 	)
 
 }
 
 func GameMigrate(db *gorm.DB) {
-
-	// DROPPING ALL TABLE
-	db.Exec("DROP TABLE game_developers")
-	db.Exec("DROP TABLE game_genres")
-	db.Exec("DROP TABLE game_reviews")
-	db.Exec("DROP TABLE game_tags")
 	db.Migrator().DropTable(
 		&model.Game{},
 		&model.Developer{},

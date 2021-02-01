@@ -5,7 +5,7 @@ import (
 )
 
 type Country struct {
-	ID   int 				`json:"id"`
+	ID   int 				`json:"id" gorm:"primaryKey"`
 	Name string 			`json:"name"`
 	CreatedAt time.Time 	`json:"createdAt"`
 	UpdatedAt time.Time 	`json:"updatedAt"`

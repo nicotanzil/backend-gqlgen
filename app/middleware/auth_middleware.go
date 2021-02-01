@@ -43,6 +43,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		id, err := providers.ParseToken(tokenStr.Value)
 
 		if err != nil {
+			fmt.Println("[INFO] Invalid cookie")
 			http.Error(w, "Invalid cookie", http.StatusForbidden)
 			return
 		}

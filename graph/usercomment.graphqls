@@ -1,0 +1,11 @@
+
+type UserComment {
+    id: Int!
+    user: User!
+    commentator: User!
+    content: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}

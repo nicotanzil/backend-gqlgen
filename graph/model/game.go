@@ -1,8 +1,6 @@
 package model
 
-import (
-	"time"
-)
+import "time"
 
 type Game struct {
 	ID                 	int       		`json:"id" gorm:"primaryKey"`
@@ -17,10 +15,12 @@ type Game struct {
 	GamePlayHour       	float64      	`json:"gamePlayHour"`
 	GameReviews        	[]*Review    	`json:"gameReviews" gorm:"many2many:game_reviews;"`
 	Developers         	[]*Developer 	`json:"developers" gorm:"many2many:game_developers;"`
-	PublisherID         int				`json:"publisher"`
-	SystemID			int				`json:"system"`
+	PublisherID         int				`json:"publisherId"`
+	Publisher          	*Publisher   	`json:"publisher" gorm:"foreignKey:PublisherID"`
+	SystemID			int				`json:"systemId"`
+	System             	*System      	`json:"system" gorm:"foreignKey:SystemID"`
+	Users              	[]*User      	`json:"users" gorm:"many2many:game_users;"`
 	CreatedAt          	time.Time    	`json:"createdAt"`
 	UpdatedAt          	time.Time    	`json:"updatedAt"`
 	DeletedAt          	*time.Time   	`json:"deletedAt"`
 }
-

@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Review struct {
-	ID        int    	`json:"id"`
+	ID        int    	`json:"id" gorm:"primaryKey"`
 	UserID    string    `json:"userId"`
 	Content   string    `json:"content"`
 	Upvote    string    `json:"upvote"`

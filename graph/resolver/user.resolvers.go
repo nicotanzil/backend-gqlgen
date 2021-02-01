@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/generated"
@@ -28,7 +27,8 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user *model.NewUser, 
 		Password:    providers.HashPassword(user.Password),
 		Balance:     0,
 		CustomURL:   user.AccountName,
-		CountryID:   otp.CountryId,
+		Summary:     "No information given.",
+		Country:     &model.Country{ID: otp.CountryId},
 	}
 
 	db.Create(&newUser)
@@ -45,7 +45,7 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 
 	//db.Find(&users)	//populate the users variable with `SELECT * FROM users`
 
-	db.Find(&users) //populate the users with each corresponding countries
+	db.Preload("Country").Preload("Games").Preload("Friends").Find(&users) //populate the users with each corresponding countries
 
 	return users, nil
 }
@@ -58,22 +58,22 @@ func (r *queryResolver) GetUserByID(ctx context.Context, input *string) (*model.
 
 	var user model.User
 
-	db.Where("id = ?", input).First(&user)
+	db.Preload("Country").Preload("Games").Preload("Friends").Where("id = ?", input).First(&user)
 
 	return &user, nil
 }
 
-func (r *userResolver) Country(ctx context.Context, obj *model.User) (*model.Country, error) {
+func (r *queryResolver) GetUserByURL(ctx context.Context, input *string) (*model.User, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
 	}
 
-	var country model.Country
+	var user model.User
 
-	db.Where("id = ?", obj.CountryID).First(&country)
+	db.Preload("Country").Preload("Games").Preload("Friends").Where("custom_url = ?", input).First(&user)
 
-	return &country, nil
+	return &user, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
@@ -82,9 +82,6 @@ func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResol
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
-// User returns generated.UserResolver implementation.
-func (r *Resolver) User() generated.UserResolver { return &userResolver{r} }
-
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-type userResolver struct{ *Resolver }
+

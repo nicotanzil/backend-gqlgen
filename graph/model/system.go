@@ -5,7 +5,7 @@ import (
 )
 
 type System struct {
-	ID        int    	`json:"id"`
+	ID        int    	`json:"id" gorm:"primaryKey"`
 	Os        string    `json:"os"`
 	Memory    int       `json:"memory"`
 	Graphics  string    `json:"graphics"`
