@@ -28,3 +28,17 @@ type User struct {
 	UpdatedAt             time.Time `json:"updatedAt"`
 	DeletedAt             *time.Time `json:"deletedAt"`
 }
+
+type UpdateUser struct {
+	AccountName           string `json:"accountName"`
+	ProfileName           string `json:"profileName"`
+	RealName              string `json:"realName"`
+	CustomURL             string `json:"customURL"`
+	Summary               string `json:"summary"`
+	Avatar                string `json:"avatar"`
+	AvatarFrames          string `json:"avatarFrames"`
+	ProfileBackground     string `json:"profileBackground"`
+	MiniProfileBackground string `json:"miniProfileBackground"`
+	Theme                 string `json:"theme"`
+	CountryID             int    `json:"CountryId"`
+}

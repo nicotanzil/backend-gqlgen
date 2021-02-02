@@ -33,6 +33,21 @@ input NewUser {
     password: String!
 }
 
+input UpdateUser {
+    accountName: String!
+    profileName: String!
+    realName: String!
+    customURL: String!
+    summary: String!
+    avatar: String!
+    avatarFrames: String!
+    profileBackground: String!
+    miniProfileBackground: String!
+    theme: String!
+
+    CountryId: Int!
+}
+
 type Query {
     users: [User!]!
     getUserById(input: String): User!
@@ -41,4 +56,5 @@ type Query {
 
 type Mutation {
     createUser(user: NewUser, otp: NewOtp): Boolean!
+    updateUser(user: UpdateUser): Boolean!
 }
