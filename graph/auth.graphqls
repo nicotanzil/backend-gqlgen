@@ -15,4 +15,5 @@ extend type Mutation {
     login(input: Login): String!
     logout: Boolean!
 #    refreshToken(input: RefreshTokenInput!): String!
+    adminLogin(input: Login): Boolean!
 }

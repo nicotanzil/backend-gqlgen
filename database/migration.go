@@ -30,6 +30,7 @@ func Migrate() {
 func UserMigrate(db *gorm.DB) {
 	// DROPPING ALL TABLE
 	db.Migrator().DropTable(
+		&model.Admin{},
 		&model.FriendRequest{},
 		&model.UserComment{},
 		&model.User{},
@@ -39,6 +40,7 @@ func UserMigrate(db *gorm.DB) {
 
 	// CREATING ALL TABLE
 	db.AutoMigrate(
+		&model.Admin{},
 		&model.Country{},
 		&model.User{},
 		&model.UserComment{},

@@ -11,3 +11,7 @@ type Tag struct {
 	UpdatedAt 	time.Time 	`json:"updatedAt"`
 	DeletedAt 	*time.Time 	`json:"deletedAt"`
 }
+
+type NewTag struct {
+	Name string `json:"name"`
+}

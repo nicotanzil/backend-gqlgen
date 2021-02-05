@@ -20,7 +20,28 @@ type Game struct {
 	SystemID			int				`json:"systemId"`
 	System             	*System      	`json:"system" gorm:"foreignKey:SystemID"`
 	Users              	[]*User      	`json:"users" gorm:"many2many:game_users;"`
+
+	Banner             string       `json:"banner"`
+	Video              string       `json:"video"`
+	Image1             string       `json:"image1"`
+	Image2             string       `json:"image2"`
+	Image3             string       `json:"image3"`
+	Image4             string       `json:"image4"`
+
 	CreatedAt          	time.Time    	`json:"createdAt"`
 	UpdatedAt          	time.Time    	`json:"updatedAt"`
 	DeletedAt          	*time.Time   	`json:"deletedAt"`
+}
+
+type NewGame struct {
+	Name               string          `json:"name"`
+	Description        string          `json:"description"`
+	Genres             []*NewGenre     `json:"genres"`
+	Tags               []*NewTag       `json:"tags"`
+	OriginalPrice      float64         `json:"originalPrice"`
+	OnSale             bool            `json:"onSale"`
+	DiscountPercentage int             `json:"discountPercentage"`
+	Developers         []*NewDeveloper `json:"developers"`
+	Publisher          *NewPublisher   `json:"publisher"`
+	System             *NewSystem      `json:"system"`
 }

@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 	"gorm.io/gorm"
 	"time"
@@ -17,6 +18,7 @@ func Seed() {
 	fmt.Println("[INFO] SEEDING...")
 	// SEED ALL NECESSARY TABLE
 
+	SeedAdmin(db)
 	SeedTag(db)
 	SeedSystem(db)
 	SeedReview(db)
@@ -29,6 +31,16 @@ func Seed() {
 	SeedUser(db)
 
 	fmt.Println("[INFO] SEEDED.")
+}
+
+func SeedAdmin(db *gorm.DB) {
+	admin := model.Admin{
+		ID:          1,
+		AccountName: "admin",
+		Password:    providers.HashPassword("admin"),
+	}
+
+	db.Create(&admin)
 }
 
 func SeedTag(db *gorm.DB) {
@@ -158,6 +170,7 @@ func SeedGame(db *gorm.DB) {
 			GamePlayHour: 1500,
 			PublisherID: 1,
 			SystemID: 1,
+			Banner: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fbanner.jpg?alt=media&token=6fe38ac5-d74e-45f9-b1f3-5052403edfec",
 		},
 	}
 
@@ -438,7 +451,7 @@ func SeedUser(db *gorm.DB) {
 			ProfileName: "nico tanzil",
 			RealName: "Nico Tanzil",
 			Email: "nico@mail.com",
-			Password: "$2a$14$LHJO1WVSn/HK7lEtm164aOoVoGv5yTJpXorfttKNE0HniMU.CqPlK",
+			Password: providers.HashPassword("password"),
 			Balance: 100,
 			CustomURL: "nico",
 			Summary: "No information given.",
@@ -457,7 +470,7 @@ func SeedUser(db *gorm.DB) {
 			ProfileName: "William",
 			RealName: "William Martin",
 			Email: "will@mail.com",
-			Password: "$2a$14$LHJO1WVSn/HK7lEtm164aOoVoGv5yTJpXorfttKNE0HniMU.CqPlK",
+			Password: providers.HashPassword("password"),
 			Balance: 100,
 			CustomURL: "william",
 			Summary: "No information given.",
@@ -470,7 +483,7 @@ func SeedUser(db *gorm.DB) {
 			ProfileName: "Ricko",
 			RealName: "Ricko Adrio",
 			Email: "rick@mail.com",
-			Password: "$2a$14$LHJO1WVSn/HK7lEtm164aOoVoGv5yTJpXorfttKNE0HniMU.CqPlK",
+			Password: providers.HashPassword("password"),
 			Balance: 100,
 			CustomURL: "rick",
 			Summary: "No information given.",

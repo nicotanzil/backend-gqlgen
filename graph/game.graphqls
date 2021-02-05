@@ -14,6 +14,14 @@ type Game {
     publisher: Publisher!
     system: System!
     users: [User!]!
+
+    banner: String!
+    video: String!
+    image1: String!
+    image2: String!
+    image3: String!
+    image4: String!
+
     createdAt: Time!
     updatedAt: Time!
     deletedAt: Time!
@@ -34,6 +42,7 @@ input NewGame {
 
 extend type Query {
     games: [Game!]!
+    getGamePaginationAdmin(page: Int): [Game!]!
 }
 
 extend type Mutation {

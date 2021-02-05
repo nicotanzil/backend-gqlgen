@@ -44,6 +44,15 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Admin struct {
+		AccountName func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		DeletedAt   func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Password    func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+	}
+
 	Country struct {
 		CreatedAt func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
@@ -74,6 +83,7 @@ type ComplexityRoot struct {
 	}
 
 	Game struct {
+		Banner             func(childComplexity int) int
 		CreatedAt          func(childComplexity int) int
 		DeletedAt          func(childComplexity int) int
 		Description        func(childComplexity int) int
@@ -83,6 +93,10 @@ type ComplexityRoot struct {
 		GameReviews        func(childComplexity int) int
 		Genres             func(childComplexity int) int
 		ID                 func(childComplexity int) int
+		Image1             func(childComplexity int) int
+		Image2             func(childComplexity int) int
+		Image3             func(childComplexity int) int
+		Image4             func(childComplexity int) int
 		Name               func(childComplexity int) int
 		OnSale             func(childComplexity int) int
 		OriginalPrice      func(childComplexity int) int
@@ -92,6 +106,7 @@ type ComplexityRoot struct {
 		Tags               func(childComplexity int) int
 		UpdatedAt          func(childComplexity int) int
 		Users              func(childComplexity int) int
+		Video              func(childComplexity int) int
 	}
 
 	Genre struct {
@@ -105,6 +120,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		AdminLogin      func(childComplexity int, input *model.Login) int
 		CreateDeveloper func(childComplexity int, input model.NewDeveloper) int
 		CreateGame      func(childComplexity int, input model.NewGame) int
 		CreateGenre     func(childComplexity int, input model.NewGenre) int
@@ -115,7 +131,7 @@ type ComplexityRoot struct {
 		Login           func(childComplexity int, input *model.Login) int
 		Logout          func(childComplexity int) int
 		UpdateOtp       func(childComplexity int, code string) int
-		UpdateUser      func(childComplexity int, user *model.UpdateUser) int
+		UpdateUser      func(childComplexity int, user model.UpdateUser) int
 	}
 
 	Otp struct {
@@ -138,21 +154,22 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Countries          func(childComplexity int) int
-		Developers         func(childComplexity int) int
-		Games              func(childComplexity int) int
-		Genres             func(childComplexity int) int
-		GetOtpByCode       func(childComplexity int, code *string) int
-		GetUserAuth        func(childComplexity int) int
-		GetUserByID        func(childComplexity int, input *string) int
-		GetUserByURL       func(childComplexity int, input *string) int
-		GetVotesByReviewID func(childComplexity int, input *string) int
-		Otps               func(childComplexity int) int
-		Publishers         func(childComplexity int) int
-		Reviews            func(childComplexity int) int
-		Systems            func(childComplexity int) int
-		Tags               func(childComplexity int) int
-		Users              func(childComplexity int) int
+		Countries              func(childComplexity int) int
+		Developers             func(childComplexity int) int
+		Games                  func(childComplexity int) int
+		Genres                 func(childComplexity int) int
+		GetGamePaginationAdmin func(childComplexity int, page *int) int
+		GetOtpByCode           func(childComplexity int, code *string) int
+		GetUserAuth            func(childComplexity int) int
+		GetUserByID            func(childComplexity int, input *string) int
+		GetUserByURL           func(childComplexity int, input *string) int
+		GetVotesByReviewID     func(childComplexity int, input *string) int
+		Otps                   func(childComplexity int) int
+		Publishers             func(childComplexity int) int
+		Reviews                func(childComplexity int) int
+		Systems                func(childComplexity int) int
+		Tags                   func(childComplexity int) int
+		Users                  func(childComplexity int) int
 	}
 
 	Review struct {
@@ -198,7 +215,7 @@ type ComplexityRoot struct {
 	User struct {
 		AccountName           func(childComplexity int) int
 		Avatar                func(childComplexity int) int
-		AvatarFrames          func(childComplexity int) int
+		AvatarFrame           func(childComplexity int) int
 		Balance               func(childComplexity int) int
 		Country               func(childComplexity int) int
 		CreatedAt             func(childComplexity int) int
@@ -209,6 +226,7 @@ type ComplexityRoot struct {
 		Friends               func(childComplexity int) int
 		Games                 func(childComplexity int) int
 		ID                    func(childComplexity int) int
+		IsSuspend             func(childComplexity int) int
 		MiniProfileBackground func(childComplexity int) int
 		Password              func(childComplexity int) int
 		ProfileBackground     func(childComplexity int) int
@@ -232,9 +250,10 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateUser(ctx context.Context, user *model.NewUser, otp *model.NewOtp) (bool, error)
-	UpdateUser(ctx context.Context, user *model.UpdateUser) (bool, error)
+	UpdateUser(ctx context.Context, user model.UpdateUser) (bool, error)
 	Login(ctx context.Context, input *model.Login) (string, error)
 	Logout(ctx context.Context) (bool, error)
+	AdminLogin(ctx context.Context, input *model.Login) (bool, error)
 	CreateDeveloper(ctx context.Context, input model.NewDeveloper) (*model.Developer, error)
 	CreateGame(ctx context.Context, input model.NewGame) (*model.Game, error)
 	CreateGenre(ctx context.Context, input model.NewGenre) (*model.Genre, error)
@@ -251,6 +270,7 @@ type QueryResolver interface {
 	Countries(ctx context.Context) ([]*model.Country, error)
 	Developers(ctx context.Context) ([]*model.Developer, error)
 	Games(ctx context.Context) ([]*model.Game, error)
+	GetGamePaginationAdmin(ctx context.Context, page *int) ([]*model.Game, error)
 	Genres(ctx context.Context) ([]*model.Genre, error)
 	Otps(ctx context.Context) ([]*model.Otp, error)
 	GetOtpByCode(ctx context.Context, code *string) (*model.Otp, error)
@@ -275,6 +295,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Admin.accountName":
+		if e.complexity.Admin.AccountName == nil {
+			break
+		}
+
+		return e.complexity.Admin.AccountName(childComplexity), true
+
+	case "Admin.createdAt":
+		if e.complexity.Admin.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Admin.CreatedAt(childComplexity), true
+
+	case "Admin.deletedAt":
+		if e.complexity.Admin.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.Admin.DeletedAt(childComplexity), true
+
+	case "Admin.id":
+		if e.complexity.Admin.ID == nil {
+			break
+		}
+
+		return e.complexity.Admin.ID(childComplexity), true
+
+	case "Admin.password":
+		if e.complexity.Admin.Password == nil {
+			break
+		}
+
+		return e.complexity.Admin.Password(childComplexity), true
+
+	case "Admin.updatedAt":
+		if e.complexity.Admin.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Admin.UpdatedAt(childComplexity), true
 
 	case "Country.createdAt":
 		if e.complexity.Country.CreatedAt == nil {
@@ -395,6 +457,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.FriendRequest.Status(childComplexity), true
 
+	case "Game.banner":
+		if e.complexity.Game.Banner == nil {
+			break
+		}
+
+		return e.complexity.Game.Banner(childComplexity), true
+
 	case "Game.createdAt":
 		if e.complexity.Game.CreatedAt == nil {
 			break
@@ -457,6 +526,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Game.ID(childComplexity), true
+
+	case "Game.image1":
+		if e.complexity.Game.Image1 == nil {
+			break
+		}
+
+		return e.complexity.Game.Image1(childComplexity), true
+
+	case "Game.image2":
+		if e.complexity.Game.Image2 == nil {
+			break
+		}
+
+		return e.complexity.Game.Image2(childComplexity), true
+
+	case "Game.image3":
+		if e.complexity.Game.Image3 == nil {
+			break
+		}
+
+		return e.complexity.Game.Image3(childComplexity), true
+
+	case "Game.image4":
+		if e.complexity.Game.Image4 == nil {
+			break
+		}
+
+		return e.complexity.Game.Image4(childComplexity), true
 
 	case "Game.name":
 		if e.complexity.Game.Name == nil {
@@ -521,6 +618,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Game.Users(childComplexity), true
 
+	case "Game.video":
+		if e.complexity.Game.Video == nil {
+			break
+		}
+
+		return e.complexity.Game.Video(childComplexity), true
+
 	case "Genre.createdAt":
 		if e.complexity.Genre.CreatedAt == nil {
 			break
@@ -569,6 +673,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Genre.UpdatedAt(childComplexity), true
+
+	case "Mutation.adminLogin":
+		if e.complexity.Mutation.AdminLogin == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_adminLogin_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AdminLogin(childComplexity, args["input"].(*model.Login)), true
 
 	case "Mutation.createDeveloper":
 		if e.complexity.Mutation.CreateDeveloper == nil {
@@ -695,7 +811,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateUser(childComplexity, args["user"].(*model.UpdateUser)), true
+		return e.complexity.Mutation.UpdateUser(childComplexity, args["user"].(model.UpdateUser)), true
 
 	case "Otp.code":
 		if e.complexity.Otp.Code == nil {
@@ -815,6 +931,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Genres(childComplexity), true
+
+	case "Query.getGamePaginationAdmin":
+		if e.complexity.Query.GetGamePaginationAdmin == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getGamePaginationAdmin_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetGamePaginationAdmin(childComplexity, args["page"].(*int)), true
 
 	case "Query.getOtpByCode":
 		if e.complexity.Query.GetOtpByCode == nil {
@@ -1123,12 +1251,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Avatar(childComplexity), true
 
-	case "User.avatarFrames":
-		if e.complexity.User.AvatarFrames == nil {
+	case "User.avatarFrame":
+		if e.complexity.User.AvatarFrame == nil {
 			break
 		}
 
-		return e.complexity.User.AvatarFrames(childComplexity), true
+		return e.complexity.User.AvatarFrame(childComplexity), true
 
 	case "User.balance":
 		if e.complexity.User.Balance == nil {
@@ -1199,6 +1327,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.ID(childComplexity), true
+
+	case "User.isSuspend":
+		if e.complexity.User.IsSuspend == nil {
+			break
+		}
+
+		return e.complexity.User.IsSuspend(childComplexity), true
 
 	case "User.miniProfileBackground":
 		if e.complexity.User.MiniProfileBackground == nil {
@@ -1369,6 +1504,15 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
+	{Name: "graph/admin.graphqls", Input: `type Admin {
+    id: Int!
+    accountName: String!
+    password: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}`, BuiltIn: false},
 	{Name: "graph/auth.graphqls", Input: `input Login {
     accountName: String!
     password: String!
@@ -1386,6 +1530,7 @@ extend type Mutation {
     login(input: Login): String!
     logout: Boolean!
 #    refreshToken(input: RefreshTokenInput!): String!
+    adminLogin(input: Login): Boolean!
 }
 `, BuiltIn: false},
 	{Name: "graph/country.graphqls", Input: `type Country {
@@ -1453,6 +1598,14 @@ input UploadFile {
     publisher: Publisher!
     system: System!
     users: [User!]!
+
+    banner: String!
+    video: String!
+    image1: String!
+    image2: String!
+    image3: String!
+    image4: String!
+
     createdAt: Time!
     updatedAt: Time!
     deletedAt: Time!
@@ -1473,6 +1626,7 @@ input NewGame {
 
 extend type Query {
     games: [Game!]!
+    getGamePaginationAdmin(page: Int): [Game!]!
 }
 
 extend type Mutation {
@@ -1626,7 +1780,7 @@ type User {
     summary: String!
 
     avatar: String!
-    avatarFrames: String!
+    avatarFrame: String!
     profileBackground: String!
     miniProfileBackground: String!
     theme: String!
@@ -1636,6 +1790,7 @@ type User {
     friends: [User!]!
 
     experience: Int!
+    isSuspend: Boolean!
 
     createdAt: Time!
     updatedAt: Time!
@@ -1654,7 +1809,7 @@ input UpdateUser {
     customURL: String!
     summary: String!
     avatar: String!
-    avatarFrames: String!
+    avatarFrame: String!
     profileBackground: String!
     miniProfileBackground: String!
     theme: String!
@@ -1670,7 +1825,7 @@ type Query {
 
 type Mutation {
     createUser(user: NewUser, otp: NewOtp): Boolean!
-    updateUser(user: UpdateUser): Boolean!
+    updateUser(user: UpdateUser!): Boolean!
 }`, BuiltIn: false},
 	{Name: "graph/usercomment.graphqls", Input: `
 type UserComment {
@@ -1689,6 +1844,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_adminLogin_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.Login
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOLogin2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐLogin(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createDeveloper_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -1837,10 +2007,10 @@ func (ec *executionContext) field_Mutation_updateOtp_args(ctx context.Context, r
 func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.UpdateUser
+	var arg0 model.UpdateUser
 	if tmp, ok := rawArgs["user"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user"))
-		arg0, err = ec.unmarshalOUpdateUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUpdateUser(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateUser2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUpdateUser(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1861,6 +2031,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getGamePaginationAdmin_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["page"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["page"] = arg0
 	return args, nil
 }
 
@@ -1961,6 +2146,216 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _Admin_id(ctx context.Context, field graphql.CollectedField, obj *model.Admin) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Admin",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Admin_accountName(ctx context.Context, field graphql.CollectedField, obj *model.Admin) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Admin",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccountName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Admin_password(ctx context.Context, field graphql.CollectedField, obj *model.Admin) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Admin",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Password, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Admin_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Admin) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Admin",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Admin_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Admin) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Admin",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Admin_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.Admin) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Admin",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
 
 func (ec *executionContext) _Country_id(ctx context.Context, field graphql.CollectedField, obj *model.Country) (ret graphql.Marshaler) {
 	defer func() {
@@ -3082,6 +3477,216 @@ func (ec *executionContext) _Game_users(ctx context.Context, field graphql.Colle
 	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Game_banner(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Game",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Banner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Game_video(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Game",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Video, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Game_image1(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Game",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Image1, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Game_image2(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Game",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Image2, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Game_image3(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Game",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Image3, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Game_image4(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Game",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Image4, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Game_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3499,7 +4104,7 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateUser(rctx, args["user"].(*model.UpdateUser))
+		return ec.resolvers.Mutation().UpdateUser(rctx, args["user"].(model.UpdateUser))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3577,6 +4182,48 @@ func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().Logout(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_adminLogin(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_adminLogin_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AdminLogin(rctx, args["input"].(*model.Login))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4585,6 +5232,48 @@ func (ec *executionContext) _Query_games(ctx context.Context, field graphql.Coll
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().Games(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getGamePaginationAdmin(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getGamePaginationAdmin_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetGamePaginationAdmin(rctx, args["page"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6296,7 +6985,7 @@ func (ec *executionContext) _User_avatar(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_avatarFrames(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_avatarFrame(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6314,7 +7003,7 @@ func (ec *executionContext) _User_avatarFrames(ctx context.Context, field graphq
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.AvatarFrames, nil
+		return obj.AvatarFrame, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6574,6 +7263,41 @@ func (ec *executionContext) _User_experience(ctx context.Context, field graphql.
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_isSuspend(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsSuspend, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -8375,11 +9099,11 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj in
 			if err != nil {
 				return it, err
 			}
-		case "avatarFrames":
+		case "avatarFrame":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarFrames"))
-			it.AvatarFrames, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarFrame"))
+			it.AvatarFrame, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8456,6 +9180,58 @@ func (ec *executionContext) unmarshalInputUploadFile(ctx context.Context, obj in
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var adminImplementors = []string{"Admin"}
+
+func (ec *executionContext) _Admin(ctx context.Context, sel ast.SelectionSet, obj *model.Admin) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, adminImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Admin")
+		case "id":
+			out.Values[i] = ec._Admin_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "accountName":
+			out.Values[i] = ec._Admin_accountName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "password":
+			out.Values[i] = ec._Admin_password(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._Admin_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._Admin_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._Admin_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
 
 var countryImplementors = []string{"Country"}
 
@@ -8716,6 +9492,36 @@ func (ec *executionContext) _Game(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "banner":
+			out.Values[i] = ec._Game_banner(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "video":
+			out.Values[i] = ec._Game_video(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "image1":
+			out.Values[i] = ec._Game_image1(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "image2":
+			out.Values[i] = ec._Game_image2(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "image3":
+			out.Values[i] = ec._Game_image3(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "image4":
+			out.Values[i] = ec._Game_image4(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createdAt":
 			out.Values[i] = ec._Game_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -8831,6 +9637,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "logout":
 			out.Values[i] = ec._Mutation_logout(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "adminLogin":
+			out.Values[i] = ec._Mutation_adminLogin(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -9097,6 +9908,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_games(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getGamePaginationAdmin":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getGamePaginationAdmin(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -9518,8 +10343,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "avatarFrames":
-			out.Values[i] = ec._User_avatarFrames(ctx, field, obj)
+		case "avatarFrame":
+			out.Values[i] = ec._User_avatarFrame(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -9555,6 +10380,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "experience":
 			out.Values[i] = ec._User_experience(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isSuspend":
+			out.Values[i] = ec._User_isSuspend(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -10609,6 +11439,11 @@ func (ec *executionContext) marshalNTime2ᚖtimeᚐTime(ctx context.Context, sel
 	return res
 }
 
+func (ec *executionContext) unmarshalNUpdateUser2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUpdateUser(ctx context.Context, v interface{}) (model.UpdateUser, error) {
+	res, err := ec.unmarshalInputUpdateUser(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (graphql.Upload, error) {
 	res, err := graphql.UnmarshalUpload(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -10928,6 +11763,21 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalInt(*v)
+}
+
 func (ec *executionContext) unmarshalOLogin2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐLogin(ctx context.Context, v interface{}) (*model.Login, error) {
 	if v == nil {
 		return nil, nil
@@ -10974,14 +11824,6 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return graphql.MarshalString(*v)
-}
-
-func (ec *executionContext) unmarshalOUpdateUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUpdateUser(ctx context.Context, v interface{}) (*model.UpdateUser, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputUpdateUser(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

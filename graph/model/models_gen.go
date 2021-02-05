@@ -12,44 +12,6 @@ type File struct {
 	Content string `json:"content"`
 }
 
-type NewGame struct {
-	Name               string          `json:"name"`
-	Description        string          `json:"description"`
-	Genres             []*NewGenre     `json:"genres"`
-	Tags               []*NewTag       `json:"tags"`
-	OriginalPrice      float64         `json:"originalPrice"`
-	OnSale             bool            `json:"onSale"`
-	DiscountPercentage int             `json:"discountPercentage"`
-	Developers         []*NewDeveloper `json:"developers"`
-	Publisher          *NewPublisher   `json:"publisher"`
-	System             *NewSystem      `json:"system"`
-}
-
-type NewGenre struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-}
-
-type NewPublisher struct {
-	Name string `json:"name"`
-}
-
-type NewSystem struct {
-	Os       string `json:"os"`
-	Memory   int    `json:"memory"`
-	Graphics string `json:"graphics"`
-	Storage  int    `json:"storage"`
-}
-
-type NewTag struct {
-	Name string `json:"name"`
-}
-
-type NewUser struct {
-	AccountName string `json:"accountName"`
-	Password    string `json:"password"`
-}
-
 type UploadFile struct {
 	ID   int            `json:"id"`
 	File graphql.Upload `json:"file"`

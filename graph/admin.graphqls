@@ -1,0 +1,9 @@
+type Admin {
+    id: Int!
+    accountName: String!
+    password: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}

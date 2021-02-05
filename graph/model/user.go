@@ -14,19 +14,25 @@ type User struct {
 	Summary               string    `json:"summary"`
 
 	Avatar                string    `json:"avatar"`
-	AvatarFrames          string    `json:"avatarFrames"`
+	AvatarFrame          string    `json:"avatarFrames"`
 	ProfileBackground     string    `json:"profileBackground"`
 	MiniProfileBackground string    `json:"miniProfileBackground"`
 	Theme                 string    `json:"theme"`
 
-	CountryID      		  int 		`json:"countryId"`
-	Country               *Country  `json:"country" gorm:"foreignKey:CountryID"`
-	Games                 []*Game   `json:"games" gorm:"many2many:game_users;"`
-	Friends               []*User   `json:"friends" gorm:"many2many:user_friends"`
-	Experience            int       `json:"experience"`
-	CreatedAt             time.Time `json:"createdAt"`
-	UpdatedAt             time.Time `json:"updatedAt"`
-	DeletedAt             *time.Time `json:"deletedAt"`
+	CountryID  int        `json:"countryId"`
+	Country    *Country   `json:"country" gorm:"foreignKey:CountryID"`
+	Games      []*Game    `json:"games" gorm:"many2many:game_users;"`
+	Friends    []*User    `json:"friends" gorm:"many2many:user_friends"`
+	Experience int        `json:"experience"`
+	IsSuspend  bool       `json:"isSuspend"`
+	CreatedAt  time.Time  `json:"createdAt"`
+	UpdatedAt  time.Time  `json:"updatedAt"`
+	DeletedAt  *time.Time `json:"deletedAt"`
+}
+
+type NewUser struct {
+	AccountName string `json:"accountName"`
+	Password    string `json:"password"`
 }
 
 type UpdateUser struct {
@@ -36,7 +42,7 @@ type UpdateUser struct {
 	CustomURL             string `json:"customURL"`
 	Summary               string `json:"summary"`
 	Avatar                string `json:"avatar"`
-	AvatarFrames          string `json:"avatarFrames"`
+	AvatarFrame           string `json:"avatarFrames"`
 	ProfileBackground     string `json:"profileBackground"`
 	MiniProfileBackground string `json:"miniProfileBackground"`
 	Theme                 string `json:"theme"`

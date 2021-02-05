@@ -14,3 +14,11 @@ type System struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 	DeletedAt *time.Time `json:"deletedAt"`
 }
+
+
+type NewSystem struct {
+	Os       string `json:"os"`
+	Memory   int    `json:"memory"`
+	Graphics string `json:"graphics"`
+	Storage  int    `json:"storage"`
+}

@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+
 	firebase_data "github.com/nicotanzil/backend-gqlgen/app/firebase-data"
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
@@ -38,7 +39,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user *model.NewUser, 
 	return true, nil
 }
 
-func (r *mutationResolver) UpdateUser(ctx context.Context, user *model.UpdateUser) (bool, error) {
+func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUser) (bool, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
@@ -53,7 +54,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user *model.UpdateUse
 	u.CustomURL = user.CustomURL
 	u.Summary = user.Summary
 	u.Avatar = user.Avatar
-	u.AvatarFrames = user.AvatarFrames
+	u.AvatarFrame = user.AvatarFrame
 	u.ProfileBackground = user.ProfileBackground
 	u.MiniProfileBackground = user.MiniProfileBackground
 	u.Theme = user.Theme

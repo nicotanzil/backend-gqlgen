@@ -14,3 +14,8 @@ type Genre struct {
 	DeletedAt   *time.Time 	`json:"deletedAt"`
 }
 
+type NewGenre struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+

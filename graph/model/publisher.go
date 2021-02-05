@@ -11,3 +11,7 @@ type Publisher struct {
 	UpdatedAt 	time.Time `json:"updatedAt"`
 	DeletedAt 	*time.Time `json:"deletedAt"`
 }
+
+type NewPublisher struct {
+	Name string `json:"name"`
+}
