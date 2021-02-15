@@ -10,6 +10,10 @@ input NewTag {
     name: String!
 }
 
+input InputTag {
+    id: Int!
+}
+
 extend type Query {
     tags: [Tag!]!
 }

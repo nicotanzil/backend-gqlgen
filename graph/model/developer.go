@@ -16,3 +16,6 @@ type NewDeveloper struct {
 	Name string `json:"name"`
 }
 
+type InputDeveloper struct {
+	ID int `json:"id"`
+}

@@ -128,6 +128,7 @@ type ComplexityRoot struct {
 		CreatePublisher func(childComplexity int, input model.NewPublisher) int
 		CreateTag       func(childComplexity int, input model.NewTag) int
 		CreateUser      func(childComplexity int, user *model.NewUser, otp *model.NewOtp) int
+		DeleteGame      func(childComplexity int, id int) int
 		Login           func(childComplexity int, input *model.Login) int
 		Logout          func(childComplexity int) int
 		UpdateOtp       func(childComplexity int, code string) int
@@ -159,6 +160,7 @@ type ComplexityRoot struct {
 		Games                  func(childComplexity int) int
 		Genres                 func(childComplexity int) int
 		GetGamePaginationAdmin func(childComplexity int, page *int) int
+		GetLatestID            func(childComplexity int) int
 		GetOtpByCode           func(childComplexity int, code *string) int
 		GetUserAuth            func(childComplexity int) int
 		GetUserByID            func(childComplexity int, input *string) int
@@ -256,6 +258,7 @@ type MutationResolver interface {
 	AdminLogin(ctx context.Context, input *model.Login) (bool, error)
 	CreateDeveloper(ctx context.Context, input model.NewDeveloper) (*model.Developer, error)
 	CreateGame(ctx context.Context, input model.NewGame) (*model.Game, error)
+	DeleteGame(ctx context.Context, id int) (*model.Game, error)
 	CreateGenre(ctx context.Context, input model.NewGenre) (*model.Genre, error)
 	CreateOtp(ctx context.Context, input model.NewOtp) (*model.Otp, error)
 	UpdateOtp(ctx context.Context, code string) (*model.Otp, error)
@@ -271,6 +274,7 @@ type QueryResolver interface {
 	Developers(ctx context.Context) ([]*model.Developer, error)
 	Games(ctx context.Context) ([]*model.Game, error)
 	GetGamePaginationAdmin(ctx context.Context, page *int) ([]*model.Game, error)
+	GetLatestID(ctx context.Context) (int, error)
 	Genres(ctx context.Context) ([]*model.Genre, error)
 	Otps(ctx context.Context) ([]*model.Otp, error)
 	GetOtpByCode(ctx context.Context, code *string) (*model.Otp, error)
@@ -770,6 +774,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["user"].(*model.NewUser), args["otp"].(*model.NewOtp)), true
 
+	case "Mutation.deleteGame":
+		if e.complexity.Mutation.DeleteGame == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteGame_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteGame(childComplexity, args["id"].(int)), true
+
 	case "Mutation.login":
 		if e.complexity.Mutation.Login == nil {
 			break
@@ -943,6 +959,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetGamePaginationAdmin(childComplexity, args["page"].(*int)), true
+
+	case "Query.getLatestId":
+		if e.complexity.Query.GetLatestID == nil {
+			break
+		}
+
+		return e.complexity.Query.GetLatestID(childComplexity), true
 
 	case "Query.getOtpByCode":
 		if e.complexity.Query.GetOtpByCode == nil {
@@ -1544,7 +1567,7 @@ extend type Query {
     countries: [Country!]!
 }`, BuiltIn: false},
 	{Name: "graph/developer.graphqls", Input: `type Developer {
-    id: Int!,
+    id: Int!
     name: String!
     createdAt: Time!
     updatedAt: Time!
@@ -1553,6 +1576,10 @@ extend type Query {
 
 input NewDeveloper {
     name: String!
+}
+
+input InputDeveloper {
+    id: Int!
 }
 
 extend type Query {
@@ -1614,23 +1641,32 @@ input UploadFile {
 input NewGame {
     name: String!
     description: String!
-    genres: [NewGenre!]!
-    tags: [NewTag!]!
+    genres: [InputGenre!]!
+    tags: [InputTag!]!
     originalPrice: Float!
     onSale: Boolean!
     discountPercentage: Int!
-    developers: [NewDeveloper!]!
-    publisher: NewPublisher!
-    system: NewSystem!
+    developers: [InputDeveloper!]!
+    publisherId: Int!
+    systemId: Int!
+
+    banner: String!
+    video: String!
+    image1: String!
+    image2: String!
+    image3: String!
+    image4: String!
 }
 
 extend type Query {
     games: [Game!]!
     getGamePaginationAdmin(page: Int): [Game!]!
+    getLatestId: Int!
 }
 
 extend type Mutation {
     createGame(input: NewGame!): Game!
+    deleteGame(id: Int!): Game!
 }`, BuiltIn: false},
 	{Name: "graph/genre.graphqls", Input: `type Genre {
     id: Int!
@@ -1645,6 +1681,10 @@ extend type Mutation {
 input NewGenre {
     name: String!
     description: String!
+}
+
+input InputGenre {
+    id: Int!
 }
 
 extend type Query {
@@ -1757,6 +1797,10 @@ extend type Query {
 
 input NewTag {
     name: String!
+}
+
+input InputTag {
+    id: Int!
 }
 
 extend type Query {
@@ -1971,6 +2015,21 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 		}
 	}
 	args["otp"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteGame_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -4324,6 +4383,48 @@ func (ec *executionContext) _Mutation_createGame(ctx context.Context, field grap
 	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_deleteGame(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteGame_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteGame(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createGenre(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -5288,6 +5389,41 @@ func (ec *executionContext) _Query_getGamePaginationAdmin(ctx context.Context, f
 	res := resTmp.([]*model.Game)
 	fc.Result = res
 	return ec.marshalNGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getLatestId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetLatestID(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_genres(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -8737,6 +8873,66 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputInputDeveloper(ctx context.Context, obj interface{}) (model.InputDeveloper, error) {
+	var it model.InputDeveloper
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputInputGenre(ctx context.Context, obj interface{}) (model.InputGenre, error) {
+	var it model.InputGenre
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputInputTag(ctx context.Context, obj interface{}) (model.InputTag, error) {
+	var it model.InputTag
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputLogin(ctx context.Context, obj interface{}) (model.Login, error) {
 	var it model.Login
 	var asMap = obj.(map[string]interface{})
@@ -8811,7 +9007,7 @@ func (ec *executionContext) unmarshalInputNewGame(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genres"))
-			it.Genres, err = ec.unmarshalNNewGenre2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewGenreᚄ(ctx, v)
+			it.Genres, err = ec.unmarshalNInputGenre2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputGenreᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8819,7 +9015,7 @@ func (ec *executionContext) unmarshalInputNewGame(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tags"))
-			it.Tags, err = ec.unmarshalNNewTag2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewTagᚄ(ctx, v)
+			it.Tags, err = ec.unmarshalNInputTag2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputTagᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8851,23 +9047,71 @@ func (ec *executionContext) unmarshalInputNewGame(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("developers"))
-			it.Developers, err = ec.unmarshalNNewDeveloper2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewDeveloperᚄ(ctx, v)
+			it.Developers, err = ec.unmarshalNInputDeveloper2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputDeveloperᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "publisher":
+		case "publisherId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publisher"))
-			it.Publisher, err = ec.unmarshalNNewPublisher2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewPublisher(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publisherId"))
+			it.PublisherID, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "system":
+		case "systemId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("system"))
-			it.System, err = ec.unmarshalNNewSystem2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewSystem(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("systemId"))
+			it.SystemID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "banner":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("banner"))
+			it.Banner, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "video":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("video"))
+			it.Video, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image1":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image1"))
+			it.Image1, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image2":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image2"))
+			it.Image2, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image3":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image3"))
+			it.Image3, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "image4":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image4"))
+			it.Image4, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -9655,6 +9899,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "deleteGame":
+			out.Values[i] = ec._Mutation_deleteGame(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createGenre":
 			out.Values[i] = ec._Mutation_createGenre(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -9922,6 +10171,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getGamePaginationAdmin(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getLatestId":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getLatestId(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -10961,6 +11224,84 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
+func (ec *executionContext) unmarshalNInputDeveloper2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputDeveloperᚄ(ctx context.Context, v interface{}) ([]*model.InputDeveloper, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.InputDeveloper, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInputDeveloper2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputDeveloper(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNInputDeveloper2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputDeveloper(ctx context.Context, v interface{}) (*model.InputDeveloper, error) {
+	res, err := ec.unmarshalInputInputDeveloper(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNInputGenre2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputGenreᚄ(ctx context.Context, v interface{}) ([]*model.InputGenre, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.InputGenre, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInputGenre2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputGenre(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNInputGenre2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputGenre(ctx context.Context, v interface{}) (*model.InputGenre, error) {
+	res, err := ec.unmarshalInputInputGenre(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNInputTag2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputTagᚄ(ctx context.Context, v interface{}) ([]*model.InputTag, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.InputTag, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInputTag2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputTag(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNInputTag2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputTag(ctx context.Context, v interface{}) (*model.InputTag, error) {
+	res, err := ec.unmarshalInputInputTag(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalInt(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -10981,32 +11322,6 @@ func (ec *executionContext) unmarshalNNewDeveloper2githubᚗcomᚋnicotanzilᚋb
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewDeveloper2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewDeveloperᚄ(ctx context.Context, v interface{}) ([]*model.NewDeveloper, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*model.NewDeveloper, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNNewDeveloper2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewDeveloper(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalNNewDeveloper2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewDeveloper(ctx context.Context, v interface{}) (*model.NewDeveloper, error) {
-	res, err := ec.unmarshalInputNewDeveloper(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNNewGame2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewGame(ctx context.Context, v interface{}) (model.NewGame, error) {
 	res, err := ec.unmarshalInputNewGame(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -11015,32 +11330,6 @@ func (ec *executionContext) unmarshalNNewGame2githubᚗcomᚋnicotanzilᚋbacken
 func (ec *executionContext) unmarshalNNewGenre2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewGenre(ctx context.Context, v interface{}) (model.NewGenre, error) {
 	res, err := ec.unmarshalInputNewGenre(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNNewGenre2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewGenreᚄ(ctx context.Context, v interface{}) ([]*model.NewGenre, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*model.NewGenre, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNNewGenre2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewGenre(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalNNewGenre2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewGenre(ctx context.Context, v interface{}) (*model.NewGenre, error) {
-	res, err := ec.unmarshalInputNewGenre(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNNewOtp2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewOtp(ctx context.Context, v interface{}) (model.NewOtp, error) {
@@ -11053,45 +11342,9 @@ func (ec *executionContext) unmarshalNNewPublisher2githubᚗcomᚋnicotanzilᚋb
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewPublisher2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewPublisher(ctx context.Context, v interface{}) (*model.NewPublisher, error) {
-	res, err := ec.unmarshalInputNewPublisher(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNNewSystem2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewSystem(ctx context.Context, v interface{}) (*model.NewSystem, error) {
-	res, err := ec.unmarshalInputNewSystem(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNNewTag2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewTag(ctx context.Context, v interface{}) (model.NewTag, error) {
 	res, err := ec.unmarshalInputNewTag(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNNewTag2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewTagᚄ(ctx context.Context, v interface{}) ([]*model.NewTag, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*model.NewTag, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNNewTag2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewTag(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalNNewTag2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewTag(ctx context.Context, v interface{}) (*model.NewTag, error) {
-	res, err := ec.unmarshalInputNewTag(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNOtp2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐOtp(ctx context.Context, sel ast.SelectionSet, v model.Otp) graphql.Marshaler {

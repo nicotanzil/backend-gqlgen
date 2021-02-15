@@ -1,5 +1,5 @@
 type Developer {
-    id: Int!,
+    id: Int!
     name: String!
     createdAt: Time!
     updatedAt: Time!
@@ -8,6 +8,10 @@ type Developer {
 
 input NewDeveloper {
     name: String!
+}
+
+input InputDeveloper {
+    id: Int!
 }
 
 extend type Query {

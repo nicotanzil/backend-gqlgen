@@ -9,6 +9,7 @@ import (
 
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
+	"gorm.io/gorm/clause"
 )
 
 func (r *mutationResolver) CreateGenre(ctx context.Context, input model.NewGenre) (*model.Genre, error) {
@@ -23,7 +24,7 @@ func (r *queryResolver) Genres(ctx context.Context) ([]*model.Genre, error) {
 
 	var genres []*model.Genre
 
-	db.Find(&genres)
+	db.Preload(clause.Associations).Find(&genres)
 
 	return genres, nil
 }

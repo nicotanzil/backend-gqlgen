@@ -19,3 +19,7 @@ type NewGenre struct {
 	Description string `json:"description"`
 }
 
+type InputGenre struct {
+	ID int `json:"id"`
+}
+

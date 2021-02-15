@@ -13,6 +13,10 @@ input NewGenre {
     description: String!
 }
 
+input InputGenre {
+    id: Int!
+}
+
 extend type Query {
     genres: [Genre!]!
 }

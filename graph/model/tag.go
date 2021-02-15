@@ -15,3 +15,7 @@ type Tag struct {
 type NewTag struct {
 	Name string `json:"name"`
 }
+
+type InputTag struct {
+	ID int `json:"id"`
+}

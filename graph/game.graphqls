@@ -30,21 +30,30 @@ type Game {
 input NewGame {
     name: String!
     description: String!
-    genres: [NewGenre!]!
-    tags: [NewTag!]!
+    genres: [InputGenre!]!
+    tags: [InputTag!]!
     originalPrice: Float!
     onSale: Boolean!
     discountPercentage: Int!
-    developers: [NewDeveloper!]!
-    publisher: NewPublisher!
-    system: NewSystem!
+    developers: [InputDeveloper!]!
+    publisherId: Int!
+    systemId: Int!
+
+    banner: String!
+    video: String!
+    image1: String!
+    image2: String!
+    image3: String!
+    image4: String!
 }
 
 extend type Query {
     games: [Game!]!
     getGamePaginationAdmin(page: Int): [Game!]!
+    getLatestId: Int!
 }
 
 extend type Mutation {
     createGame(input: NewGame!): Game!
+    deleteGame(id: Int!): Game!
 }

@@ -15,6 +15,7 @@ func Migrate() {
 
 	fmt.Println("[INFO] MIGRATING...")
 	// MIGRATE ALL TABLE
+	db.Exec("DROP TABLE user_friends")
 	db.Exec("DROP TABLE game_users")
 	db.Exec("DROP TABLE game_developers")
 	db.Exec("DROP TABLE game_genres")
