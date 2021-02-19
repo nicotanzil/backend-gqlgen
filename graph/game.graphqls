@@ -50,7 +50,7 @@ input NewGame {
 extend type Query {
     games: [Game!]!
     getGamePaginationAdmin(page: Int): [Game!]!
-    getLatestId: Int!
+    getTotalGame: Int!
 }
 
 extend type Mutation {

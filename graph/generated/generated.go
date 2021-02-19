@@ -160,8 +160,8 @@ type ComplexityRoot struct {
 		Games                  func(childComplexity int) int
 		Genres                 func(childComplexity int) int
 		GetGamePaginationAdmin func(childComplexity int, page *int) int
-		GetLatestID            func(childComplexity int) int
 		GetOtpByCode           func(childComplexity int, code *string) int
+		GetTotalGame           func(childComplexity int) int
 		GetUserAuth            func(childComplexity int) int
 		GetUserByID            func(childComplexity int, input *string) int
 		GetUserByURL           func(childComplexity int, input *string) int
@@ -274,7 +274,7 @@ type QueryResolver interface {
 	Developers(ctx context.Context) ([]*model.Developer, error)
 	Games(ctx context.Context) ([]*model.Game, error)
 	GetGamePaginationAdmin(ctx context.Context, page *int) ([]*model.Game, error)
-	GetLatestID(ctx context.Context) (int, error)
+	GetTotalGame(ctx context.Context) (int, error)
 	Genres(ctx context.Context) ([]*model.Genre, error)
 	Otps(ctx context.Context) ([]*model.Otp, error)
 	GetOtpByCode(ctx context.Context, code *string) (*model.Otp, error)
@@ -960,13 +960,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetGamePaginationAdmin(childComplexity, args["page"].(*int)), true
 
-	case "Query.getLatestId":
-		if e.complexity.Query.GetLatestID == nil {
-			break
-		}
-
-		return e.complexity.Query.GetLatestID(childComplexity), true
-
 	case "Query.getOtpByCode":
 		if e.complexity.Query.GetOtpByCode == nil {
 			break
@@ -978,6 +971,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetOtpByCode(childComplexity, args["code"].(*string)), true
+
+	case "Query.getTotalGame":
+		if e.complexity.Query.GetTotalGame == nil {
+			break
+		}
+
+		return e.complexity.Query.GetTotalGame(childComplexity), true
 
 	case "Query.getUserAuth":
 		if e.complexity.Query.GetUserAuth == nil {
@@ -1661,7 +1661,7 @@ input NewGame {
 extend type Query {
     games: [Game!]!
     getGamePaginationAdmin(page: Int): [Game!]!
-    getLatestId: Int!
+    getTotalGame: Int!
 }
 
 extend type Mutation {
@@ -5391,7 +5391,7 @@ func (ec *executionContext) _Query_getGamePaginationAdmin(ctx context.Context, f
 	return ec.marshalNGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getLatestId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_getTotalGame(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5409,7 +5409,7 @@ func (ec *executionContext) _Query_getLatestId(ctx context.Context, field graphq
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetLatestID(rctx)
+		return ec.resolvers.Query().GetTotalGame(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10176,7 +10176,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "getLatestId":
+		case "getTotalGame":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -10184,7 +10184,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getLatestId(ctx, field)
+				res = ec._Query_getTotalGame(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

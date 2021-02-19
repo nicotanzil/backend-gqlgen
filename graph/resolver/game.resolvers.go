@@ -98,22 +98,20 @@ func (r *queryResolver) GetGamePaginationAdmin(ctx context.Context, page *int) (
 
 	var games []*model.Game
 
-	left := (providers.ADMIN_GAME_PAGINATION * (*page - 1)) + 1
-	right := providers.ADMIN_GAME_PAGINATION * (*page)
-
-	db.Preload(clause.Associations).Where("id >= ? AND id <= ?", left, right).Find(&games)
+	db.Preload(clause.Associations).Limit(providers.ADMIN_GAME_PAGINATION).Offset(providers.ADMIN_GAME_PAGINATION*(*page-1)).Find(&games)
 
 	return games, nil
 }
 
-func (r *queryResolver) GetLatestID(ctx context.Context) (int, error) {
+func (r *queryResolver) GetTotalGame(ctx context.Context) (int, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
 	}
 
-	var game model.Game
-	db.Last(&game)
+	var count int64
 
-	return game.ID, nil
+	db.Model(&model.Game{}).Count(&count)
+
+	return int(count), nil
 }

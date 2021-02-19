@@ -25,8 +25,8 @@ func Seed() {
 	SeedReviewVote(db)
 	SeedPublisher(db)
 	SeedGenre(db)
-	SeedGame(db)
 	SeedDeveloper(db)
+	SeedGame(db)
 	SeedCountry(db)
 	SeedUser(db)
 
@@ -46,10 +46,40 @@ func SeedAdmin(db *gorm.DB) {
 func SeedTag(db *gorm.DB) {
 	tags := []model.Tag{
 		{
+			Name: "Horror",
+		},
+		{
+			Name: "Adventure",
+		},
+		{
+			Name: "Indie",
+		},
+		{
 			Name: "MOBA",
 		},
 		{
 			Name: "Action",
+		},
+		{
+			Name: "Third Person",
+		},
+		{
+			Name: "RPG",
+		},
+		{
+			Name: "Fighting",
+		},
+		{
+			Name: "Multiplayer",
+		},
+		{
+			Name: "Arcade",
+		},
+		{
+			Name: "FPS",
+		},
+		{
+			Name: "Mature Content",
 		},
 	}
 
@@ -85,6 +115,18 @@ func SeedPublisher(db *gorm.DB) {
 	publishers := []model.Publisher{
 		{
 			Name: "Valve",
+		},
+		{
+			Name: "Electronic Arts",
+		},
+		{
+			Name: "Capcom",
+		},
+		{
+			Name: "Rockstar Games",
+		},
+		{
+			Name: "Re-Logic",
 		},
 	}
 
@@ -167,10 +209,238 @@ func SeedGame(db *gorm.DB) {
 			OriginalPrice:      0,
 			OnSale:             false,
 			DiscountPercentage: 0,
+			Developers: []*model.Developer {
+				{
+					ID:        1,
+				},
+			},
 			GamePlayHour:       1500,
 			PublisherID:        1,
 			SystemID:           1,
 			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fbanner.jpg?alt=media&token=6fe38ac5-d74e-45f9-b1f3-5052403edfec",
+		},
+		{
+			Name:               "STAR WARS Jedi: Fallen Order",
+			Description:        "A galaxy-spanning adventure awaits in Star Wars Jedi: Fallen Order, a new third-person action-adventure title from Respawn Entertainment. This narratively driven, single-player game puts you in the role of a Jedi Padawan who narrowly escaped the purge of Order 66 following the events of Episode 3: Revenge of the Sith. On a quest to rebuild the Jedi Order, you must pick up the pieces of your shattered past to complete your training, develop new powerful Force abilities and master the art of the iconic lightsaber - all while staying one step ahead of the Empire and its deadly Inquisitors.",
+			ReleaseDate:        time.Now(),
+			Genres: []*model.Genre{
+				{
+					ID: 5,
+				},
+				{
+					ID: 7,
+				},
+				{
+					ID: 10,
+				},
+			},
+			Tags: []*model.Tag{
+				{
+					ID: 2,
+				},
+				{
+					ID: 5,
+				},
+			},
+			OriginalPrice:      562000,
+			OnSale:             true,
+			DiscountPercentage: 50,
+			Developers:         []*model.Developer {
+				{
+					ID: 2,
+				},
+			},
+			PublisherID:        2,
+			SystemID:           1,
+			Users:              nil,
+			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F2%2Fbanner.jpg?alt=media&token=f12004fa-98c7-4238-b209-7437fa761197",
+			Video:              "",
+			Image1:             "",
+			Image2:             "",
+			Image3:             "",
+			Image4:             "",
+		},
+		{
+			Name:               "Street Fighter V",
+			Description:        "Experience the intensity of head-to-head battle with Street Fighter® V! Choose from 16 iconic characters, each with their own personal story and unique training challenges, then battle against friends online or offline with a robust variety of match options.\n\nEarn Fight Money in Ranked Matches, play for fun in Casual Matches or invite friends into a Battle Lounge and see who comes out on top! PlayStation 4 and Steam players can also play against each other thanks to cross-play compatibility!\n",
+			ReleaseDate:        time.Now(),
+			Genres: []*model.Genre{
+				{
+					ID: 8,
+				},
+				{
+					ID: 2,
+				},
+				{
+					ID: 1,
+				},
+			},
+			Tags: []*model.Tag{
+				{
+					ID: 6,
+				},
+				{
+					ID: 7,
+				},
+			},
+			OriginalPrice:      650000,
+			OnSale:             false,
+			DiscountPercentage: 0,
+			Developers:         []*model.Developer {
+				{
+					ID: 3,
+				},
+			},
+			PublisherID:        3,
+			SystemID:           1,
+			Users:              nil,
+			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F3%2Fbanner.jpg?alt=media&token=073881f4-a93e-4a05-9bc9-9efbb1401108",
+			Video:              "",
+			Image1:             "",
+			Image2:             "",
+			Image3:             "",
+			Image4:             "",
+		},
+		{
+			Name:               "Counter-Strike: Global Offensive",
+			Description:        "Counter-Strike: Global Offensive (CS: GO) expands upon the team-based action gameplay that it pioneered when it was launched 19 years ago.\n\nCS: GO features new maps, characters, weapons, and game modes, and delivers updated versions of the classic CS content (de_dust2, etc.).",
+			ReleaseDate:        time.Now(),
+			Genres: []*model.Genre{
+				{
+					ID: 2,
+				},
+				{
+					ID: 5,
+				},
+				{
+					ID: 10,
+				},
+			},
+			Tags: []*model.Tag{
+				{
+					ID: 2,
+				},
+				{
+					ID: 3,
+				},
+				{
+					ID: 5,
+				},
+				{
+					ID: 12,
+				},
+			},
+			OriginalPrice:      0,
+			OnSale:             false,
+			DiscountPercentage: 0,
+			Developers:         []*model.Developer {
+				{
+					ID: 1,
+				},
+				{
+					ID: 4,
+				},
+			},
+			PublisherID:        1,
+			SystemID:           1,
+			Users:              nil,
+			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F4%2Fbanner.jpg?alt=media&token=71bf9807-e661-47f4-b19e-5b12b8f8eb79",
+			Video:              "",
+			Image1:             "",
+			Image2:             "",
+			Image3:             "",
+			Image4:             "",
+		},
+		{
+			Name:               "Grand Theft Auto V",
+			Description:        "When a young street hustler, a retired bank robber and a terrifying psychopath find themselves entangled with some of the most frightening and deranged elements of the criminal underworld, the U.S. government and the entertainment industry, they must pull off a series of dangerous heists to survive in a ruthless city in which they can trust nobody, least of all each other.",
+			ReleaseDate:        time.Now(),
+			Genres: []*model.Genre{
+				{
+					ID: 1,
+				},
+				{
+					ID: 6,
+				},
+				{
+					ID: 8,
+				},
+			},
+			Tags: []*model.Tag{
+				{
+					ID: 1,
+				},
+				{
+					ID: 4,
+				},
+				{
+					ID: 8,
+				},
+				{
+					ID: 12,
+				},
+			},
+			OriginalPrice:      300000,
+			OnSale:             true,
+			DiscountPercentage: 25,
+			Developers:         []*model.Developer {
+				{
+					ID: 5,
+				},
+			},
+			PublisherID:        4,
+			SystemID:           1,
+			Users:              nil,
+			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F5%2Fbanner.jpg?alt=media&token=dafa20ed-2139-45cc-8a59-38e245faac53",
+			Video:              "",
+			Image1:             "",
+			Image2:             "",
+			Image3:             "",
+			Image4:             "",
+		},
+		{
+			Name:               "Terraria",
+			Description:        "Dig, Fight, Explore, Build: The very world is at your fingertips as you fight for survival, fortune, and glory. Will you delve deep into cavernous expanses in search of treasure and raw materials with which to craft ever-evolving gear, machinery, and aesthetics? Perhaps you will choose instead to seek out ever-greater foes to test your mettle in combat? Maybe you will decide to construct your own city to house the host of mysterious allies you may encounter along your travels? ",
+			ReleaseDate:        time.Now(),
+			Genres: []*model.Genre{
+				{
+					ID: 4,
+				},
+				{
+					ID: 8,
+				},
+				{
+					ID: 12,
+				},
+			},
+			Tags: []*model.Tag{
+				{
+					ID: 2,
+				},
+				{
+					ID: 3,
+				},
+				{
+					ID: 7,
+				},
+			},
+			OriginalPrice:      89999,
+			OnSale:             false,
+			DiscountPercentage: 0,
+			Developers:         []*model.Developer {
+				{
+					ID: 6,
+				},
+			},
+			PublisherID:        5,
+			SystemID:           1,
+			Users:              nil,
+			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F6%2Fbanner.jpg?alt=media&token=b403f94b-9ebc-496d-a8a6-36a34fed085e",
+			Video:              "",
+			Image1:             "",
+			Image2:             "",
+			Image3:             "",
+			Image4:             "",
 		},
 	}
 
@@ -184,6 +454,21 @@ func SeedDeveloper(db *gorm.DB) {
 	developers := []model.Developer{
 		{
 			Name: "Valve",
+		},
+		{
+			Name: "Respawn Entertainment",
+		},
+		{
+			Name: "Capcom",
+		},
+		{
+			Name: "Hidden Path Entertainment",
+		},
+		{
+			Name: "Rockstar North",
+		},
+		{
+			Name: "Re-Logic",
 		},
 	}
 

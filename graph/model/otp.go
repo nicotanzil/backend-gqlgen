@@ -68,6 +68,7 @@ func GenerateRandomCode() string{
 
 	for i := 0; i < 5; i++ {
 		idx := rand.Intn(len(allCharSet))
+		idx = int(time.Now().Unix()) % idx;
 		password += string(allCharSet[idx])
 	}
 

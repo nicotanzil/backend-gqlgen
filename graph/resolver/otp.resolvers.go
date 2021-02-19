@@ -66,7 +66,7 @@ func (r *queryResolver) GetOtpByCode(ctx context.Context, code *string) (*model.
 
 	var otp model.Otp
 
-	db.Where("code = ? AND is_valid = ?", code, true).First(&otp)
+	db.Where("code = ?", code).First(&otp)
 
 	//Delete OTP
 
