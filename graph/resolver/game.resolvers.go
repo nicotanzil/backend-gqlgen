@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
@@ -73,7 +72,6 @@ func (r *mutationResolver) DeleteGame(ctx context.Context, id int) (*model.Game,
 	db.Where("id = ?", id).First(&game)
 
 	db.Delete(&model.Game{}, id)
-	fmt.Println("Delete")
 	return &game, nil
 }
 
@@ -98,7 +96,7 @@ func (r *queryResolver) GetGamePaginationAdmin(ctx context.Context, page *int) (
 
 	var games []*model.Game
 
-	db.Preload(clause.Associations).Limit(providers.ADMIN_GAME_PAGINATION).Offset(providers.ADMIN_GAME_PAGINATION*(*page-1)).Find(&games)
+	db.Preload(clause.Associations).Limit(providers.ADMIN_GAME_PAGINATION).Offset(providers.ADMIN_GAME_PAGINATION * (*page - 1)).Find(&games)
 
 	return games, nil
 }

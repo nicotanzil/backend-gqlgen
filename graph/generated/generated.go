@@ -125,10 +125,12 @@ type ComplexityRoot struct {
 		CreateGame      func(childComplexity int, input model.NewGame) int
 		CreateGenre     func(childComplexity int, input model.NewGenre) int
 		CreateOtp       func(childComplexity int, input model.NewOtp) int
+		CreatePromo     func(childComplexity int, input model.NewPromo) int
 		CreatePublisher func(childComplexity int, input model.NewPublisher) int
 		CreateTag       func(childComplexity int, input model.NewTag) int
 		CreateUser      func(childComplexity int, user *model.NewUser, otp *model.NewOtp) int
 		DeleteGame      func(childComplexity int, id int) int
+		DeletePromo     func(childComplexity int, id int) int
 		Login           func(childComplexity int, input *model.Login) int
 		Logout          func(childComplexity int) int
 		UpdateOtp       func(childComplexity int, code string) int
@@ -146,6 +148,15 @@ type ComplexityRoot struct {
 		ValidUntil func(childComplexity int) int
 	}
 
+	Promo struct {
+		CreatedAt          func(childComplexity int) int
+		DeletedAt          func(childComplexity int) int
+		DiscountPercentage func(childComplexity int) int
+		ID                 func(childComplexity int) int
+		UpdatedAt          func(childComplexity int) int
+		ValidUntil         func(childComplexity int) int
+	}
+
 	Publisher struct {
 		CreatedAt func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
@@ -155,23 +166,26 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Countries              func(childComplexity int) int
-		Developers             func(childComplexity int) int
-		Games                  func(childComplexity int) int
-		Genres                 func(childComplexity int) int
-		GetGamePaginationAdmin func(childComplexity int, page *int) int
-		GetOtpByCode           func(childComplexity int, code *string) int
-		GetTotalGame           func(childComplexity int) int
-		GetUserAuth            func(childComplexity int) int
-		GetUserByID            func(childComplexity int, input *string) int
-		GetUserByURL           func(childComplexity int, input *string) int
-		GetVotesByReviewID     func(childComplexity int, input *string) int
-		Otps                   func(childComplexity int) int
-		Publishers             func(childComplexity int) int
-		Reviews                func(childComplexity int) int
-		Systems                func(childComplexity int) int
-		Tags                   func(childComplexity int) int
-		Users                  func(childComplexity int) int
+		Countries               func(childComplexity int) int
+		Developers              func(childComplexity int) int
+		Games                   func(childComplexity int) int
+		Genres                  func(childComplexity int) int
+		GetGamePaginationAdmin  func(childComplexity int, page *int) int
+		GetOtpByCode            func(childComplexity int, code *string) int
+		GetPromoPaginationAdmin func(childComplexity int, page *int) int
+		GetTotalGame            func(childComplexity int) int
+		GetTotalPromo           func(childComplexity int) int
+		GetUserAuth             func(childComplexity int) int
+		GetUserByID             func(childComplexity int, input *string) int
+		GetUserByURL            func(childComplexity int, input *string) int
+		GetVotesByReviewID      func(childComplexity int, input *string) int
+		Otps                    func(childComplexity int) int
+		Promos                  func(childComplexity int) int
+		Publishers              func(childComplexity int) int
+		Reviews                 func(childComplexity int) int
+		Systems                 func(childComplexity int) int
+		Tags                    func(childComplexity int) int
+		Users                   func(childComplexity int) int
 	}
 
 	Review struct {
@@ -262,6 +276,8 @@ type MutationResolver interface {
 	CreateGenre(ctx context.Context, input model.NewGenre) (*model.Genre, error)
 	CreateOtp(ctx context.Context, input model.NewOtp) (*model.Otp, error)
 	UpdateOtp(ctx context.Context, code string) (*model.Otp, error)
+	CreatePromo(ctx context.Context, input model.NewPromo) (*model.Promo, error)
+	DeletePromo(ctx context.Context, id int) (*model.Promo, error)
 	CreatePublisher(ctx context.Context, input model.NewPublisher) (*model.Publisher, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
 }
@@ -278,6 +294,9 @@ type QueryResolver interface {
 	Genres(ctx context.Context) ([]*model.Genre, error)
 	Otps(ctx context.Context) ([]*model.Otp, error)
 	GetOtpByCode(ctx context.Context, code *string) (*model.Otp, error)
+	Promos(ctx context.Context) ([]*model.Promo, error)
+	GetPromoPaginationAdmin(ctx context.Context, page *int) ([]*model.Promo, error)
+	GetTotalPromo(ctx context.Context) (int, error)
 	Publishers(ctx context.Context) ([]*model.Publisher, error)
 	Reviews(ctx context.Context) ([]*model.Review, error)
 	GetVotesByReviewID(ctx context.Context, input *string) ([]*model.ReviewVote, error)
@@ -738,6 +757,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateOtp(childComplexity, args["input"].(model.NewOtp)), true
 
+	case "Mutation.createPromo":
+		if e.complexity.Mutation.CreatePromo == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createPromo_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreatePromo(childComplexity, args["input"].(model.NewPromo)), true
+
 	case "Mutation.createPublisher":
 		if e.complexity.Mutation.CreatePublisher == nil {
 			break
@@ -785,6 +816,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteGame(childComplexity, args["id"].(int)), true
+
+	case "Mutation.deletePromo":
+		if e.complexity.Mutation.DeletePromo == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deletePromo_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeletePromo(childComplexity, args["id"].(int)), true
 
 	case "Mutation.login":
 		if e.complexity.Mutation.Login == nil {
@@ -885,6 +928,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Otp.ValidUntil(childComplexity), true
 
+	case "Promo.createdAt":
+		if e.complexity.Promo.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Promo.CreatedAt(childComplexity), true
+
+	case "Promo.deletedAt":
+		if e.complexity.Promo.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.Promo.DeletedAt(childComplexity), true
+
+	case "Promo.discountPercentage":
+		if e.complexity.Promo.DiscountPercentage == nil {
+			break
+		}
+
+		return e.complexity.Promo.DiscountPercentage(childComplexity), true
+
+	case "Promo.id":
+		if e.complexity.Promo.ID == nil {
+			break
+		}
+
+		return e.complexity.Promo.ID(childComplexity), true
+
+	case "Promo.updatedAt":
+		if e.complexity.Promo.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Promo.UpdatedAt(childComplexity), true
+
+	case "Promo.validUntil":
+		if e.complexity.Promo.ValidUntil == nil {
+			break
+		}
+
+		return e.complexity.Promo.ValidUntil(childComplexity), true
+
 	case "Publisher.createdAt":
 		if e.complexity.Publisher.CreatedAt == nil {
 			break
@@ -972,12 +1057,31 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetOtpByCode(childComplexity, args["code"].(*string)), true
 
+	case "Query.getPromoPaginationAdmin":
+		if e.complexity.Query.GetPromoPaginationAdmin == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getPromoPaginationAdmin_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPromoPaginationAdmin(childComplexity, args["page"].(*int)), true
+
 	case "Query.getTotalGame":
 		if e.complexity.Query.GetTotalGame == nil {
 			break
 		}
 
 		return e.complexity.Query.GetTotalGame(childComplexity), true
+
+	case "Query.getTotalPromo":
+		if e.complexity.Query.GetTotalPromo == nil {
+			break
+		}
+
+		return e.complexity.Query.GetTotalPromo(childComplexity), true
 
 	case "Query.getUserAuth":
 		if e.complexity.Query.GetUserAuth == nil {
@@ -1028,6 +1132,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Otps(childComplexity), true
+
+	case "Query.promos":
+		if e.complexity.Query.Promos == nil {
+			break
+		}
+
+		return e.complexity.Query.Promos(childComplexity), true
 
 	case "Query.publishers":
 		if e.complexity.Query.Publishers == nil {
@@ -1719,6 +1830,31 @@ extend type Mutation {
     createOtp(input: NewOtp!): Otp!
     updateOtp(code: String!): Otp!
 }`, BuiltIn: false},
+	{Name: "graph/promo.graphqls", Input: `type Promo {
+    id: Int!
+    discountPercentage: Int!
+    validUntil: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input NewPromo {
+    discountPercentage: Int!
+    validUntil: Int!
+}
+
+extend type Query {
+    promos: [Promo!]!
+    getPromoPaginationAdmin(page: Int): [Promo!]!
+    getTotalPromo: Int!
+}
+
+extend type Mutation {
+    createPromo(input: NewPromo!): Promo!
+    deletePromo(id: Int!): Promo!
+}`, BuiltIn: false},
 	{Name: "graph/publisher.graphqls", Input: `type Publisher {
     id: Int!
     name: String!
@@ -1964,6 +2100,21 @@ func (ec *executionContext) field_Mutation_createOtp_args(ctx context.Context, r
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createPromo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.NewPromo
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNNewPromo2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewPromo(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createPublisher_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2019,6 +2170,21 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 }
 
 func (ec *executionContext) field_Mutation_deleteGame_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deletePromo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -2120,6 +2286,21 @@ func (ec *executionContext) field_Query_getOtpByCode_args(ctx context.Context, r
 		}
 	}
 	args["code"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getPromoPaginationAdmin_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["page"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["page"] = arg0
 	return args, nil
 }
 
@@ -4551,6 +4732,90 @@ func (ec *executionContext) _Mutation_updateOtp(ctx context.Context, field graph
 	return ec.marshalNOtp2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐOtp(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createPromo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createPromo_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreatePromo(rctx, args["input"].(model.NewPromo))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Promo)
+	fc.Result = res
+	return ec.marshalNPromo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPromo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deletePromo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deletePromo_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeletePromo(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Promo)
+	fc.Result = res
+	return ec.marshalNPromo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPromo(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createPublisher(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -4913,6 +5178,216 @@ func (ec *executionContext) _Otp_deletedAt(ctx context.Context, field graphql.Co
 	res := resTmp.(*time.Time)
 	fc.Result = res
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Promo_id(ctx context.Context, field graphql.CollectedField, obj *model.Promo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Promo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Promo_discountPercentage(ctx context.Context, field graphql.CollectedField, obj *model.Promo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Promo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DiscountPercentage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Promo_validUntil(ctx context.Context, field graphql.CollectedField, obj *model.Promo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Promo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ValidUntil, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Promo_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Promo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Promo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Promo_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Promo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Promo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Promo_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.Promo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Promo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Publisher_id(ctx context.Context, field graphql.CollectedField, obj *model.Publisher) (ret graphql.Marshaler) {
@@ -5536,6 +6011,118 @@ func (ec *executionContext) _Query_getOtpByCode(ctx context.Context, field graph
 	res := resTmp.(*model.Otp)
 	fc.Result = res
 	return ec.marshalNOtp2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐOtp(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_promos(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Promos(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Promo)
+	fc.Result = res
+	return ec.marshalNPromo2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPromoᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getPromoPaginationAdmin(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getPromoPaginationAdmin_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPromoPaginationAdmin(rctx, args["page"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Promo)
+	fc.Result = res
+	return ec.marshalNPromo2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPromoᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getTotalPromo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetTotalPromo(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_publishers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -9177,6 +9764,34 @@ func (ec *executionContext) unmarshalInputNewOtp(ctx context.Context, obj interf
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputNewPromo(ctx context.Context, obj interface{}) (model.NewPromo, error) {
+	var it model.NewPromo
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "discountPercentage":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("discountPercentage"))
+			it.DiscountPercentage, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "validUntil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("validUntil"))
+			it.ValidUntil, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewPublisher(ctx context.Context, obj interface{}) (model.NewPublisher, error) {
 	var it model.NewPublisher
 	var asMap = obj.(map[string]interface{})
@@ -9919,6 +10534,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "createPromo":
+			out.Values[i] = ec._Mutation_createPromo(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletePromo":
+			out.Values[i] = ec._Mutation_deletePromo(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createPublisher":
 			out.Values[i] = ec._Mutation_createPublisher(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -9988,6 +10613,58 @@ func (ec *executionContext) _Otp(ctx context.Context, sel ast.SelectionSet, obj 
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Otp_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var promoImplementors = []string{"Promo"}
+
+func (ec *executionContext) _Promo(ctx context.Context, sel ast.SelectionSet, obj *model.Promo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, promoImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Promo")
+		case "id":
+			out.Values[i] = ec._Promo_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "discountPercentage":
+			out.Values[i] = ec._Promo_discountPercentage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "validUntil":
+			out.Values[i] = ec._Promo_validUntil(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._Promo_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._Promo_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._Promo_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -10227,6 +10904,48 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getOtpByCode(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "promos":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_promos(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getPromoPaginationAdmin":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getPromoPaginationAdmin(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getTotalPromo":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getTotalPromo(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -11337,6 +12056,11 @@ func (ec *executionContext) unmarshalNNewOtp2githubᚗcomᚋnicotanzilᚋbackend
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNNewPromo2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewPromo(ctx context.Context, v interface{}) (model.NewPromo, error) {
+	res, err := ec.unmarshalInputNewPromo(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNNewPublisher2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewPublisher(ctx context.Context, v interface{}) (model.NewPublisher, error) {
 	res, err := ec.unmarshalInputNewPublisher(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -11396,6 +12120,57 @@ func (ec *executionContext) marshalNOtp2ᚖgithubᚗcomᚋnicotanzilᚋbackend�
 		return graphql.Null
 	}
 	return ec._Otp(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPromo2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPromo(ctx context.Context, sel ast.SelectionSet, v model.Promo) graphql.Marshaler {
+	return ec._Promo(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPromo2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPromoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Promo) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPromo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPromo(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNPromo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPromo(ctx context.Context, sel ast.SelectionSet, v *model.Promo) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Promo(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPublisher2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPublisher(ctx context.Context, sel ast.SelectionSet, v model.Publisher) graphql.Marshaler {

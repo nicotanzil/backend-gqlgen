@@ -26,6 +26,7 @@ func Seed() {
 	SeedPublisher(db)
 	SeedGenre(db)
 	SeedDeveloper(db)
+	SeedPromo(db)
 	SeedGame(db)
 	SeedCountry(db)
 	SeedUser(db)
@@ -178,6 +179,24 @@ func SeedGenre(db *gorm.DB) {
 	for _, genre := range genres {
 		db.Create(&genre)
 		db.Save(&genre)
+	}
+}
+
+func SeedPromo(db *gorm.DB) {
+	promos := []model.Promo {
+		{
+			DiscountPercentage: 50,
+			ValidUntil:         int(time.Now().Add(time.Hour * 24 * 3).Unix()),
+		},
+		{
+			DiscountPercentage: 10,
+			ValidUntil:         int(time.Now().Add(time.Hour * 24 * 7).Unix()),
+		},
+	}
+
+	for _, promo := range promos {
+		db.Create(&promo)
+		db.Save(&promo)
 	}
 }
 

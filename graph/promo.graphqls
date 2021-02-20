@@ -1,0 +1,25 @@
+type Promo {
+    id: Int!
+    discountPercentage: Int!
+    validUntil: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input NewPromo {
+    discountPercentage: Int!
+    validUntil: Int!
+}
+
+extend type Query {
+    promos: [Promo!]!
+    getPromoPaginationAdmin(page: Int): [Promo!]!
+    getTotalPromo: Int!
+}
+
+extend type Mutation {
+    createPromo(input: NewPromo!): Promo!
+    deletePromo(id: Int!): Promo!
+}
