@@ -15,11 +15,13 @@ input NewPromo {
 
 extend type Query {
     promos: [Promo!]!
-    getPromoPaginationAdmin(page: Int): [Promo!]!
     getTotalPromo: Int!
+    getPromoById(id: Int!): Promo!
+    getPromoPaginationAdmin(page: Int): [Promo!]!
 }
 
 extend type Mutation {
     createPromo(input: NewPromo!): Promo!
+    updatePromo(input: NewPromo!, id:Int!): Promo!
     deletePromo(id: Int!): Promo!
 }
