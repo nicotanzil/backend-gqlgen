@@ -1,0 +1,12 @@
+type SuspensionRequest {
+    id: Int!
+    description: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    suspensionRequests: [SuspensionRequest!]!
+}

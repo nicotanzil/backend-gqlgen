@@ -5,12 +5,12 @@ package resolver
 
 import (
 	"context"
-
 	firebase_data "github.com/nicotanzil/backend-gqlgen/app/firebase-data"
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/generated"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
+	"gorm.io/gorm/clause"
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, user *model.NewUser, otp *model.NewOtp) (bool, error) {
@@ -65,6 +65,27 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUser
 	return true, nil
 }
 
+func (r *mutationResolver) UpdateAccountSuspension(ctx context.Context, id int) (bool, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var user model.User
+
+	db.Preload(clause.Associations).Where("id = ?", id).First(&user)
+
+	if user.IsSuspend {
+		user.IsSuspend = false
+		user.SuspensionRequest = &model.SuspensionRequest{ID: 1}
+	} else {
+		user.IsSuspend = true
+		user.SuspensionRequest = &model.SuspensionRequest{ID: 2}
+	}
+	db.Save(&user)
+	return true, nil
+}
+
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	db, err := database.Connect()
 	if err != nil {
@@ -75,12 +96,12 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 
 	//db.Find(&users)	//populate the users variable with `SELECT * FROM users`
 
-	db.Preload("Country").Preload("Games").Preload("Friends").Find(&users) //populate the users with each corresponding countries
+	db.Preload(clause.Associations).Find(&users) //populate the users with each corresponding countries
 
 	return users, nil
 }
 
-func (r *queryResolver) GetUserByID(ctx context.Context, input *string) (*model.User, error) {
+func (r *queryResolver) GetUserByID(ctx context.Context, id *int) (*model.User, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
@@ -88,7 +109,7 @@ func (r *queryResolver) GetUserByID(ctx context.Context, input *string) (*model.
 
 	var user model.User
 
-	db.Preload("Country").Preload("Games").Preload("Friends").Where("id = ?", input).First(&user)
+	db.Preload(clause.Associations).Where("id = ?", id).First(&user)
 
 	return &user, nil
 }
@@ -101,9 +122,22 @@ func (r *queryResolver) GetUserByURL(ctx context.Context, input *string) (*model
 
 	var user model.User
 
-	db.Preload("Country").Preload("Games").Preload("Friends").Where("custom_url = ?", input).First(&user)
+	db.Preload(clause.Associations).Where("custom_url = ?", input).First(&user)
 
 	return &user, nil
+}
+
+func (r *queryResolver) GetUserPaginationAdmin(ctx context.Context, page int) ([]*model.User, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var promos []*model.User
+
+	db.Preload(clause.Associations).Limit(providers.ADMIN_USER_PAGINATION).Offset(providers.ADMIN_USER_PAGINATION * (page - 1)).Find(&promos)
+
+	return promos, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

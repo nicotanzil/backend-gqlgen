@@ -2,10 +2,9 @@ package model
 
 import "time"
 
-type Admin struct {
+type SuspensionRequest struct {
 	ID          int       `json:"id"`
-	AccountName string    `json:"accountName"`
-	Password    string    `json:"password"`
+	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 	DeletedAt   *time.Time `json:"deletedAt"`

@@ -1,0 +1,15 @@
+type UserReport {
+    id: Int!
+    reported: User!
+    reporter: User!
+    description: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    reports: [UserReport!]!
+    getReportByReported(id: Int!): [UserReport!]!
+}

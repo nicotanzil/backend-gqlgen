@@ -32,20 +32,24 @@ func UserMigrate(db *gorm.DB) {
 	// DROPPING ALL TABLE
 	db.Migrator().DropTable(
 		&model.Admin{},
+		&model.UserReport{},
 		&model.FriendRequest{},
 		&model.UserComment{},
 		&model.User{},
 		&model.Country{},
 		&model.Otp{},
+		&model.SuspensionRequest{},
 	)
 
 	// CREATING ALL TABLE
 	db.AutoMigrate(
 		&model.Admin{},
+		&model.SuspensionRequest{},
 		&model.Country{},
 		&model.User{},
 		&model.UserComment{},
 		&model.FriendRequest{},
+		&model.UserReport{},
 		&model.Otp{},
 	)
 
@@ -75,7 +79,6 @@ func GameMigrate(db *gorm.DB) {
 		&model.Promo{},
 		&model.Game{},
 		&model.Developer{},
-
 	)
 }
 

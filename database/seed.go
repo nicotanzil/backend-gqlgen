@@ -19,6 +19,7 @@ func Seed() {
 	// SEED ALL NECESSARY TABLE
 
 	SeedAdmin(db)
+	SeedSuspensionRequest(db)
 	SeedTag(db)
 	SeedSystem(db)
 	SeedReview(db)
@@ -30,6 +31,7 @@ func Seed() {
 	SeedGame(db)
 	SeedCountry(db)
 	SeedUser(db)
+	SeedUserReport(db)
 
 	fmt.Println("[INFO] SEEDED.")
 }
@@ -768,6 +770,7 @@ func SeedUser(db *gorm.DB) {
 				},
 			},
 			Experience: 550,
+			SuspensionRequest: &model.SuspensionRequest{ID: 2},
 		},
 		{
 			AccountName:       "William",
@@ -781,6 +784,7 @@ func SeedUser(db *gorm.DB) {
 			Avatar:            firebase_data.Avatar,
 			ProfileBackground: firebase_data.ProfileBackground,
 			Country:           &model.Country{ID: 2},
+			SuspensionRequest: &model.SuspensionRequest{ID: 1},
 		},
 		{
 			AccountName:       "Ricko",
@@ -794,10 +798,45 @@ func SeedUser(db *gorm.DB) {
 			Avatar:            firebase_data.Avatar,
 			ProfileBackground: firebase_data.ProfileBackground,
 			Country:           &model.Country{ID: 3},
+			SuspensionRequest: &model.SuspensionRequest{ID: 1},
 		},
 	}
 
 	for _, user := range users {
 		db.Create(&user)
+	}
+}
+
+func SeedUserReport(db *gorm.DB) {
+	userReports := []model.UserReport {
+		{
+			Reported:    &model.User{ID: 1},
+			Reporter:    &model.User{ID: 2},
+			Description: "Toxic user!",
+		},
+		{
+			Reported:    &model.User{ID: 1},
+			Reporter:    &model.User{ID: 3},
+			Description: "Careful scammer!",
+		},
+	}
+
+	for _, report := range userReports {
+		db.Create(&report)
+	}
+}
+
+func SeedSuspensionRequest(db *gorm.DB) {
+	suspensionRequests := []model.SuspensionRequest {
+		{
+			Description: "No suspension request.",
+		},
+		{
+			Description: "Please unsuspend me!",
+		},
+	}
+
+	for _, request := range suspensionRequests {
+		db.Create(&request)
 	}
 }
