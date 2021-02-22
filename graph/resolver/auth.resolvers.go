@@ -40,6 +40,11 @@ func (r *mutationResolver) Login(ctx context.Context, input *model.Login) (strin
 		return "", errorlist.Auth_Invalid //invalid password
 	}
 
+	if user.IsSuspend {
+		fmt.Println("Account suspended")
+		return "", errorlist.Account_Suspended
+	}
+
 	//Create JWT Token
 	token, err2 := providers.GenerateToken(user)
 

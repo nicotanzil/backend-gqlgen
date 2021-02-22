@@ -770,6 +770,7 @@ func SeedUser(db *gorm.DB) {
 				},
 			},
 			Experience: 550,
+			IsSuspend: true,
 			SuspensionRequest: &model.SuspensionRequest{ID: 2},
 		},
 		{
