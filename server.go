@@ -24,7 +24,7 @@ func main() {
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &resolver.Resolver{}}))
 
 	wrapped := middleware.CorsMiddleware(srv)
-	wrapped = middleware.AuthMiddleware(wrapped)
+	//wrapped = middleware.AuthMiddleware(wrapped)
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", wrapped)

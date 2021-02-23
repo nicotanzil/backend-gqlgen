@@ -113,3 +113,17 @@ func (r *queryResolver) GetTotalGame(ctx context.Context) (int, error) {
 
 	return int(count), nil
 }
+
+func (r *queryResolver) GameSearch(ctx context.Context, keyword string) ([]*model.Game, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var games []*model.Game
+
+	keyword = "%" + keyword +"%"
+	db.Preload(clause.Associations).Limit(providers.GAME_SEARCH_LIMIT).Where("name LIKE ?", keyword).Find(&games)
+
+	return games, nil
+}
