@@ -128,16 +128,39 @@ func (r *queryResolver) GameSearch(ctx context.Context, keyword string) ([]*mode
 	return games, nil
 }
 
-func (r *queryResolver) GameSearchPage(ctx context.Context, keyword string, page int) ([]*model.Game, error) {
+func (r *queryResolver) GameSearchPage(ctx context.Context, keyword string, page int, price int, tag []*model.InputTag) ([]*model.Game, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
 	}
 
 	var games []*model.Game
+	var tagsId []int
 
-	keyword = "%" + keyword + "%"
-	db.Preload(clause.Associations).Limit(providers.GAME_SEARCH_PAGE_LIMIT).Offset(providers.GAME_SEARCH_PAGE_LIMIT * (page - 1)).Where("name LIKE ?", keyword).Find(&games)
+	if len(tag) > 0 {
+		for i:=0; i<len(tag); i++ {
+			tagsId = append(tagsId, tag[i].ID)
+		}
+
+		keyword = "%" + keyword + "%"
+		db.Preload(clause.Associations).
+			Limit(providers.GAME_SEARCH_PAGE_LIMIT).
+			Offset(providers.GAME_SEARCH_PAGE_LIMIT*(page-1)).
+			Joins("JOIN game_tags ON game_tags.game_id = games.id").
+			Where("name LIKE ?", keyword).
+			Where("original_price <= ?", price).
+			Where("game_tags.tag_id IN ?", tagsId).
+			Find(&games)
+	} else {
+		keyword = "%" + keyword + "%"
+		db.Preload(clause.Associations).
+			Limit(providers.GAME_SEARCH_PAGE_LIMIT).
+			Offset(providers.GAME_SEARCH_PAGE_LIMIT*(page-1)).
+			Where("name LIKE ?", keyword).
+			Where("original_price <= ?", price).
+			Find(&games)
+	}
+
 
 	return games, nil
 }
