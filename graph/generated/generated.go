@@ -171,6 +171,7 @@ type ComplexityRoot struct {
 		Countries               func(childComplexity int) int
 		Developers              func(childComplexity int) int
 		GameSearch              func(childComplexity int, keyword string) int
+		GameSearchPage          func(childComplexity int, keyword string, page int) int
 		Games                   func(childComplexity int) int
 		Genres                  func(childComplexity int) int
 		GetGamePaginationAdmin  func(childComplexity int, page *int) int
@@ -322,6 +323,7 @@ type QueryResolver interface {
 	GetGamePaginationAdmin(ctx context.Context, page *int) ([]*model.Game, error)
 	GetTotalGame(ctx context.Context) (int, error)
 	GameSearch(ctx context.Context, keyword string) ([]*model.Game, error)
+	GameSearchPage(ctx context.Context, keyword string, page int) ([]*model.Game, error)
 	Genres(ctx context.Context) ([]*model.Genre, error)
 	Otps(ctx context.Context) ([]*model.Otp, error)
 	GetOtpByCode(ctx context.Context, code *string) (*model.Otp, error)
@@ -1089,6 +1091,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GameSearch(childComplexity, args["keyword"].(string)), true
+
+	case "Query.gameSearchPage":
+		if e.complexity.Query.GameSearchPage == nil {
+			break
+		}
+
+		args, err := ec.field_Query_gameSearchPage_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GameSearchPage(childComplexity, args["keyword"].(string), args["page"].(int)), true
 
 	case "Query.games":
 		if e.complexity.Query.Games == nil {
@@ -1986,6 +2000,7 @@ extend type Query {
     getGamePaginationAdmin(page: Int): [Game!]!
     getTotalGame: Int!
     gameSearch(keyword: String!): [Game!]!
+    gameSearchPage(keyword: String!, page: Int!): [Game!]!
 }
 
 extend type Mutation {
@@ -2540,6 +2555,30 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_gameSearchPage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["keyword"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keyword"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["keyword"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["page"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["page"] = arg1
 	return args, nil
 }
 
@@ -6397,6 +6436,48 @@ func (ec *executionContext) _Query_gameSearch(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().GameSearch(rctx, args["keyword"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_gameSearchPage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_gameSearchPage_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GameSearchPage(rctx, args["keyword"].(string), args["page"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12018,6 +12099,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_gameSearch(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "gameSearchPage":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_gameSearchPage(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

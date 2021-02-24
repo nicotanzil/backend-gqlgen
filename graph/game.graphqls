@@ -52,6 +52,7 @@ extend type Query {
     getGamePaginationAdmin(page: Int): [Game!]!
     getTotalGame: Int!
     gameSearch(keyword: String!): [Game!]!
+    gameSearchPage(keyword: String!, page: Int!): [Game!]!
 }
 
 extend type Mutation {

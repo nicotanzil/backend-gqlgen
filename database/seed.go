@@ -774,7 +774,7 @@ func SeedUser(db *gorm.DB) {
 			SuspensionRequest: &model.SuspensionRequest{ID: 2},
 		},
 		{
-			AccountName:       "William",
+			AccountName:       "william",
 			ProfileName:       "William",
 			RealName:          "William Martin",
 			Email:             "will@mail.com",
@@ -788,7 +788,7 @@ func SeedUser(db *gorm.DB) {
 			SuspensionRequest: &model.SuspensionRequest{ID: 1},
 		},
 		{
-			AccountName:       "Ricko",
+			AccountName:       "ricko",
 			ProfileName:       "Ricko",
 			RealName:          "Ricko Adrio",
 			Email:             "rick@mail.com",

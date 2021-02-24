@@ -122,8 +122,22 @@ func (r *queryResolver) GameSearch(ctx context.Context, keyword string) ([]*mode
 
 	var games []*model.Game
 
-	keyword = "%" + keyword +"%"
+	keyword = "%" + keyword + "%"
 	db.Preload(clause.Associations).Limit(providers.GAME_SEARCH_LIMIT).Where("name LIKE ?", keyword).Find(&games)
+
+	return games, nil
+}
+
+func (r *queryResolver) GameSearchPage(ctx context.Context, keyword string, page int) ([]*model.Game, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var games []*model.Game
+
+	keyword = "%" + keyword + "%"
+	db.Preload(clause.Associations).Limit(providers.GAME_SEARCH_PAGE_LIMIT).Offset(providers.GAME_SEARCH_PAGE_LIMIT * (page - 1)).Where("name LIKE ?", keyword).Find(&games)
 
 	return games, nil
 }
