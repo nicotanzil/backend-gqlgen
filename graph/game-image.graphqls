@@ -1,0 +1,23 @@
+type GameImage {
+    id: Int!
+    gameId: Int!
+    link: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input InputGameImage {
+    gameId: Int!
+    link: String!
+}
+
+extend type Query {
+    gameImages: [GameImage!]!
+}
+
+extend type Mutation {
+    insertGameImage(gameImages: [InputGameImage!]!): Boolean!
+    updateGameImage(id: Int!, link: String!): GameImage!
+}

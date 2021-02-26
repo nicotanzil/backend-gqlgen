@@ -22,15 +22,12 @@ type Game struct {
 	Users              	[]*User      	`json:"users" gorm:"many2many:game_users;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	Banner             string       `json:"banner"`
-	Video              string       `json:"video"`
-	Image1             string       `json:"image1"`
-	Image2             string       `json:"image2"`
-	Image3             string       `json:"image3"`
-	Image4             string       `json:"image4"`
+	Video              []*GameVideo `json:"video" gorm:foreignKey:GameID`
+	Images             []*GameImage `json:"images" gorm:"foreignKey:GameID"`
 
-	CreatedAt          	time.Time    	`json:"createdAt"`
-	UpdatedAt          	time.Time    	`json:"updatedAt"`
-	DeletedAt          	*time.Time   	`json:"deletedAt"`
+	CreatedAt          time.Time    `json:"createdAt"`
+	UpdatedAt          time.Time    `json:"updatedAt"`
+	DeletedAt          *time.Time    `json:"deletedAt"`
 }
 
 type NewGame struct {
@@ -44,10 +41,4 @@ type NewGame struct {
 	Developers         []*InputDeveloper `json:"developers"`
 	PublisherID        int               `json:"publisherId"`
 	SystemID           int               `json:"systemId"`
-	Banner             string            `json:"banner"`
-	Video              string            `json:"video"`
-	Image1             string            `json:"image1"`
-	Image2             string            `json:"image2"`
-	Image3             string            `json:"image3"`
-	Image4             string            `json:"image4"`
 }

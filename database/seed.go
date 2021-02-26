@@ -29,6 +29,7 @@ func Seed() {
 	SeedDeveloper(db)
 	SeedPromo(db)
 	SeedGame(db)
+	SeedGameImage(db)
 	SeedCountry(db)
 	SeedUser(db)
 	SeedUserReport(db)
@@ -44,6 +45,51 @@ func SeedAdmin(db *gorm.DB) {
 	}
 
 	db.Create(&admin)
+}
+
+func SeedGameImage(db *gorm.DB) {
+	gameImages := []model.GameImage{
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2Fimages%2F1.jpg?alt=media&token=0b63bb33-8e7c-46d9-b222-55e3da729ede"},
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2Fimages%2F2.jpg?alt=media&token=dbde5e49-b6be-484e-bfbf-a0a3d95b40c6"},
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2Fimages%2F3.jpg?alt=media&token=51888aed-db9b-4d5c-a681-c97246f8a2f1"},
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2Fimages%2F4.jpg?alt=media&token=b596efbc-9a93-4a9a-a0b9-c5eb2f7147b1"},
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2Fimages%2F5.jpg?alt=media&token=85eac0fe-86f8-4939-931c-9989dadb0caa"},
+		{GameID: 2, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F2%2F1.jpg?alt=media&token=7f5e64b4-9853-4df1-9fd4-143ee83c3578"},
+		{GameID: 2, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F2%2F2.jpg?alt=media&token=54d52e5f-73f1-46e0-879f-e3effbc901ad"},
+		{GameID: 2, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F2%2F3.jpg?alt=media&token=23254fc0-9328-4f9a-938b-d59b669712c3"},
+		{GameID: 2, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F2%2F4.jpg?alt=media&token=36086373-200b-4e71-89f2-e6a53a880fd0"},
+		{GameID: 2, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F2%2F5.jpg?alt=media&token=36b46e74-1ff6-4411-8da3-74526824ffc2"},
+		{GameID: 3, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F3%2F1.jpg?alt=media&token=61fff14c-aa9e-40e8-bee7-ff34a405bc18"},
+		{GameID: 3, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F3%2F2.jpg?alt=media&token=1be0a5d7-5adf-4a57-9e42-cfe1261f2157"},
+		{GameID: 3, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F3%2F3.jpg?alt=media&token=6fa25ff5-6998-4613-a7d0-39391288a758"},
+		{GameID: 3, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F3%2F4.jpg?alt=media&token=c6bb3113-ee28-461f-bc30-182a3036fe3d"},
+		{GameID: 3, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F3%2F5.jpg?alt=media&token=a15181b9-1d11-4861-bcf0-af3eed554bac"},
+		{GameID: 4, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F4%2F1.jpg?alt=media&token=ad074c45-0e4f-4894-82d4-2b953125d339"},
+		{GameID: 4, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F4%2F2.jpg?alt=media&token=270ae5ef-336f-4eb8-b311-51ec901bd87f"},
+		{GameID: 4, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F4%2F3.jpg?alt=media&token=accb5312-3c9a-4751-9994-ae092b6ea9d0"},
+		{GameID: 4, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F4%2F4.jpg?alt=media&token=92d7eed4-4ffa-40bb-b9cc-7dc781d438a3"},
+		{GameID: 4, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F4%2F5.jpg?alt=media&token=0b38b234-52bc-4325-a64a-4eebc86ff31c"},
+		{GameID: 5, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F5%2F1.jpg?alt=media&token=e532cf5d-6721-4871-b39c-99aa1cc30235"},
+		{GameID: 5, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F5%2F2.jpg?alt=media&token=eb183ce6-2dcb-4ad7-8f79-b2d076efc84d"},
+		{GameID: 5, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F5%2F3.jpg?alt=media&token=4bcd2864-82da-4bb7-8e91-3a646fee5c69"},
+		{GameID: 5, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F5%2F4.jpg?alt=media&token=2e2b118a-f449-4093-bf14-16bb60b4b031"},
+		{GameID: 5, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F5%2F5.jpg?alt=media&token=89ec1556-d73c-45be-894b-6b4bacfa18c8"},
+		{GameID: 6, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F6%2F1.jpg?alt=media&token=21ff03bb-d533-43b1-80a8-f59b184ba5fb"},
+		{GameID: 6, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F6%2F2.jpg?alt=media&token=e532061f-2532-45b9-be7f-8d2c80a539a7"},
+		{GameID: 6, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F6%2F3.jpg?alt=media&token=a167e1c6-9f07-4013-8c36-4b02a02af48a"},
+		{GameID: 6, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F6%2F4.jpg?alt=media&token=474429c0-0d47-43bb-ae97-0f5dfccc11f1"},
+		{GameID: 6, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F6%2F5.jpg?alt=media&token=3058b24e-cd33-446e-b855-fce0fe150e95"},
+		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F1.jpg?alt=media&token=e0cbea1a-823f-402a-b4d6-5d791a5e8928"},
+		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F2.jpg?alt=media&token=d6b8473d-a15e-43c0-b637-2856ef4ef880"},
+		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F3.jpg?alt=media&token=c58410b5-473c-4431-a8e7-7afd7fa39a2d"},
+		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F4.jpg?alt=media&token=316fe4c3-412b-41ee-b5a0-0f4b98554062"},
+		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F5.jpg?alt=media&token=d1d1c041-81d6-475e-b835-b9f5b76e066f"},
+	}
+
+	for _, gameImage := range gameImages {
+		db.Create(&gameImage)
+	}
+
 }
 
 func SeedTag(db *gorm.DB) {
@@ -185,7 +231,7 @@ func SeedGenre(db *gorm.DB) {
 }
 
 func SeedPromo(db *gorm.DB) {
-	promos := []model.Promo {
+	promos := []model.Promo{
 		{
 			DiscountPercentage: 50,
 			ValidUntil:         int(time.Now().Add(time.Hour * 24 * 3).Unix()),
@@ -230,20 +276,20 @@ func SeedGame(db *gorm.DB) {
 			OriginalPrice:      0,
 			OnSale:             false,
 			DiscountPercentage: 0,
-			Developers: []*model.Developer {
+			Developers: []*model.Developer{
 				{
-					ID:        1,
+					ID: 1,
 				},
 			},
-			GamePlayHour:       1500,
-			PublisherID:        1,
-			SystemID:           1,
-			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fbanner.jpg?alt=media&token=6fe38ac5-d74e-45f9-b1f3-5052403edfec",
+			GamePlayHour: 1500,
+			PublisherID:  1,
+			SystemID:     1,
+			Banner:       "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fbanner.jpg?alt=media&token=6fe38ac5-d74e-45f9-b1f3-5052403edfec",
 		},
 		{
-			Name:               "STAR WARS Jedi: Fallen Order",
-			Description:        "A galaxy-spanning adventure awaits in Star Wars Jedi: Fallen Order, a new third-person action-adventure title from Respawn Entertainment. This narratively driven, single-player game puts you in the role of a Jedi Padawan who narrowly escaped the purge of Order 66 following the events of Episode 3: Revenge of the Sith. On a quest to rebuild the Jedi Order, you must pick up the pieces of your shattered past to complete your training, develop new powerful Force abilities and master the art of the iconic lightsaber - all while staying one step ahead of the Empire and its deadly Inquisitors.",
-			ReleaseDate:        time.Now(),
+			Name:        "STAR WARS Jedi: Fallen Order",
+			Description: "A galaxy-spanning adventure awaits in Star Wars Jedi: Fallen Order, a new third-person action-adventure title from Respawn Entertainment. This narratively driven, single-player game puts you in the role of a Jedi Padawan who narrowly escaped the purge of Order 66 following the events of Episode 3: Revenge of the Sith. On a quest to rebuild the Jedi Order, you must pick up the pieces of your shattered past to complete your training, develop new powerful Force abilities and master the art of the iconic lightsaber - all while staying one step ahead of the Empire and its deadly Inquisitors.",
+			ReleaseDate: time.Now(),
 			Genres: []*model.Genre{
 				{
 					ID: 5,
@@ -266,25 +312,20 @@ func SeedGame(db *gorm.DB) {
 			OriginalPrice:      562000,
 			OnSale:             true,
 			DiscountPercentage: 50,
-			Developers:         []*model.Developer {
+			Developers: []*model.Developer{
 				{
 					ID: 2,
 				},
 			},
-			PublisherID:        2,
-			SystemID:           1,
-			Users:              nil,
-			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F2%2Fbanner.jpg?alt=media&token=f12004fa-98c7-4238-b209-7437fa761197",
-			Video:              "",
-			Image1:             "",
-			Image2:             "",
-			Image3:             "",
-			Image4:             "",
+			PublisherID: 2,
+			SystemID:    1,
+			Users:       nil,
+			Banner:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F2%2Fbanner.jpg?alt=media&token=f12004fa-98c7-4238-b209-7437fa761197",
 		},
 		{
-			Name:               "Street Fighter V",
-			Description:        "Experience the intensity of head-to-head battle with Street Fighter® V! Choose from 16 iconic characters, each with their own personal story and unique training challenges, then battle against friends online or offline with a robust variety of match options.\n\nEarn Fight Money in Ranked Matches, play for fun in Casual Matches or invite friends into a Battle Lounge and see who comes out on top! PlayStation 4 and Steam players can also play against each other thanks to cross-play compatibility!\n",
-			ReleaseDate:        time.Now(),
+			Name:        "Street Fighter V",
+			Description: "Experience the intensity of head-to-head battle with Street Fighter® V! Choose from 16 iconic characters, each with their own personal story and unique training challenges, then battle against friends online or offline with a robust variety of match options.\n\nEarn Fight Money in Ranked Matches, play for fun in Casual Matches or invite friends into a Battle Lounge and see who comes out on top! PlayStation 4 and Steam players can also play against each other thanks to cross-play compatibility!\n",
+			ReleaseDate: time.Now(),
 			Genres: []*model.Genre{
 				{
 					ID: 8,
@@ -307,25 +348,20 @@ func SeedGame(db *gorm.DB) {
 			OriginalPrice:      650000,
 			OnSale:             false,
 			DiscountPercentage: 0,
-			Developers:         []*model.Developer {
+			Developers: []*model.Developer{
 				{
 					ID: 3,
 				},
 			},
-			PublisherID:        3,
-			SystemID:           1,
-			Users:              nil,
-			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F3%2Fbanner.jpg?alt=media&token=073881f4-a93e-4a05-9bc9-9efbb1401108",
-			Video:              "",
-			Image1:             "",
-			Image2:             "",
-			Image3:             "",
-			Image4:             "",
+			PublisherID: 3,
+			SystemID:    1,
+			Users:       nil,
+			Banner:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F3%2Fbanner.jpg?alt=media&token=073881f4-a93e-4a05-9bc9-9efbb1401108",
 		},
 		{
-			Name:               "Counter-Strike: Global Offensive",
-			Description:        "Counter-Strike: Global Offensive (CS: GO) expands upon the team-based action gameplay that it pioneered when it was launched 19 years ago.\n\nCS: GO features new maps, characters, weapons, and game modes, and delivers updated versions of the classic CS content (de_dust2, etc.).",
-			ReleaseDate:        time.Now(),
+			Name:        "Counter-Strike: Global Offensive",
+			Description: "Counter-Strike: Global Offensive (CS: GO) expands upon the team-based action gameplay that it pioneered when it was launched 19 years ago.\n\nCS: GO features new maps, characters, weapons, and game modes, and delivers updated versions of the classic CS content (de_dust2, etc.).",
+			ReleaseDate: time.Now(),
 			Genres: []*model.Genre{
 				{
 					ID: 2,
@@ -354,7 +390,7 @@ func SeedGame(db *gorm.DB) {
 			OriginalPrice:      0,
 			OnSale:             false,
 			DiscountPercentage: 0,
-			Developers:         []*model.Developer {
+			Developers: []*model.Developer{
 				{
 					ID: 1,
 				},
@@ -362,20 +398,15 @@ func SeedGame(db *gorm.DB) {
 					ID: 4,
 				},
 			},
-			PublisherID:        1,
-			SystemID:           1,
-			Users:              nil,
-			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F4%2Fbanner.jpg?alt=media&token=71bf9807-e661-47f4-b19e-5b12b8f8eb79",
-			Video:              "",
-			Image1:             "",
-			Image2:             "",
-			Image3:             "",
-			Image4:             "",
+			PublisherID: 1,
+			SystemID:    1,
+			Users:       nil,
+			Banner:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F4%2Fbanner.jpg?alt=media&token=71bf9807-e661-47f4-b19e-5b12b8f8eb79",
 		},
 		{
-			Name:               "Grand Theft Auto V",
-			Description:        "When a young street hustler, a retired bank robber and a terrifying psychopath find themselves entangled with some of the most frightening and deranged elements of the criminal underworld, the U.S. government and the entertainment industry, they must pull off a series of dangerous heists to survive in a ruthless city in which they can trust nobody, least of all each other.",
-			ReleaseDate:        time.Now(),
+			Name:        "Grand Theft Auto V",
+			Description: "When a young street hustler, a retired bank robber and a terrifying psychopath find themselves entangled with some of the most frightening and deranged elements of the criminal underworld, the U.S. government and the entertainment industry, they must pull off a series of dangerous heists to survive in a ruthless city in which they can trust nobody, least of all each other.",
+			ReleaseDate: time.Now(),
 			Genres: []*model.Genre{
 				{
 					ID: 1,
@@ -404,25 +435,20 @@ func SeedGame(db *gorm.DB) {
 			OriginalPrice:      300000,
 			OnSale:             true,
 			DiscountPercentage: 25,
-			Developers:         []*model.Developer {
+			Developers: []*model.Developer{
 				{
 					ID: 5,
 				},
 			},
-			PublisherID:        4,
-			SystemID:           1,
-			Users:              nil,
-			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F5%2Fbanner.jpg?alt=media&token=dafa20ed-2139-45cc-8a59-38e245faac53",
-			Video:              "",
-			Image1:             "",
-			Image2:             "",
-			Image3:             "",
-			Image4:             "",
+			PublisherID: 4,
+			SystemID:    1,
+			Users:       nil,
+			Banner:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F5%2Fbanner.jpg?alt=media&token=dafa20ed-2139-45cc-8a59-38e245faac53",
 		},
 		{
-			Name:               "Terraria",
-			Description:        "Dig, Fight, Explore, Build: The very world is at your fingertips as you fight for survival, fortune, and glory. Will you delve deep into cavernous expanses in search of treasure and raw materials with which to craft ever-evolving gear, machinery, and aesthetics? Perhaps you will choose instead to seek out ever-greater foes to test your mettle in combat? Maybe you will decide to construct your own city to house the host of mysterious allies you may encounter along your travels? ",
-			ReleaseDate:        time.Now(),
+			Name:        "Terraria",
+			Description: "Dig, Fight, Explore, Build: The very world is at your fingertips as you fight for survival, fortune, and glory. Will you delve deep into cavernous expanses in search of treasure and raw materials with which to craft ever-evolving gear, machinery, and aesthetics? Perhaps you will choose instead to seek out ever-greater foes to test your mettle in combat? Maybe you will decide to construct your own city to house the host of mysterious allies you may encounter along your travels? ",
+			ReleaseDate: time.Now(),
 			Genres: []*model.Genre{
 				{
 					ID: 4,
@@ -448,20 +474,54 @@ func SeedGame(db *gorm.DB) {
 			OriginalPrice:      89999,
 			OnSale:             false,
 			DiscountPercentage: 0,
-			Developers:         []*model.Developer {
+			Developers: []*model.Developer{
 				{
 					ID: 6,
 				},
 			},
-			PublisherID:        5,
-			SystemID:           1,
-			Users:              nil,
-			Banner:             "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F6%2Fbanner.jpg?alt=media&token=b403f94b-9ebc-496d-a8a6-36a34fed085e",
-			Video:              "",
-			Image1:             "",
-			Image2:             "",
-			Image3:             "",
-			Image4:             "",
+			PublisherID: 5,
+			SystemID:    1,
+			Users:       nil,
+			Banner:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F6%2Fbanner.jpg?alt=media&token=b403f94b-9ebc-496d-a8a6-36a34fed085e",
+		},
+		{
+			Name:        "Underlords",
+			Description: "NEXT GENERATION AUTO-BATTLER\nIn Dota Underlords, strategic decisions matter more than twitch reflexes. Underlords includes compelling singleplayer and multiplayer modes, and offers level progression with rewards. Play a strategic Standard game, a quick Knockout match, or co-op Duos match with a friend.\n\nSEASON ONE NOW AVAILABLE\nSeason One comes with a City Crawl full of content, a Battle Pass full of rewards, and multiple ways to play online or offline. Dota Underlords is now out of Early Access and ready to play!",
+			ReleaseDate: time.Now(),
+			Genres: []*model.Genre{
+				{
+					ID: 1,
+				},
+				{
+					ID: 2,
+				},
+				{
+					ID: 10,
+				},
+			},
+			Tags: []*model.Tag{
+				{
+					ID: 5,
+				},
+				{
+					ID: 8,
+				},
+				{
+					ID: 11,
+				},
+			},
+			OriginalPrice:      0,
+			OnSale:             false,
+			DiscountPercentage: 0,
+			Developers: []*model.Developer{
+				{
+					ID: 1,
+				},
+			},
+			PublisherID: 1,
+			SystemID:    1,
+			Users:       nil,
+			Banner:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2Fbanner?alt=media&token=ae35450c-bf16-4075-b89f-4f8d2f288b11",
 		},
 	}
 
@@ -769,8 +829,8 @@ func SeedUser(db *gorm.DB) {
 					ID: 1,
 				},
 			},
-			Experience: 550,
-			IsSuspend: true,
+			Experience:        550,
+			IsSuspend:         true,
 			SuspensionRequest: &model.SuspensionRequest{ID: 2},
 		},
 		{
@@ -809,7 +869,7 @@ func SeedUser(db *gorm.DB) {
 }
 
 func SeedUserReport(db *gorm.DB) {
-	userReports := []model.UserReport {
+	userReports := []model.UserReport{
 		{
 			Reported:    &model.User{ID: 1},
 			Reporter:    &model.User{ID: 2},
@@ -828,7 +888,7 @@ func SeedUserReport(db *gorm.DB) {
 }
 
 func SeedSuspensionRequest(db *gorm.DB) {
-	suspensionRequests := []model.SuspensionRequest {
+	suspensionRequests := []model.SuspensionRequest{
 		{
 			Description: "No suspension request.",
 		},

@@ -93,10 +93,7 @@ type ComplexityRoot struct {
 		GameReviews        func(childComplexity int) int
 		Genres             func(childComplexity int) int
 		ID                 func(childComplexity int) int
-		Image1             func(childComplexity int) int
-		Image2             func(childComplexity int) int
-		Image3             func(childComplexity int) int
-		Image4             func(childComplexity int) int
+		Images             func(childComplexity int) int
 		Name               func(childComplexity int) int
 		OnSale             func(childComplexity int) int
 		OriginalPrice      func(childComplexity int) int
@@ -107,6 +104,24 @@ type ComplexityRoot struct {
 		UpdatedAt          func(childComplexity int) int
 		Users              func(childComplexity int) int
 		Video              func(childComplexity int) int
+	}
+
+	GameImage struct {
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		GameID    func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Link      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+	}
+
+	GameVideo struct {
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		GameID    func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Link      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
 	}
 
 	Genre struct {
@@ -131,9 +146,12 @@ type ComplexityRoot struct {
 		CreateUser              func(childComplexity int, user *model.NewUser, otp *model.NewOtp) int
 		DeleteGame              func(childComplexity int, id int) int
 		DeletePromo             func(childComplexity int, id int) int
+		InsertGameBanner        func(childComplexity int, id int, link string) int
+		InsertGameImage         func(childComplexity int, gameImages []*model.InputGameImage) int
 		Login                   func(childComplexity int, input *model.Login) int
 		Logout                  func(childComplexity int) int
 		UpdateAccountSuspension func(childComplexity int, id int) int
+		UpdateGameImage         func(childComplexity int, id int, link string) int
 		UpdateOtp               func(childComplexity int, code string) int
 		UpdatePromo             func(childComplexity int, input model.NewPromo, id int) int
 		UpdateUser              func(childComplexity int, user model.UpdateUser) int
@@ -170,6 +188,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Countries               func(childComplexity int) int
 		Developers              func(childComplexity int) int
+		GameImages              func(childComplexity int) int
 		GameSearch              func(childComplexity int, keyword string) int
 		GameSearchPage          func(childComplexity int, keyword string, page int, price int, tag []*model.InputTag) int
 		Games                   func(childComplexity int) int
@@ -300,8 +319,11 @@ type MutationResolver interface {
 	Logout(ctx context.Context) (bool, error)
 	AdminLogin(ctx context.Context, input *model.Login) (bool, error)
 	CreateDeveloper(ctx context.Context, input model.NewDeveloper) (*model.Developer, error)
+	InsertGameImage(ctx context.Context, gameImages []*model.InputGameImage) (bool, error)
+	UpdateGameImage(ctx context.Context, id int, link string) (*model.GameImage, error)
 	CreateGame(ctx context.Context, input model.NewGame) (*model.Game, error)
 	DeleteGame(ctx context.Context, id int) (*model.Game, error)
+	InsertGameBanner(ctx context.Context, id int, link string) (bool, error)
 	CreateGenre(ctx context.Context, input model.NewGenre) (*model.Genre, error)
 	CreateOtp(ctx context.Context, input model.NewOtp) (*model.Otp, error)
 	UpdateOtp(ctx context.Context, code string) (*model.Otp, error)
@@ -319,6 +341,7 @@ type QueryResolver interface {
 	GetUserAuth(ctx context.Context) (*model.User, error)
 	Countries(ctx context.Context) ([]*model.Country, error)
 	Developers(ctx context.Context) ([]*model.Developer, error)
+	GameImages(ctx context.Context) ([]*model.GameImage, error)
 	Games(ctx context.Context) ([]*model.Game, error)
 	GetGamePaginationAdmin(ctx context.Context, page *int) ([]*model.Game, error)
 	GetTotalGame(ctx context.Context) (int, error)
@@ -587,33 +610,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Game.ID(childComplexity), true
 
-	case "Game.image1":
-		if e.complexity.Game.Image1 == nil {
+	case "Game.images":
+		if e.complexity.Game.Images == nil {
 			break
 		}
 
-		return e.complexity.Game.Image1(childComplexity), true
-
-	case "Game.image2":
-		if e.complexity.Game.Image2 == nil {
-			break
-		}
-
-		return e.complexity.Game.Image2(childComplexity), true
-
-	case "Game.image3":
-		if e.complexity.Game.Image3 == nil {
-			break
-		}
-
-		return e.complexity.Game.Image3(childComplexity), true
-
-	case "Game.image4":
-		if e.complexity.Game.Image4 == nil {
-			break
-		}
-
-		return e.complexity.Game.Image4(childComplexity), true
+		return e.complexity.Game.Images(childComplexity), true
 
 	case "Game.name":
 		if e.complexity.Game.Name == nil {
@@ -684,6 +686,90 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Game.Video(childComplexity), true
+
+	case "GameImage.createdAt":
+		if e.complexity.GameImage.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.GameImage.CreatedAt(childComplexity), true
+
+	case "GameImage.deletedAt":
+		if e.complexity.GameImage.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.GameImage.DeletedAt(childComplexity), true
+
+	case "GameImage.gameId":
+		if e.complexity.GameImage.GameID == nil {
+			break
+		}
+
+		return e.complexity.GameImage.GameID(childComplexity), true
+
+	case "GameImage.id":
+		if e.complexity.GameImage.ID == nil {
+			break
+		}
+
+		return e.complexity.GameImage.ID(childComplexity), true
+
+	case "GameImage.link":
+		if e.complexity.GameImage.Link == nil {
+			break
+		}
+
+		return e.complexity.GameImage.Link(childComplexity), true
+
+	case "GameImage.updatedAt":
+		if e.complexity.GameImage.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.GameImage.UpdatedAt(childComplexity), true
+
+	case "GameVideo.createdAt":
+		if e.complexity.GameVideo.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.GameVideo.CreatedAt(childComplexity), true
+
+	case "GameVideo.deletedAt":
+		if e.complexity.GameVideo.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.GameVideo.DeletedAt(childComplexity), true
+
+	case "GameVideo.gameId":
+		if e.complexity.GameVideo.GameID == nil {
+			break
+		}
+
+		return e.complexity.GameVideo.GameID(childComplexity), true
+
+	case "GameVideo.id":
+		if e.complexity.GameVideo.ID == nil {
+			break
+		}
+
+		return e.complexity.GameVideo.ID(childComplexity), true
+
+	case "GameVideo.link":
+		if e.complexity.GameVideo.Link == nil {
+			break
+		}
+
+		return e.complexity.GameVideo.Link(childComplexity), true
+
+	case "GameVideo.updatedAt":
+		if e.complexity.GameVideo.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.GameVideo.UpdatedAt(childComplexity), true
 
 	case "Genre.createdAt":
 		if e.complexity.Genre.CreatedAt == nil {
@@ -866,6 +952,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeletePromo(childComplexity, args["id"].(int)), true
 
+	case "Mutation.insertGameBanner":
+		if e.complexity.Mutation.InsertGameBanner == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_insertGameBanner_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.InsertGameBanner(childComplexity, args["id"].(int), args["link"].(string)), true
+
+	case "Mutation.insertGameImage":
+		if e.complexity.Mutation.InsertGameImage == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_insertGameImage_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.InsertGameImage(childComplexity, args["gameImages"].([]*model.InputGameImage)), true
+
 	case "Mutation.login":
 		if e.complexity.Mutation.Login == nil {
 			break
@@ -896,6 +1006,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateAccountSuspension(childComplexity, args["id"].(int)), true
+
+	case "Mutation.updateGameImage":
+		if e.complexity.Mutation.UpdateGameImage == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateGameImage_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateGameImage(childComplexity, args["id"].(int), args["link"].(string)), true
 
 	case "Mutation.updateOtp":
 		if e.complexity.Mutation.UpdateOtp == nil {
@@ -1079,6 +1201,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Developers(childComplexity), true
+
+	case "Query.gameImages":
+		if e.complexity.Query.GameImages == nil {
+			break
+		}
+
+		return e.complexity.Query.GameImages(childComplexity), true
 
 	case "Query.gameSearch":
 		if e.complexity.Query.GameSearch == nil {
@@ -1946,6 +2075,43 @@ input UploadFile {
     requested: User!
     status: String!
 }`, BuiltIn: false},
+	{Name: "graph/game-image.graphqls", Input: `type GameImage {
+    id: Int!
+    gameId: Int!
+    link: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input InputGameImage {
+    gameId: Int!
+    link: String!
+}
+
+extend type Query {
+    gameImages: [GameImage!]!
+}
+
+extend type Mutation {
+    insertGameImage(gameImages: [InputGameImage!]!): Boolean!
+    updateGameImage(id: Int!, link: String!): GameImage!
+}`, BuiltIn: false},
+	{Name: "graph/game-video.graphqls", Input: `type GameVideo {
+    id: Int!
+    gameId: Int!
+    link: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input InputGameVideo {
+    gameId: Int!
+    link: String!
+}`, BuiltIn: false},
 	{Name: "graph/game.graphqls", Input: `type Game {
     id: Int!
     name: String!
@@ -1964,11 +2130,8 @@ input UploadFile {
     users: [User!]!
 
     banner: String!
-    video: String!
-    image1: String!
-    image2: String!
-    image3: String!
-    image4: String!
+    video: [GameVideo!]!
+    images: [GameImage!]!
 
     createdAt: Time!
     updatedAt: Time!
@@ -1986,13 +2149,6 @@ input NewGame {
     developers: [InputDeveloper!]!
     publisherId: Int!
     systemId: Int!
-
-    banner: String!
-    video: String!
-    image1: String!
-    image2: String!
-    image3: String!
-    image4: String!
 }
 
 extend type Query {
@@ -2006,6 +2162,7 @@ extend type Query {
 extend type Mutation {
     createGame(input: NewGame!): Game!
     deleteGame(id: Int!): Game!
+    insertGameBanner(id: Int!, link: String!): Boolean!
 }`, BuiltIn: false},
 	{Name: "graph/genre.graphqls", Input: `type Genre {
     id: Int!
@@ -2459,6 +2616,45 @@ func (ec *executionContext) field_Mutation_deletePromo_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_insertGameBanner_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["link"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["link"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_insertGameImage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []*model.InputGameImage
+	if tmp, ok := rawArgs["gameImages"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameImages"))
+		arg0, err = ec.unmarshalNInputGameImage2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputGameImageᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gameImages"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2486,6 +2682,30 @@ func (ec *executionContext) field_Mutation_updateAccountSuspension_args(ctx cont
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateGameImage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["link"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["link"] = arg1
 	return args, nil
 }
 
@@ -4183,12 +4403,12 @@ func (ec *executionContext) _Game_video(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.([]*model.GameVideo)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNGameVideo2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameVideoᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Game_image1(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+func (ec *executionContext) _Game_images(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4206,7 +4426,7 @@ func (ec *executionContext) _Game_image1(ctx context.Context, field graphql.Coll
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Image1, nil
+		return obj.Images, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4218,114 +4438,9 @@ func (ec *executionContext) _Game_image1(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.([]*model.GameImage)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Game_image2(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Game",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Image2, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Game_image3(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Game",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Image3, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Game_image4(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Game",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Image4, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNGameImage2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImageᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Game_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
@@ -4431,6 +4546,426 @@ func (ec *executionContext) _Game_deletedAt(ctx context.Context, field graphql.C
 	res := resTmp.(*time.Time)
 	fc.Result = res
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameImage_id(ctx context.Context, field graphql.CollectedField, obj *model.GameImage) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameImage",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameImage_gameId(ctx context.Context, field graphql.CollectedField, obj *model.GameImage) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameImage",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameImage_link(ctx context.Context, field graphql.CollectedField, obj *model.GameImage) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameImage",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Link, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameImage_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.GameImage) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameImage",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameImage_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.GameImage) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameImage",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameImage_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.GameImage) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameImage",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameVideo_id(ctx context.Context, field graphql.CollectedField, obj *model.GameVideo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameVideo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameVideo_gameId(ctx context.Context, field graphql.CollectedField, obj *model.GameVideo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameVideo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameVideo_link(ctx context.Context, field graphql.CollectedField, obj *model.GameVideo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameVideo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Link, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameVideo_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.GameVideo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameVideo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameVideo_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.GameVideo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameVideo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameVideo_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.GameVideo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameVideo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Genre_id(ctx context.Context, field graphql.CollectedField, obj *model.Genre) (ret graphql.Marshaler) {
@@ -4965,6 +5500,90 @@ func (ec *executionContext) _Mutation_createDeveloper(ctx context.Context, field
 	return ec.marshalNDeveloper2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐDeveloper(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_insertGameImage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_insertGameImage_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().InsertGameImage(rctx, args["gameImages"].([]*model.InputGameImage))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateGameImage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateGameImage_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateGameImage(rctx, args["id"].(int), args["link"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GameImage)
+	fc.Result = res
+	return ec.marshalNGameImage2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImage(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createGame(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -5047,6 +5666,48 @@ func (ec *executionContext) _Mutation_deleteGame(ctx context.Context, field grap
 	res := resTmp.(*model.Game)
 	fc.Result = res
 	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_insertGameBanner(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_insertGameBanner_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().InsertGameBanner(rctx, args["id"].(int), args["link"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createGenre(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6314,6 +6975,41 @@ func (ec *executionContext) _Query_developers(ctx context.Context, field graphql
 	res := resTmp.([]*model.Developer)
 	fc.Result = res
 	return ec.marshalNDeveloper2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐDeveloperᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_gameImages(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GameImages(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GameImage)
+	fc.Result = res
+	return ec.marshalNGameImage2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImageᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_games(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -10697,6 +11393,62 @@ func (ec *executionContext) unmarshalInputInputDeveloper(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputInputGameImage(ctx context.Context, obj interface{}) (model.InputGameImage, error) {
+	var it model.InputGameImage
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "gameId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameId"))
+			it.GameID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "link":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link"))
+			it.Link, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputInputGameVideo(ctx context.Context, obj interface{}) (model.InputGameVideo, error) {
+	var it model.InputGameVideo
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "gameId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameId"))
+			it.GameID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "link":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link"))
+			it.Link, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputInputGenre(ctx context.Context, obj interface{}) (model.InputGenre, error) {
 	var it model.InputGenre
 	var asMap = obj.(map[string]interface{})
@@ -10868,54 +11620,6 @@ func (ec *executionContext) unmarshalInputNewGame(ctx context.Context, obj inter
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("systemId"))
 			it.SystemID, err = ec.unmarshalNInt2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "banner":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("banner"))
-			it.Banner, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "video":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("video"))
-			it.Video, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "image1":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image1"))
-			it.Image1, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "image2":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image2"))
-			it.Image2, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "image3":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image3"))
-			it.Image3, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "image4":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image4"))
-			it.Image4, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -11578,23 +12282,8 @@ func (ec *executionContext) _Game(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "image1":
-			out.Values[i] = ec._Game_image1(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "image2":
-			out.Values[i] = ec._Game_image2(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "image3":
-			out.Values[i] = ec._Game_image3(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "image4":
-			out.Values[i] = ec._Game_image4(ctx, field, obj)
+		case "images":
+			out.Values[i] = ec._Game_images(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -11610,6 +12299,110 @@ func (ec *executionContext) _Game(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Game_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var gameImageImplementors = []string{"GameImage"}
+
+func (ec *executionContext) _GameImage(ctx context.Context, sel ast.SelectionSet, obj *model.GameImage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, gameImageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GameImage")
+		case "id":
+			out.Values[i] = ec._GameImage_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "gameId":
+			out.Values[i] = ec._GameImage_gameId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link":
+			out.Values[i] = ec._GameImage_link(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._GameImage_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._GameImage_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._GameImage_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var gameVideoImplementors = []string{"GameVideo"}
+
+func (ec *executionContext) _GameVideo(ctx context.Context, sel ast.SelectionSet, obj *model.GameVideo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, gameVideoImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GameVideo")
+		case "id":
+			out.Values[i] = ec._GameVideo_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "gameId":
+			out.Values[i] = ec._GameVideo_gameId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link":
+			out.Values[i] = ec._GameVideo_link(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._GameVideo_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._GameVideo_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._GameVideo_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -11731,6 +12524,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "insertGameImage":
+			out.Values[i] = ec._Mutation_insertGameImage(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateGameImage":
+			out.Values[i] = ec._Mutation_updateGameImage(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createGame":
 			out.Values[i] = ec._Mutation_createGame(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -11738,6 +12541,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deleteGame":
 			out.Values[i] = ec._Mutation_deleteGame(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "insertGameBanner":
+			out.Values[i] = ec._Mutation_insertGameBanner(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -12061,6 +12869,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_developers(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "gameImages":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_gameImages(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -13308,6 +14130,104 @@ func (ec *executionContext) marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackend�
 	return ec._Game(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNGameImage2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImage(ctx context.Context, sel ast.SelectionSet, v model.GameImage) graphql.Marshaler {
+	return ec._GameImage(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGameImage2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GameImage) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNGameImage2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImage(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNGameImage2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImage(ctx context.Context, sel ast.SelectionSet, v *model.GameImage) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._GameImage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGameVideo2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameVideoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GameVideo) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNGameVideo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameVideo(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNGameVideo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameVideo(ctx context.Context, sel ast.SelectionSet, v *model.GameVideo) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._GameVideo(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNGenre2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGenre(ctx context.Context, sel ast.SelectionSet, v model.Genre) graphql.Marshaler {
 	return ec._Genre(ctx, sel, &v)
 }
@@ -13397,6 +14317,32 @@ func (ec *executionContext) unmarshalNInputDeveloper2ᚕᚖgithubᚗcomᚋnicota
 
 func (ec *executionContext) unmarshalNInputDeveloper2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputDeveloper(ctx context.Context, v interface{}) (*model.InputDeveloper, error) {
 	res, err := ec.unmarshalInputInputDeveloper(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNInputGameImage2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputGameImageᚄ(ctx context.Context, v interface{}) ([]*model.InputGameImage, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.InputGameImage, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInputGameImage2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputGameImage(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNInputGameImage2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputGameImage(ctx context.Context, v interface{}) (*model.InputGameImage, error) {
+	res, err := ec.unmarshalInputInputGameImage(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

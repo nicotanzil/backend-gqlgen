@@ -49,12 +49,6 @@ func (r *mutationResolver) CreateGame(ctx context.Context, input model.NewGame) 
 		PublisherID:        input.PublisherID,
 		SystemID:           input.SystemID,
 		Users:              nil,
-		Banner:             input.Banner,
-		Video:              input.Video,
-		Image1:             input.Image1,
-		Image2:             input.Image2,
-		Image3:             input.Image3,
-		Image4:             input.Image4,
 	}
 
 	db.Create(&newGame)
@@ -73,6 +67,21 @@ func (r *mutationResolver) DeleteGame(ctx context.Context, id int) (*model.Game,
 
 	db.Delete(&model.Game{}, id)
 	return &game, nil
+}
+
+func (r *mutationResolver) InsertGameBanner(ctx context.Context, id int, link string) (bool, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var game model.Game
+
+	db.Where("id = ?", id).First(&game)
+
+	game.Banner = link
+	db.Save(&game)
+	return true, nil
 }
 
 func (r *queryResolver) Games(ctx context.Context) ([]*model.Game, error) {
@@ -138,7 +147,7 @@ func (r *queryResolver) GameSearchPage(ctx context.Context, keyword string, page
 	var tagsId []int
 
 	if len(tag) > 0 {
-		for i:=0; i<len(tag); i++ {
+		for i := 0; i < len(tag); i++ {
 			tagsId = append(tagsId, tag[i].ID)
 		}
 
@@ -160,7 +169,6 @@ func (r *queryResolver) GameSearchPage(ctx context.Context, keyword string, page
 			Where("original_price <= ?", price).
 			Find(&games)
 	}
-
 
 	return games, nil
 }

@@ -1,0 +1,14 @@
+type GameVideo {
+    id: Int!
+    gameId: Int!
+    link: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input InputGameVideo {
+    gameId: Int!
+    link: String!
+}

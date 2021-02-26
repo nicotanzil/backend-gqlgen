@@ -16,11 +16,8 @@ type Game {
     users: [User!]!
 
     banner: String!
-    video: String!
-    image1: String!
-    image2: String!
-    image3: String!
-    image4: String!
+    video: [GameVideo!]!
+    images: [GameImage!]!
 
     createdAt: Time!
     updatedAt: Time!
@@ -38,13 +35,6 @@ input NewGame {
     developers: [InputDeveloper!]!
     publisherId: Int!
     systemId: Int!
-
-    banner: String!
-    video: String!
-    image1: String!
-    image2: String!
-    image3: String!
-    image4: String!
 }
 
 extend type Query {
@@ -58,4 +48,5 @@ extend type Query {
 extend type Mutation {
     createGame(input: NewGame!): Game!
     deleteGame(id: Int!): Game!
+    insertGameBanner(id: Int!, link: String!): Boolean!
 }
