@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-
 	firebase_data "github.com/nicotanzil/backend-gqlgen/app/firebase-data"
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
@@ -113,6 +112,19 @@ func (r *queryResolver) GetUserByID(ctx context.Context, id *int) (*model.User, 
 	db.Preload(clause.Associations).Where("id = ?", id).First(&user)
 
 	return &user, nil
+}
+
+func (r *queryResolver) GetTotalUser(ctx context.Context) (int, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var count int64
+
+	db.Model(&model.User{}).Count(&count)
+
+	return int(count), nil
 }
 
 func (r *queryResolver) GetUserByURL(ctx context.Context, input *string) (*model.User, error) {

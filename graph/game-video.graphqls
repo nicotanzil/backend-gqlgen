@@ -12,3 +12,12 @@ input InputGameVideo {
     gameId: Int!
     link: String!
 }
+
+extend type Query {
+    gameVideos: [GameVideo!]!
+}
+
+extend type Mutation {
+    insertGameVideo(gameVideos: [InputGameVideo!]!): Boolean!
+    updateGameVideo(id: Int!, link: String!): GameVideo!
+}

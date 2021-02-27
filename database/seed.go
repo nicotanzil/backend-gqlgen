@@ -30,6 +30,7 @@ func Seed() {
 	SeedPromo(db)
 	SeedGame(db)
 	SeedGameImage(db)
+	SeedGameVideo(db)
 	SeedCountry(db)
 	SeedUser(db)
 	SeedUserReport(db)
@@ -90,6 +91,23 @@ func SeedGameImage(db *gorm.DB) {
 		db.Create(&gameImage)
 	}
 
+}
+
+func SeedGameVideo(db *gorm.DB) {
+	gameVideos := []*model.GameVideo {
+		{
+			GameID:    	1,
+			Link:      	"https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fvideos%2F1.mp4?alt=media&token=915b8004-f5d1-4279-81fc-2c1f7e56f102",
+		},
+		{
+			GameID: 	1,
+			Link: 		"https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fvideos%2F2.mp4?alt=media&token=4cbc40d4-0f03-41e7-97f4-1c3154d34bbc",
+		},
+	}
+
+	for _, gameVideo := range gameVideos {
+		db.Create(&gameVideo)
+	}
 }
 
 func SeedTag(db *gorm.DB) {

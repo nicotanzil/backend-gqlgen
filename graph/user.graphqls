@@ -53,6 +53,7 @@ input UpdateUser {
 type Query {
     users: [User!]!
     getUserById(id: Int): User!
+    getTotalUser: Int!
     getUserByUrl(input: String): User!
     getUserPaginationAdmin(page: Int!): [User!]!
 }
