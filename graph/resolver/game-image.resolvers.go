@@ -30,19 +30,22 @@ func (r *mutationResolver) InsertGameImage(ctx context.Context, gameImages []*mo
 	return true, nil
 }
 
-func (r *mutationResolver) UpdateGameImage(ctx context.Context, id int, link string) (*model.GameImage, error) {
+func (r *mutationResolver) UpdateGameImage(ctx context.Context, id []int, images []*model.InputGameImage) (bool, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
 	}
 
-	var gameImage model.GameImage
+	length := len(id)
 
-	db.Where("id = ?", id).First(&gameImage)
-
-	gameImage.Link = link
-
-	return &gameImage, nil
+	for i := 0; i < length; i++ {
+		var currGameImage model.GameImage
+		db.Where("id = ?", id[i]).First(&currGameImage)
+		currGameImage.GameID = images[i].GameID
+		currGameImage.Link = images[i].Link
+		db.Save(&currGameImage)
+	}
+	return true, nil
 }
 
 func (r *queryResolver) GameImages(ctx context.Context) ([]*model.GameImage, error) {

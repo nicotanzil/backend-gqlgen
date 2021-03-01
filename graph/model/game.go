@@ -10,8 +10,8 @@ type Game struct {
 	Genres             	[]*Genre    	`json:"genres" gorm:"many2many:game_genres;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Tags               	[]*Tag    		`json:"tags" gorm:"many2many:game_tags;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	OriginalPrice      	float64      	`json:"originalPrice"`
-	OnSale             	bool         	`json:"onSale"`
-	DiscountPercentage 	int          	`json:"discountPercentage"`
+	PromoID				int 			`json:"promoId"`
+	Promo         		*Promo       	`json:"promo" gorm:"foreignKey:PromoID;"`
 	GamePlayHour       	float64      	`json:"gamePlayHour"`
 	GameReviews        	[]*Review    	`json:"gameReviews" gorm:"many2many:game_reviews;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Developers         	[]*Developer 	`json:"developers" gorm:"many2many:game_developers;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
@@ -22,7 +22,7 @@ type Game struct {
 	Users              	[]*User      	`json:"users" gorm:"many2many:game_users;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	Banner             string       `json:"banner"`
-	Video              []*GameVideo `json:"video" gorm:foreignKey:GameID`
+	Video              []*GameVideo `json:"video" gorm:"foreignKey:GameID"`
 	Images             []*GameImage `json:"images" gorm:"foreignKey:GameID"`
 
 	CreatedAt          time.Time    `json:"createdAt"`
@@ -31,14 +31,13 @@ type Game struct {
 }
 
 type NewGame struct {
-	Name               string            `json:"name"`
-	Description        string            `json:"description"`
-	Genres             []*InputGenre     `json:"genres"`
-	Tags               []*InputTag       `json:"tags"`
-	OriginalPrice      float64           `json:"originalPrice"`
-	OnSale             bool              `json:"onSale"`
-	DiscountPercentage int               `json:"discountPercentage"`
-	Developers         []*InputDeveloper `json:"developers"`
-	PublisherID        int               `json:"publisherId"`
-	SystemID           int               `json:"systemId"`
+	Name          string            `json:"name"`
+	Description   string            `json:"description"`
+	Genres        []*InputGenre     `json:"genres"`
+	Tags          []*InputTag       `json:"tags"`
+	OriginalPrice float64           `json:"originalPrice"`
+	Promo         *InputPromo       `json:"promo"`
+	Developers    []*InputDeveloper `json:"developers"`
+	PublisherID   int               `json:"publisherId"`
+	SystemID      int               `json:"systemId"`
 }

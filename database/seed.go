@@ -50,11 +50,11 @@ func SeedAdmin(db *gorm.DB) {
 
 func SeedGameImage(db *gorm.DB) {
 	gameImages := []model.GameImage{
-		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2Fimages%2F1.jpg?alt=media&token=0b63bb33-8e7c-46d9-b222-55e3da729ede"},
-		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2Fimages%2F2.jpg?alt=media&token=dbde5e49-b6be-484e-bfbf-a0a3d95b40c6"},
-		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2Fimages%2F3.jpg?alt=media&token=51888aed-db9b-4d5c-a681-c97246f8a2f1"},
-		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2Fimages%2F4.jpg?alt=media&token=b596efbc-9a93-4a9a-a0b9-c5eb2f7147b1"},
-		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2Fimages%2F5.jpg?alt=media&token=85eac0fe-86f8-4939-931c-9989dadb0caa"},
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2F1.jpg?alt=media&token=738cf71e-7978-482b-9b53-383a7518b7db"},
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2F2.jpg?alt=media&token=4303c33d-263f-4747-b92b-05627279be46"},
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2F3.jpg?alt=media&token=ff544eab-441f-4a63-8684-6440bb9d2206"},
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2F4.jpg?alt=media&token=36293e0b-cc7f-4898-a7bd-911ecba302a0"},
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2F5.jpg?alt=media&token=458390ea-5331-4628-ad98-7cc7f69f65cb"},
 		{GameID: 2, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F2%2F1.jpg?alt=media&token=7f5e64b4-9853-4df1-9fd4-143ee83c3578"},
 		{GameID: 2, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F2%2F2.jpg?alt=media&token=54d52e5f-73f1-46e0-879f-e3effbc901ad"},
 		{GameID: 2, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F2%2F3.jpg?alt=media&token=23254fc0-9328-4f9a-938b-d59b669712c3"},
@@ -80,11 +80,11 @@ func SeedGameImage(db *gorm.DB) {
 		{GameID: 6, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F6%2F3.jpg?alt=media&token=a167e1c6-9f07-4013-8c36-4b02a02af48a"},
 		{GameID: 6, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F6%2F4.jpg?alt=media&token=474429c0-0d47-43bb-ae97-0f5dfccc11f1"},
 		{GameID: 6, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F6%2F5.jpg?alt=media&token=3058b24e-cd33-446e-b855-fce0fe150e95"},
-		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F1.jpg?alt=media&token=e0cbea1a-823f-402a-b4d6-5d791a5e8928"},
-		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F2.jpg?alt=media&token=d6b8473d-a15e-43c0-b637-2856ef4ef880"},
-		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F3.jpg?alt=media&token=c58410b5-473c-4431-a8e7-7afd7fa39a2d"},
-		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F4.jpg?alt=media&token=316fe4c3-412b-41ee-b5a0-0f4b98554062"},
-		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F5.jpg?alt=media&token=d1d1c041-81d6-475e-b835-b9f5b76e066f"},
+		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F1.jpg?alt=media&token=432ac1d1-ad60-43c1-89c8-7efa5257acce"},
+		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F2.jpg?alt=media&token=af083f6d-3ce0-4789-b90e-c85370cdc8bb"},
+		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F3.jpg?alt=media&token=7e955225-1fa9-457a-9e76-f3630ef24056"},
+		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F4.jpg?alt=media&token=c97a66d4-1f26-4a84-8169-72b5491a618a"},
+		{GameID: 7, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2F5.jpg?alt=media&token=aba239b2-f826-4680-8485-076b849f305c"},
 	}
 
 	for _, gameImage := range gameImages {
@@ -94,15 +94,9 @@ func SeedGameImage(db *gorm.DB) {
 }
 
 func SeedGameVideo(db *gorm.DB) {
-	gameVideos := []*model.GameVideo {
-		{
-			GameID:    	1,
-			Link:      	"https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fvideos%2F1.mp4?alt=media&token=915b8004-f5d1-4279-81fc-2c1f7e56f102",
-		},
-		{
-			GameID: 	1,
-			Link: 		"https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fvideos%2F2.mp4?alt=media&token=4cbc40d4-0f03-41e7-97f4-1c3154d34bbc",
-		},
+	gameVideos := []model.GameVideo {
+		{ GameID:   1, 	Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fvideos%2F1.mp4?alt=media&token=915b8004-f5d1-4279-81fc-2c1f7e56f102",},
+		{ GameID: 	1,	Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fvideos%2F2.mp4?alt=media&token=4cbc40d4-0f03-41e7-97f4-1c3154d34bbc",},
 	}
 
 	for _, gameVideo := range gameVideos {
@@ -251,6 +245,10 @@ func SeedGenre(db *gorm.DB) {
 func SeedPromo(db *gorm.DB) {
 	promos := []model.Promo{
 		{
+			DiscountPercentage: 0,
+			ValidUntil: int(time.Now().Add(time.Hour * 24 * 30).Unix()),
+		},
+		{
 			DiscountPercentage: 50,
 			ValidUntil:         int(time.Now().Add(time.Hour * 24 * 3).Unix()),
 		},
@@ -292,8 +290,7 @@ func SeedGame(db *gorm.DB) {
 				},
 			},
 			OriginalPrice:      0,
-			OnSale:             false,
-			DiscountPercentage: 0,
+			PromoID: 1,
 			Developers: []*model.Developer{
 				{
 					ID: 1,
@@ -328,8 +325,7 @@ func SeedGame(db *gorm.DB) {
 				},
 			},
 			OriginalPrice:      562000,
-			OnSale:             true,
-			DiscountPercentage: 50,
+			PromoID: 2,
 			Developers: []*model.Developer{
 				{
 					ID: 2,
@@ -364,8 +360,7 @@ func SeedGame(db *gorm.DB) {
 				},
 			},
 			OriginalPrice:      650000,
-			OnSale:             false,
-			DiscountPercentage: 0,
+			PromoID: 2,
 			Developers: []*model.Developer{
 				{
 					ID: 3,
@@ -406,8 +401,7 @@ func SeedGame(db *gorm.DB) {
 				},
 			},
 			OriginalPrice:      0,
-			OnSale:             false,
-			DiscountPercentage: 0,
+			PromoID: 1,
 			Developers: []*model.Developer{
 				{
 					ID: 1,
@@ -451,8 +445,7 @@ func SeedGame(db *gorm.DB) {
 				},
 			},
 			OriginalPrice:      300000,
-			OnSale:             true,
-			DiscountPercentage: 25,
+			PromoID: 1,
 			Developers: []*model.Developer{
 				{
 					ID: 5,
@@ -490,8 +483,7 @@ func SeedGame(db *gorm.DB) {
 				},
 			},
 			OriginalPrice:      89999,
-			OnSale:             false,
-			DiscountPercentage: 0,
+			PromoID: 1,
 			Developers: []*model.Developer{
 				{
 					ID: 6,
@@ -529,8 +521,7 @@ func SeedGame(db *gorm.DB) {
 				},
 			},
 			OriginalPrice:      0,
-			OnSale:             false,
-			DiscountPercentage: 0,
+			PromoID: 1,
 			Developers: []*model.Developer{
 				{
 					ID: 1,
@@ -539,7 +530,7 @@ func SeedGame(db *gorm.DB) {
 			PublisherID: 1,
 			SystemID:    1,
 			Users:       nil,
-			Banner:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2Fbanner?alt=media&token=ae35450c-bf16-4075-b89f-4f8d2f288b11",
+			Banner:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F7%2Fbanner.jpg?alt=media&token=877a6401-3b03-4e09-8caa-ce2c9f25e2de",
 		},
 	}
 

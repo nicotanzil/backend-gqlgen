@@ -15,3 +15,7 @@ type Promo struct {
 	UpdatedAt          time.Time `json:"updatedAt"`
 	DeletedAt          *time.Time `json:"deletedAt"`
 }
+
+type InputPromo struct {
+	ID int `json:"id"`
+}

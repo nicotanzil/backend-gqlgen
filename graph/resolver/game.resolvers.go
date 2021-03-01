@@ -21,6 +21,7 @@ func (r *mutationResolver) CreateGame(ctx context.Context, input model.NewGame) 
 
 	genres := []*model.Genre{}
 	tags := []*model.Tag{}
+	developers := []*model.Developer{}
 
 	for i := 0; i < len(input.Genres); i++ {
 		curr := model.Genre{ID: input.Genres[i].ID}
@@ -32,27 +33,75 @@ func (r *mutationResolver) CreateGame(ctx context.Context, input model.NewGame) 
 		tags = append(tags, &curr)
 	}
 
+	for i := 0; i < len(input.Developers); i++ {
+		curr := model.Developer{ID: input.Developers[i].ID}
+		developers = append(developers, &curr)
+	}
+
 	var newGame model.Game
 
 	newGame = model.Game{
-		Name:               input.Name,
-		Description:        input.Description,
-		ReleaseDate:        time.Now(),
-		Genres:             genres,
-		Tags:               tags,
-		OriginalPrice:      input.OriginalPrice,
-		OnSale:             input.OnSale,
-		DiscountPercentage: input.DiscountPercentage,
-		GamePlayHour:       0,
-		GameReviews:        nil,
-		Developers:         nil,
-		PublisherID:        input.PublisherID,
-		SystemID:           input.SystemID,
-		Users:              nil,
+		Name:          input.Name,
+		Description:   input.Description,
+		ReleaseDate:   time.Now(),
+		Genres:        genres,
+		Tags:          tags,
+		OriginalPrice: input.OriginalPrice,
+		PromoID:       input.Promo.ID,
+		GamePlayHour:  0,
+		GameReviews:   nil,
+		Developers:    developers,
+		PublisherID:   input.PublisherID,
+		SystemID:      input.SystemID,
+		Users:         nil,
 	}
 
 	db.Create(&newGame)
 	return &newGame, nil
+}
+
+func (r *mutationResolver) UpdateGame(ctx context.Context, id int, input model.NewGame) (*model.Game, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	genres := []*model.Genre{}
+	tags := []*model.Tag{}
+	developers := []*model.Developer{}
+
+	for i := 0; i < len(input.Genres); i++ {
+		curr := model.Genre{ID: input.Genres[i].ID}
+		genres = append(genres, &curr)
+	}
+
+	for i := 0; i < len(input.Tags); i++ {
+		curr := model.Tag{ID: input.Tags[i].ID}
+		tags = append(tags, &curr)
+	}
+
+	for i := 0; i < len(input.Developers); i++ {
+		curr := model.Developer{ID: input.Developers[i].ID}
+		developers = append(developers, &curr)
+	}
+
+	var game model.Game
+
+	db.Where("id = ?", id).First(&game)
+
+	game.Name = input.Name
+	game.Description = input.Description
+	game.Genres = genres
+	game.Tags = tags
+	game.OriginalPrice = input.OriginalPrice
+	game.PromoID = input.Promo.ID
+	game.Developers = developers
+	game.PublisherID = input.PublisherID
+	game.SystemID = input.SystemID
+
+	db.Save(&game)
+
+	return &game, nil
 }
 
 func (r *mutationResolver) DeleteGame(ctx context.Context, id int) (*model.Game, error) {
@@ -60,6 +109,9 @@ func (r *mutationResolver) DeleteGame(ctx context.Context, id int) (*model.Game,
 	if err != nil {
 		panic(err)
 	}
+
+	db.Exec("DELETE FROM game_images WHERE game_id = ?", id)
+	db.Exec("DELETE FROM game_videos WHERE game_id = ?", id)
 
 	var game model.Game
 
@@ -95,6 +147,19 @@ func (r *queryResolver) Games(ctx context.Context) ([]*model.Game, error) {
 	db.Preload(clause.Associations).Find(&games)
 
 	return games, nil
+}
+
+func (r *queryResolver) GameByID(ctx context.Context, id int) (*model.Game, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var game model.Game
+
+	db.Preload(clause.Associations).Where("id = ?", id).First(&game)
+
+	return &game, nil
 }
 
 func (r *queryResolver) GetGamePaginationAdmin(ctx context.Context, page *int) ([]*model.Game, error) {

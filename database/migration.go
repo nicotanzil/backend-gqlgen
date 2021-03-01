@@ -57,6 +57,7 @@ func UserMigrate(db *gorm.DB) {
 
 func GameMigrate(db *gorm.DB) {
 	db.Migrator().DropTable(
+		&model.GameVideo{},
 		&model.GameImage{},
 		&model.Game{},
 		&model.Promo{},
@@ -78,10 +79,10 @@ func GameMigrate(db *gorm.DB) {
 		&model.Publisher{},
 		&model.Genre{},
 		&model.Promo{},
-		&model.Game{},
+		&model.Developer{},
 		&model.GameImage{},
 		&model.GameVideo{},
-		&model.Developer{},
+		&model.Game{},
 	)
 }
 

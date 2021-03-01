@@ -83,27 +83,26 @@ type ComplexityRoot struct {
 	}
 
 	Game struct {
-		Banner             func(childComplexity int) int
-		CreatedAt          func(childComplexity int) int
-		DeletedAt          func(childComplexity int) int
-		Description        func(childComplexity int) int
-		Developers         func(childComplexity int) int
-		DiscountPercentage func(childComplexity int) int
-		GamePlayHour       func(childComplexity int) int
-		GameReviews        func(childComplexity int) int
-		Genres             func(childComplexity int) int
-		ID                 func(childComplexity int) int
-		Images             func(childComplexity int) int
-		Name               func(childComplexity int) int
-		OnSale             func(childComplexity int) int
-		OriginalPrice      func(childComplexity int) int
-		Publisher          func(childComplexity int) int
-		ReleaseDate        func(childComplexity int) int
-		System             func(childComplexity int) int
-		Tags               func(childComplexity int) int
-		UpdatedAt          func(childComplexity int) int
-		Users              func(childComplexity int) int
-		Video              func(childComplexity int) int
+		Banner        func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		DeletedAt     func(childComplexity int) int
+		Description   func(childComplexity int) int
+		Developers    func(childComplexity int) int
+		GamePlayHour  func(childComplexity int) int
+		GameReviews   func(childComplexity int) int
+		Genres        func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Images        func(childComplexity int) int
+		Name          func(childComplexity int) int
+		OriginalPrice func(childComplexity int) int
+		Promo         func(childComplexity int) int
+		Publisher     func(childComplexity int) int
+		ReleaseDate   func(childComplexity int) int
+		System        func(childComplexity int) int
+		Tags          func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		Users         func(childComplexity int) int
+		Video         func(childComplexity int) int
 	}
 
 	GameImage struct {
@@ -152,8 +151,9 @@ type ComplexityRoot struct {
 		Login                   func(childComplexity int, input *model.Login) int
 		Logout                  func(childComplexity int) int
 		UpdateAccountSuspension func(childComplexity int, id int) int
-		UpdateGameImage         func(childComplexity int, id int, link string) int
-		UpdateGameVideo         func(childComplexity int, id int, link string) int
+		UpdateGame              func(childComplexity int, id int, input model.NewGame) int
+		UpdateGameImage         func(childComplexity int, id []int, images []*model.InputGameImage) int
+		UpdateGameVideo         func(childComplexity int, id []int, videos []*model.InputGameVideo) int
 		UpdateOtp               func(childComplexity int, code string) int
 		UpdatePromo             func(childComplexity int, input model.NewPromo, id int) int
 		UpdateUser              func(childComplexity int, user model.UpdateUser) int
@@ -190,6 +190,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Countries               func(childComplexity int) int
 		Developers              func(childComplexity int) int
+		GameByID                func(childComplexity int, id int) int
 		GameImages              func(childComplexity int) int
 		GameSearch              func(childComplexity int, keyword string) int
 		GameSearchPage          func(childComplexity int, keyword string, page int, price int, tag []*model.InputTag) int
@@ -324,10 +325,11 @@ type MutationResolver interface {
 	AdminLogin(ctx context.Context, input *model.Login) (bool, error)
 	CreateDeveloper(ctx context.Context, input model.NewDeveloper) (*model.Developer, error)
 	InsertGameImage(ctx context.Context, gameImages []*model.InputGameImage) (bool, error)
-	UpdateGameImage(ctx context.Context, id int, link string) (*model.GameImage, error)
+	UpdateGameImage(ctx context.Context, id []int, images []*model.InputGameImage) (bool, error)
 	InsertGameVideo(ctx context.Context, gameVideos []*model.InputGameVideo) (bool, error)
-	UpdateGameVideo(ctx context.Context, id int, link string) (*model.GameVideo, error)
+	UpdateGameVideo(ctx context.Context, id []int, videos []*model.InputGameVideo) (bool, error)
 	CreateGame(ctx context.Context, input model.NewGame) (*model.Game, error)
+	UpdateGame(ctx context.Context, id int, input model.NewGame) (*model.Game, error)
 	DeleteGame(ctx context.Context, id int) (*model.Game, error)
 	InsertGameBanner(ctx context.Context, id int, link string) (bool, error)
 	CreateGenre(ctx context.Context, input model.NewGenre) (*model.Genre, error)
@@ -351,6 +353,7 @@ type QueryResolver interface {
 	GameImages(ctx context.Context) ([]*model.GameImage, error)
 	GameVideos(ctx context.Context) ([]*model.GameVideo, error)
 	Games(ctx context.Context) ([]*model.Game, error)
+	GameByID(ctx context.Context, id int) (*model.Game, error)
 	GetGamePaginationAdmin(ctx context.Context, page *int) ([]*model.Game, error)
 	GetTotalGame(ctx context.Context) (int, error)
 	GameSearch(ctx context.Context, keyword string) ([]*model.Game, error)
@@ -583,13 +586,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Game.Developers(childComplexity), true
 
-	case "Game.discountPercentage":
-		if e.complexity.Game.DiscountPercentage == nil {
-			break
-		}
-
-		return e.complexity.Game.DiscountPercentage(childComplexity), true
-
 	case "Game.gamePlayHour":
 		if e.complexity.Game.GamePlayHour == nil {
 			break
@@ -632,19 +628,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Game.Name(childComplexity), true
 
-	case "Game.onSale":
-		if e.complexity.Game.OnSale == nil {
-			break
-		}
-
-		return e.complexity.Game.OnSale(childComplexity), true
-
 	case "Game.originalPrice":
 		if e.complexity.Game.OriginalPrice == nil {
 			break
 		}
 
 		return e.complexity.Game.OriginalPrice(childComplexity), true
+
+	case "Game.promo":
+		if e.complexity.Game.Promo == nil {
+			break
+		}
+
+		return e.complexity.Game.Promo(childComplexity), true
 
 	case "Game.publisher":
 		if e.complexity.Game.Publisher == nil {
@@ -1027,6 +1023,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateAccountSuspension(childComplexity, args["id"].(int)), true
 
+	case "Mutation.updateGame":
+		if e.complexity.Mutation.UpdateGame == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateGame_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateGame(childComplexity, args["id"].(int), args["input"].(model.NewGame)), true
+
 	case "Mutation.updateGameImage":
 		if e.complexity.Mutation.UpdateGameImage == nil {
 			break
@@ -1037,7 +1045,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateGameImage(childComplexity, args["id"].(int), args["link"].(string)), true
+		return e.complexity.Mutation.UpdateGameImage(childComplexity, args["id"].([]int), args["images"].([]*model.InputGameImage)), true
 
 	case "Mutation.updateGameVideo":
 		if e.complexity.Mutation.UpdateGameVideo == nil {
@@ -1049,7 +1057,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateGameVideo(childComplexity, args["id"].(int), args["link"].(string)), true
+		return e.complexity.Mutation.UpdateGameVideo(childComplexity, args["id"].([]int), args["videos"].([]*model.InputGameVideo)), true
 
 	case "Mutation.updateOtp":
 		if e.complexity.Mutation.UpdateOtp == nil {
@@ -1233,6 +1241,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Developers(childComplexity), true
+
+	case "Query.gameById":
+		if e.complexity.Query.GameByID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_gameById_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GameByID(childComplexity, args["id"].(int)), true
 
 	case "Query.gameImages":
 		if e.complexity.Query.GameImages == nil {
@@ -2142,7 +2162,7 @@ extend type Query {
 
 extend type Mutation {
     insertGameImage(gameImages: [InputGameImage!]!): Boolean!
-    updateGameImage(id: Int!, link: String!): GameImage!
+    updateGameImage(id: [Int!]!, images: [InputGameImage!]!): Boolean!
 }`, BuiltIn: false},
 	{Name: "graph/game-video.graphqls", Input: `type GameVideo {
     id: Int!
@@ -2165,7 +2185,7 @@ extend type Query {
 
 extend type Mutation {
     insertGameVideo(gameVideos: [InputGameVideo!]!): Boolean!
-    updateGameVideo(id: Int!, link: String!): GameVideo!
+    updateGameVideo(id: [Int!]!, videos: [InputGameVideo!]!): Boolean!
 }`, BuiltIn: false},
 	{Name: "graph/game.graphqls", Input: `type Game {
     id: Int!
@@ -2175,8 +2195,7 @@ extend type Mutation {
     genres: [Genre!]!
     tags: [Tag!]!
     originalPrice: Float!
-    onSale: Boolean!
-    discountPercentage: Int!
+    promo: Promo
     gamePlayHour: Float!
     gameReviews: [Review!]!
     developers: [Developer!]!
@@ -2199,8 +2218,7 @@ input NewGame {
     genres: [InputGenre!]!
     tags: [InputTag!]!
     originalPrice: Float!
-    onSale: Boolean!
-    discountPercentage: Int!
+    promo: InputPromo
     developers: [InputDeveloper!]!
     publisherId: Int!
     systemId: Int!
@@ -2208,6 +2226,7 @@ input NewGame {
 
 extend type Query {
     games: [Game!]!
+    gameById(id: Int!): Game!
     getGamePaginationAdmin(page: Int): [Game!]!
     getTotalGame: Int!
     gameSearch(keyword: String!): [Game!]!
@@ -2216,6 +2235,7 @@ extend type Query {
 
 extend type Mutation {
     createGame(input: NewGame!): Game!
+    updateGame(id: Int!, input: NewGame!): Game!
     deleteGame(id: Int!): Game!
     insertGameBanner(id: Int!, link: String!): Boolean!
 }`, BuiltIn: false},
@@ -2283,6 +2303,10 @@ extend type Mutation {
 input NewPromo {
     discountPercentage: Int!
     validUntil: Int!
+}
+
+input InputPromo {
+    id: Int!
 }
 
 extend type Query {
@@ -2759,28 +2783,52 @@ func (ec *executionContext) field_Mutation_updateAccountSuspension_args(ctx cont
 func (ec *executionContext) field_Mutation_updateGameImage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
+	var arg0 []int
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		arg0, err = ec.unmarshalNInt2ᚕintᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["id"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["link"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg1 []*model.InputGameImage
+	if tmp, ok := rawArgs["images"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("images"))
+		arg1, err = ec.unmarshalNInputGameImage2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputGameImageᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["link"] = arg1
+	args["images"] = arg1
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_updateGameVideo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 []int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2ᚕintᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 []*model.InputGameVideo
+	if tmp, ok := rawArgs["videos"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("videos"))
+		arg1, err = ec.unmarshalNInputGameVideo2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputGameVideoᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["videos"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateGame_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -2792,15 +2840,15 @@ func (ec *executionContext) field_Mutation_updateGameVideo_args(ctx context.Cont
 		}
 	}
 	args["id"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["link"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg1 model.NewGame
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNNewGame2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewGame(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["link"] = arg1
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -2870,6 +2918,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_gameById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -4153,7 +4216,7 @@ func (ec *executionContext) _Game_originalPrice(ctx context.Context, field graph
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Game_onSale(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+func (ec *executionContext) _Game_promo(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4171,56 +4234,18 @@ func (ec *executionContext) _Game_onSale(ctx context.Context, field graphql.Coll
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.OnSale, nil
+		return obj.Promo, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*model.Promo)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Game_discountPercentage(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Game",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DiscountPercentage, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalOPromo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPromo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Game_gamePlayHour(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
@@ -5058,9 +5083,9 @@ func (ec *executionContext) _GameVideo_deletedAt(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Genre_id(ctx context.Context, field graphql.CollectedField, obj *model.Genre) (ret graphql.Marshaler) {
@@ -5662,7 +5687,7 @@ func (ec *executionContext) _Mutation_updateGameImage(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateGameImage(rctx, args["id"].(int), args["link"].(string))
+		return ec.resolvers.Mutation().UpdateGameImage(rctx, args["id"].([]int), args["images"].([]*model.InputGameImage))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5674,9 +5699,9 @@ func (ec *executionContext) _Mutation_updateGameImage(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.GameImage)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNGameImage2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImage(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_insertGameVideo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5746,7 +5771,7 @@ func (ec *executionContext) _Mutation_updateGameVideo(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateGameVideo(rctx, args["id"].(int), args["link"].(string))
+		return ec.resolvers.Mutation().UpdateGameVideo(rctx, args["id"].([]int), args["videos"].([]*model.InputGameVideo))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5758,9 +5783,9 @@ func (ec *executionContext) _Mutation_updateGameVideo(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.GameVideo)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNGameVideo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameVideo(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createGame(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5789,6 +5814,48 @@ func (ec *executionContext) _Mutation_createGame(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().CreateGame(rctx, args["input"].(model.NewGame))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateGame(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateGame_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateGame(rctx, args["id"].(int), args["input"].(model.NewGame))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7294,6 +7361,48 @@ func (ec *executionContext) _Query_games(ctx context.Context, field graphql.Coll
 	res := resTmp.([]*model.Game)
 	fc.Result = res
 	return ec.marshalNGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_gameById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_gameById_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GameByID(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getGamePaginationAdmin(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -11718,6 +11827,26 @@ func (ec *executionContext) unmarshalInputInputGenre(ctx context.Context, obj in
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputInputPromo(ctx context.Context, obj interface{}) (model.InputPromo, error) {
+	var it model.InputPromo
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputInputTag(ctx context.Context, obj interface{}) (model.InputTag, error) {
 	var it model.InputTag
 	var asMap = obj.(map[string]interface{})
@@ -11832,19 +11961,11 @@ func (ec *executionContext) unmarshalInputNewGame(ctx context.Context, obj inter
 			if err != nil {
 				return it, err
 			}
-		case "onSale":
+		case "promo":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("onSale"))
-			it.OnSale, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "discountPercentage":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("discountPercentage"))
-			it.DiscountPercentage, err = ec.unmarshalNInt2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("promo"))
+			it.Promo, err = ec.unmarshalOInputPromo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputPromo(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12481,16 +12602,8 @@ func (ec *executionContext) _Game(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "onSale":
-			out.Values[i] = ec._Game_onSale(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "discountPercentage":
-			out.Values[i] = ec._Game_discountPercentage(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+		case "promo":
+			out.Values[i] = ec._Game_promo(ctx, field, obj)
 		case "gamePlayHour":
 			out.Values[i] = ec._Game_gamePlayHour(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -12795,6 +12908,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createGame":
 			out.Values[i] = ec._Mutation_createGame(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateGame":
+			out.Values[i] = ec._Mutation_updateGame(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -13184,6 +13302,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_games(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "gameById":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_gameById(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -14417,10 +14549,6 @@ func (ec *executionContext) marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackend�
 	return ec._Game(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNGameImage2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImage(ctx context.Context, sel ast.SelectionSet, v model.GameImage) graphql.Marshaler {
-	return ec._GameImage(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNGameImage2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GameImage) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -14466,10 +14594,6 @@ func (ec *executionContext) marshalNGameImage2ᚖgithubᚗcomᚋnicotanzilᚋbac
 		return graphql.Null
 	}
 	return ec._GameImage(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNGameVideo2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameVideo(ctx context.Context, sel ast.SelectionSet, v model.GameVideo) graphql.Marshaler {
-	return ec._GameVideo(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNGameVideo2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameVideoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GameVideo) graphql.Marshaler {
@@ -14728,6 +14852,36 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNInt2ᚕintᚄ(ctx context.Context, v interface{}) ([]int, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]int, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInt2int(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNInt2ᚕintᚄ(ctx context.Context, sel ast.SelectionSet, v []int) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNInt2int(ctx, sel, v[i])
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNNewDeveloper2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewDeveloper(ctx context.Context, v interface{}) (model.NewDeveloper, error) {
@@ -15579,6 +15733,14 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
+func (ec *executionContext) unmarshalOInputPromo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputPromo(ctx context.Context, v interface{}) (*model.InputPromo, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputInputPromo(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
 	if v == nil {
 		return nil, nil
@@ -15616,6 +15778,13 @@ func (ec *executionContext) unmarshalONewUser2ᚖgithubᚗcomᚋnicotanzilᚋbac
 	}
 	res, err := ec.unmarshalInputNewUser(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOPromo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPromo(ctx context.Context, sel ast.SelectionSet, v *model.Promo) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Promo(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

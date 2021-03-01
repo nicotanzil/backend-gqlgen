@@ -6,8 +6,7 @@ type Game {
     genres: [Genre!]!
     tags: [Tag!]!
     originalPrice: Float!
-    onSale: Boolean!
-    discountPercentage: Int!
+    promo: Promo
     gamePlayHour: Float!
     gameReviews: [Review!]!
     developers: [Developer!]!
@@ -30,8 +29,7 @@ input NewGame {
     genres: [InputGenre!]!
     tags: [InputTag!]!
     originalPrice: Float!
-    onSale: Boolean!
-    discountPercentage: Int!
+    promo: InputPromo
     developers: [InputDeveloper!]!
     publisherId: Int!
     systemId: Int!
@@ -39,6 +37,7 @@ input NewGame {
 
 extend type Query {
     games: [Game!]!
+    gameById(id: Int!): Game!
     getGamePaginationAdmin(page: Int): [Game!]!
     getTotalGame: Int!
     gameSearch(keyword: String!): [Game!]!
@@ -47,6 +46,7 @@ extend type Query {
 
 extend type Mutation {
     createGame(input: NewGame!): Game!
+    updateGame(id: Int!, input: NewGame!): Game!
     deleteGame(id: Int!): Game!
     insertGameBanner(id: Int!, link: String!): Boolean!
 }

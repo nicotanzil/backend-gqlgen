@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 )
@@ -30,19 +29,22 @@ func (r *mutationResolver) InsertGameVideo(ctx context.Context, gameVideos []*mo
 	return true, nil
 }
 
-func (r *mutationResolver) UpdateGameVideo(ctx context.Context, id int, link string) (*model.GameVideo, error) {
+func (r *mutationResolver) UpdateGameVideo(ctx context.Context, id []int, videos []*model.InputGameVideo) (bool, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
 	}
 
-	var gameVideo model.GameVideo
+	length := len(id)
 
-	db.Where("id = ?", id).First(&gameVideo)
-
-	gameVideo.Link = link
-
-	return &gameVideo, nil
+	for i := 0; i < length; i++ {
+		var currGameVideo model.GameVideo
+		db.Where("id = ?", id[i]).First(&currGameVideo)
+		currGameVideo.GameID = videos[i].GameID
+		currGameVideo.Link = videos[i].Link
+		db.Save(&currGameVideo)
+	}
+	return true, nil
 }
 
 func (r *queryResolver) GameVideos(ctx context.Context) ([]*model.GameVideo, error) {

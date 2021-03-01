@@ -19,5 +19,5 @@ extend type Query {
 
 extend type Mutation {
     insertGameImage(gameImages: [InputGameImage!]!): Boolean!
-    updateGameImage(id: Int!, link: String!): GameImage!
+    updateGameImage(id: [Int!]!, images: [InputGameImage!]!): Boolean!
 }
