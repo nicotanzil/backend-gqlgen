@@ -36,7 +36,6 @@ type NewGame struct {
 	Genres        []*InputGenre     `json:"genres"`
 	Tags          []*InputTag       `json:"tags"`
 	OriginalPrice float64           `json:"originalPrice"`
-	Promo         *InputPromo       `json:"promo"`
 	Developers    []*InputDeveloper `json:"developers"`
 	PublisherID   int               `json:"publisherId"`
 	SystemID      int               `json:"systemId"`

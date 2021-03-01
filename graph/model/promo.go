@@ -13,7 +13,7 @@ type Promo struct {
 	ValidUntil         int       `json:"validUntil"`
 	CreatedAt          time.Time `json:"createdAt"`
 	UpdatedAt          time.Time `json:"updatedAt"`
-	DeletedAt          *time.Time `json:"deletedAt"`
+	DeletedAt          time.Time `json:"deletedAt"`
 }
 
 type InputPromo struct {

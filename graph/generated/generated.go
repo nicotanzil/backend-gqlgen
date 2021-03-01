@@ -141,6 +141,7 @@ type ComplexityRoot struct {
 		CreateOtp               func(childComplexity int, input model.NewOtp) int
 		CreatePromo             func(childComplexity int, input model.NewPromo) int
 		CreatePublisher         func(childComplexity int, input model.NewPublisher) int
+		CreateSuspensionRequest func(childComplexity int, request *model.InputSuspensionRequest) int
 		CreateTag               func(childComplexity int, input model.NewTag) int
 		CreateUser              func(childComplexity int, user *model.NewUser, otp *model.NewOtp) int
 		DeleteGame              func(childComplexity int, id int) int
@@ -150,6 +151,7 @@ type ComplexityRoot struct {
 		InsertGameVideo         func(childComplexity int, gameVideos []*model.InputGameVideo) int
 		Login                   func(childComplexity int, input *model.Login) int
 		Logout                  func(childComplexity int) int
+		SetGamePromo            func(childComplexity int, gameID int, promoID int) int
 		UpdateAccountSuspension func(childComplexity int, id int) int
 		UpdateGame              func(childComplexity int, id int, input model.NewGame) int
 		UpdateGameImage         func(childComplexity int, id []int, images []*model.InputGameImage) int
@@ -197,6 +199,7 @@ type ComplexityRoot struct {
 		GameVideos              func(childComplexity int) int
 		Games                   func(childComplexity int) int
 		Genres                  func(childComplexity int) int
+		GetGameByPromoID        func(childComplexity int, id int) int
 		GetGamePaginationAdmin  func(childComplexity int, page *int) int
 		GetOtpByCode            func(childComplexity int, code *string) int
 		GetPromoByID            func(childComplexity int, id int) int
@@ -248,6 +251,7 @@ type ComplexityRoot struct {
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
+		User        func(childComplexity int) int
 	}
 
 	System struct {
@@ -332,6 +336,7 @@ type MutationResolver interface {
 	UpdateGame(ctx context.Context, id int, input model.NewGame) (*model.Game, error)
 	DeleteGame(ctx context.Context, id int) (*model.Game, error)
 	InsertGameBanner(ctx context.Context, id int, link string) (bool, error)
+	SetGamePromo(ctx context.Context, gameID int, promoID int) (*model.Game, error)
 	CreateGenre(ctx context.Context, input model.NewGenre) (*model.Genre, error)
 	CreateOtp(ctx context.Context, input model.NewOtp) (*model.Otp, error)
 	UpdateOtp(ctx context.Context, code string) (*model.Otp, error)
@@ -339,6 +344,7 @@ type MutationResolver interface {
 	UpdatePromo(ctx context.Context, input model.NewPromo, id int) (*model.Promo, error)
 	DeletePromo(ctx context.Context, id int) (*model.Promo, error)
 	CreatePublisher(ctx context.Context, input model.NewPublisher) (*model.Publisher, error)
+	CreateSuspensionRequest(ctx context.Context, request *model.InputSuspensionRequest) (*model.SuspensionRequest, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
 }
 type QueryResolver interface {
@@ -354,6 +360,7 @@ type QueryResolver interface {
 	GameVideos(ctx context.Context) ([]*model.GameVideo, error)
 	Games(ctx context.Context) ([]*model.Game, error)
 	GameByID(ctx context.Context, id int) (*model.Game, error)
+	GetGameByPromoID(ctx context.Context, id int) (*model.Game, error)
 	GetGamePaginationAdmin(ctx context.Context, page *int) ([]*model.Game, error)
 	GetTotalGame(ctx context.Context) (int, error)
 	GameSearch(ctx context.Context, keyword string) ([]*model.Game, error)
@@ -908,6 +915,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreatePublisher(childComplexity, args["input"].(model.NewPublisher)), true
 
+	case "Mutation.createSuspensionRequest":
+		if e.complexity.Mutation.CreateSuspensionRequest == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createSuspensionRequest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateSuspensionRequest(childComplexity, args["request"].(*model.InputSuspensionRequest)), true
+
 	case "Mutation.createTag":
 		if e.complexity.Mutation.CreateTag == nil {
 			break
@@ -1010,6 +1029,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Logout(childComplexity), true
+
+	case "Mutation.setGamePromo":
+		if e.complexity.Mutation.SetGamePromo == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_setGamePromo_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SetGamePromo(childComplexity, args["gameId"].(int), args["promoId"].(int)), true
 
 	case "Mutation.updateAccountSuspension":
 		if e.complexity.Mutation.UpdateAccountSuspension == nil {
@@ -1305,6 +1336,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Genres(childComplexity), true
+
+	case "Query.getGameByPromoId":
+		if e.complexity.Query.GetGameByPromoID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getGameByPromoId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetGameByPromoID(childComplexity, args["id"].(int)), true
 
 	case "Query.getGamePaginationAdmin":
 		if e.complexity.Query.GetGamePaginationAdmin == nil {
@@ -1644,6 +1687,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SuspensionRequest.UpdatedAt(childComplexity), true
+
+	case "SuspensionRequest.user":
+		if e.complexity.SuspensionRequest.User == nil {
+			break
+		}
+
+		return e.complexity.SuspensionRequest.User(childComplexity), true
 
 	case "System.createdAt":
 		if e.complexity.System.CreatedAt == nil {
@@ -2218,7 +2268,6 @@ input NewGame {
     genres: [InputGenre!]!
     tags: [InputTag!]!
     originalPrice: Float!
-    promo: InputPromo
     developers: [InputDeveloper!]!
     publisherId: Int!
     systemId: Int!
@@ -2227,6 +2276,7 @@ input NewGame {
 extend type Query {
     games: [Game!]!
     gameById(id: Int!): Game!
+    getGameByPromoId(id: Int!): Game!
     getGamePaginationAdmin(page: Int): [Game!]!
     getTotalGame: Int!
     gameSearch(keyword: String!): [Game!]!
@@ -2238,6 +2288,7 @@ extend type Mutation {
     updateGame(id: Int!, input: NewGame!): Game!
     deleteGame(id: Int!): Game!
     insertGameBanner(id: Int!, link: String!): Boolean!
+    setGamePromo(gameId: Int!, promoId: Int!): Game!
 }`, BuiltIn: false},
 	{Name: "graph/genre.graphqls", Input: `type Genre {
     id: Int!
@@ -2305,10 +2356,6 @@ input NewPromo {
     validUntil: Int!
 }
 
-input InputPromo {
-    id: Int!
-}
-
 extend type Query {
     promos: [Promo!]!
     getTotalPromo: Int!
@@ -2371,14 +2418,24 @@ extend type Query {
 	{Name: "graph/suspension-request.graphqls", Input: `type SuspensionRequest {
     id: Int!
     description: String!
+    user: User!
 
     createdAt: Time!
     updatedAt: Time!
     deletedAt: Time!
 }
 
+input InputSuspensionRequest {
+    description: String!
+    user: InputUser!
+}
+
 extend type Query {
     suspensionRequests: [SuspensionRequest!]!
+}
+
+extend type Mutation {
+    createSuspensionRequest(request:InputSuspensionRequest): SuspensionRequest
 }`, BuiltIn: false},
 	{Name: "graph/system.graphqls", Input: `type System {
     id: Int!
@@ -2474,6 +2531,10 @@ type User {
 input NewUser {
     accountName: String!
     password: String!
+}
+
+input InputUser {
+    id: Int!
 }
 
 input UpdateUser {
@@ -2627,6 +2688,21 @@ func (ec *executionContext) field_Mutation_createPublisher_args(ctx context.Cont
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createSuspensionRequest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.InputSuspensionRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("request"))
+		arg0, err = ec.unmarshalOInputSuspensionRequest2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputSuspensionRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["request"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createTag_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2762,6 +2838,30 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_setGamePromo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["gameId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gameId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["promoId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("promoId"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["promoId"] = arg1
 	return args, nil
 }
 
@@ -2990,6 +3090,21 @@ func (ec *executionContext) field_Query_gameSearch_args(ctx context.Context, raw
 		}
 	}
 	args["keyword"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getGameByPromoId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -5956,6 +6071,48 @@ func (ec *executionContext) _Mutation_insertGameBanner(ctx context.Context, fiel
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_setGamePromo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_setGamePromo_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().SetGamePromo(rctx, args["gameId"].(int), args["promoId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createGenre(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6248,6 +6405,45 @@ func (ec *executionContext) _Mutation_createPublisher(ctx context.Context, field
 	res := resTmp.(*model.Publisher)
 	fc.Result = res
 	return ec.marshalNPublisher2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPublisher(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createSuspensionRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createSuspensionRequest_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateSuspensionRequest(rctx, args["request"].(*model.InputSuspensionRequest))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.SuspensionRequest)
+	fc.Result = res
+	return ec.marshalOSuspensionRequest2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐSuspensionRequest(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createTag(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6777,9 +6973,9 @@ func (ec *executionContext) _Promo_deletedAt(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Publisher_id(ctx context.Context, field graphql.CollectedField, obj *model.Publisher) (ret graphql.Marshaler) {
@@ -7389,6 +7585,48 @@ func (ec *executionContext) _Query_gameById(ctx context.Context, field graphql.C
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().GameByID(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getGameByPromoId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getGameByPromoId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetGameByPromoID(rctx, args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8792,6 +9030,41 @@ func (ec *executionContext) _SuspensionRequest_description(ctx context.Context, 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _SuspensionRequest_user(ctx context.Context, field graphql.CollectedField, obj *model.SuspensionRequest) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SuspensionRequest",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _SuspensionRequest_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.SuspensionRequest) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8892,9 +9165,9 @@ func (ec *executionContext) _SuspensionRequest_deletedAt(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _System_id(ctx context.Context, field graphql.CollectedField, obj *model.System) (ret graphql.Marshaler) {
@@ -11827,8 +12100,36 @@ func (ec *executionContext) unmarshalInputInputGenre(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputInputPromo(ctx context.Context, obj interface{}) (model.InputPromo, error) {
-	var it model.InputPromo
+func (ec *executionContext) unmarshalInputInputSuspensionRequest(ctx context.Context, obj interface{}) (model.InputSuspensionRequest, error) {
+	var it model.InputSuspensionRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "user":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("user"))
+			it.User, err = ec.unmarshalNInputUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputUser(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputInputTag(ctx context.Context, obj interface{}) (model.InputTag, error) {
+	var it model.InputTag
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -11847,8 +12148,8 @@ func (ec *executionContext) unmarshalInputInputPromo(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputInputTag(ctx context.Context, obj interface{}) (model.InputTag, error) {
-	var it model.InputTag
+func (ec *executionContext) unmarshalInputInputUser(ctx context.Context, obj interface{}) (model.InputUser, error) {
+	var it model.InputUser
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -11958,14 +12259,6 @@ func (ec *executionContext) unmarshalInputNewGame(ctx context.Context, obj inter
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("originalPrice"))
 			it.OriginalPrice, err = ec.unmarshalNFloat2float64(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "promo":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("promo"))
-			it.Promo, err = ec.unmarshalOInputPromo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputPromo(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12926,6 +13219,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "setGamePromo":
+			out.Values[i] = ec._Mutation_setGamePromo(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createGenre":
 			out.Values[i] = ec._Mutation_createGenre(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -12961,6 +13259,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "createSuspensionRequest":
+			out.Values[i] = ec._Mutation_createSuspensionRequest(ctx, field)
 		case "createTag":
 			out.Values[i] = ec._Mutation_createTag(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -13316,6 +13616,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_gameById(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getGameByPromoId":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getGameByPromoId(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -13739,6 +14053,11 @@ func (ec *executionContext) _SuspensionRequest(ctx context.Context, sel ast.Sele
 			}
 		case "description":
 			out.Values[i] = ec._SuspensionRequest_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user":
+			out.Values[i] = ec._SuspensionRequest_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -14839,6 +15158,11 @@ func (ec *executionContext) unmarshalNInputTag2ᚖgithubᚗcomᚋnicotanzilᚋba
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNInputUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputUser(ctx context.Context, v interface{}) (*model.InputUser, error) {
+	res, err := ec.unmarshalInputInputUser(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalInt(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -15733,11 +16057,11 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
-func (ec *executionContext) unmarshalOInputPromo2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputPromo(ctx context.Context, v interface{}) (*model.InputPromo, error) {
+func (ec *executionContext) unmarshalOInputSuspensionRequest2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputSuspensionRequest(ctx context.Context, v interface{}) (*model.InputSuspensionRequest, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputInputPromo(ctx, v)
+	res, err := ec.unmarshalInputInputSuspensionRequest(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

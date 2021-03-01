@@ -47,7 +47,7 @@ func (r *mutationResolver) CreateGame(ctx context.Context, input model.NewGame) 
 		Genres:        genres,
 		Tags:          tags,
 		OriginalPrice: input.OriginalPrice,
-		PromoID:       input.Promo.ID,
+		PromoID:       providers.DEFAULT_PROMO_ID,
 		GamePlayHour:  0,
 		GameReviews:   nil,
 		Developers:    developers,
@@ -94,7 +94,6 @@ func (r *mutationResolver) UpdateGame(ctx context.Context, id int, input model.N
 	game.Genres = genres
 	game.Tags = tags
 	game.OriginalPrice = input.OriginalPrice
-	game.PromoID = input.Promo.ID
 	game.Developers = developers
 	game.PublisherID = input.PublisherID
 	game.SystemID = input.SystemID
@@ -136,6 +135,21 @@ func (r *mutationResolver) InsertGameBanner(ctx context.Context, id int, link st
 	return true, nil
 }
 
+func (r *mutationResolver) SetGamePromo(ctx context.Context, gameID int, promoID int) (*model.Game, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var game model.Game
+
+	db.Where("id = ?", game).First(&game)
+	game.Promo = &model.Promo{ID: promoID}
+	db.Save(&game)
+
+	return &game, nil
+}
+
 func (r *queryResolver) Games(ctx context.Context) ([]*model.Game, error) {
 	db, err := database.Connect()
 	if err != nil {
@@ -159,6 +173,18 @@ func (r *queryResolver) GameByID(ctx context.Context, id int) (*model.Game, erro
 
 	db.Preload(clause.Associations).Where("id = ?", id).First(&game)
 
+	return &game, nil
+}
+
+func (r *queryResolver) GetGameByPromoID(ctx context.Context, id int) (*model.Game, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var game model.Game
+
+	db.Preload(clause.Associations).Where("promo_id = ?", id).First(&game)
 	return &game, nil
 }
 

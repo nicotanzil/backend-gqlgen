@@ -13,10 +13,6 @@ input NewPromo {
     validUntil: Int!
 }
 
-input InputPromo {
-    id: Int!
-}
-
 extend type Query {
     promos: [Promo!]!
     getTotalPromo: Int!

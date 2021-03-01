@@ -1,12 +1,22 @@
 type SuspensionRequest {
     id: Int!
     description: String!
+    user: User!
 
     createdAt: Time!
     updatedAt: Time!
     deletedAt: Time!
 }
 
+input InputSuspensionRequest {
+    description: String!
+    user: InputUser!
+}
+
 extend type Query {
     suspensionRequests: [SuspensionRequest!]!
+}
+
+extend type Mutation {
+    createSuspensionRequest(request:InputSuspensionRequest): SuspensionRequest
 }

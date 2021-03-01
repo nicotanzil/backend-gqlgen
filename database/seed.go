@@ -360,7 +360,7 @@ func SeedGame(db *gorm.DB) {
 				},
 			},
 			OriginalPrice:      650000,
-			PromoID: 2,
+			PromoID: 3,
 			Developers: []*model.Developer{
 				{
 					ID: 3,

@@ -35,6 +35,10 @@ input NewUser {
     password: String!
 }
 
+input InputUser {
+    id: Int!
+}
+
 input UpdateUser {
     accountName: String!
     profileName: String!

@@ -52,3 +52,7 @@ type UpdateUser struct {
 	Theme                 string `json:"theme"`
 	CountryID             int    `json:"CountryId"`
 }
+
+type InputUser struct {
+	ID int `json:"id"`
+}

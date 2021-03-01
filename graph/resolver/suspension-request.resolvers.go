@@ -5,11 +5,16 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 	"gorm.io/gorm/clause"
 )
+
+func (r *mutationResolver) CreateSuspensionRequest(ctx context.Context, request *model.InputSuspensionRequest) (*model.SuspensionRequest, error) {
+	panic(fmt.Errorf("not implemented"))
+}
 
 func (r *queryResolver) SuspensionRequests(ctx context.Context) ([]*model.SuspensionRequest, error) {
 	db, err := database.Connect()
