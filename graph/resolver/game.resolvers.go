@@ -263,3 +263,16 @@ func (r *queryResolver) GameSearchPage(ctx context.Context, keyword string, page
 
 	return games, nil
 }
+
+func (r *queryResolver) GetSpecialOfferGame(ctx context.Context) ([]*model.Game, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var games []*model.Game
+
+	db.Preload(clause.Associations).Where("promo_id <> ?", 1).Find(&games)
+
+	return games, nil
+}
