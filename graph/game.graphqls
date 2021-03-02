@@ -44,6 +44,9 @@ extend type Query {
     gameSearchPage(keyword: String!, page: Int!, price: Int!, tag: [InputTag!]!): [Game!]!
 
     getSpecialOfferGame: [Game!]!
+
+    getNewTrendingGame: [Game!]!
+
 }
 
 extend type Mutation {

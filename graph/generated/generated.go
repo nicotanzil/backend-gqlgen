@@ -201,6 +201,7 @@ type ComplexityRoot struct {
 		Genres                     func(childComplexity int) int
 		GetGameByPromoID           func(childComplexity int, id int) int
 		GetGamePaginationAdmin     func(childComplexity int, page *int) int
+		GetNewTrendingGame         func(childComplexity int) int
 		GetOtpByCode               func(childComplexity int, code *string) int
 		GetPromoByID               func(childComplexity int, id int) int
 		GetPromoPaginationAdmin    func(childComplexity int, page *int) int
@@ -369,6 +370,7 @@ type QueryResolver interface {
 	GameSearch(ctx context.Context, keyword string) ([]*model.Game, error)
 	GameSearchPage(ctx context.Context, keyword string, page int, price int, tag []*model.InputTag) ([]*model.Game, error)
 	GetSpecialOfferGame(ctx context.Context) ([]*model.Game, error)
+	GetNewTrendingGame(ctx context.Context) ([]*model.Game, error)
 	Genres(ctx context.Context) ([]*model.Genre, error)
 	Otps(ctx context.Context) ([]*model.Otp, error)
 	GetOtpByCode(ctx context.Context, code *string) (*model.Otp, error)
@@ -1366,6 +1368,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetGamePaginationAdmin(childComplexity, args["page"].(*int)), true
 
+	case "Query.getNewTrendingGame":
+		if e.complexity.Query.GetNewTrendingGame == nil {
+			break
+		}
+
+		return e.complexity.Query.GetNewTrendingGame(childComplexity), true
+
 	case "Query.getOtpByCode":
 		if e.complexity.Query.GetOtpByCode == nil {
 			break
@@ -2312,6 +2321,9 @@ extend type Query {
     gameSearchPage(keyword: String!, page: Int!, price: Int!, tag: [InputTag!]!): [Game!]!
 
     getSpecialOfferGame: [Game!]!
+
+    getNewTrendingGame: [Game!]!
+
 }
 
 extend type Mutation {
@@ -7930,6 +7942,41 @@ func (ec *executionContext) _Query_getSpecialOfferGame(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().GetSpecialOfferGame(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getNewTrendingGame(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetNewTrendingGame(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13869,6 +13916,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getSpecialOfferGame(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getNewTrendingGame":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getNewTrendingGame(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

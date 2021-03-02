@@ -256,6 +256,10 @@ func SeedPromo(db *gorm.DB) {
 			DiscountPercentage: 10,
 			ValidUntil:         int(time.Now().Add(time.Hour * 24 * 7).Unix()),
 		},
+		{
+			DiscountPercentage: 75,
+			ValidUntil:         int(time.Now().Add(time.Hour * 24 * 1).Unix()),
+		},
 	}
 
 	for _, promo := range promos {
@@ -445,7 +449,7 @@ func SeedGame(db *gorm.DB) {
 				},
 			},
 			OriginalPrice:      300000,
-			PromoID: 1,
+			PromoID: 4,
 			Developers: []*model.Developer{
 				{
 					ID: 5,

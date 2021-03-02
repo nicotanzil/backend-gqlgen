@@ -276,3 +276,16 @@ func (r *queryResolver) GetSpecialOfferGame(ctx context.Context) ([]*model.Game,
 
 	return games, nil
 }
+
+func (r *queryResolver) GetNewTrendingGame(ctx context.Context) ([]*model.Game, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var games []*model.Game
+
+	db.Preload(clause.Associations).Order("created_at desc").Limit(providers.DEFAULT_HOME_CATEGORY_ITEM).Find(&games)
+
+	return games, nil
+}
