@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-
 	firebase_data "github.com/nicotanzil/backend-gqlgen/app/firebase-data"
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
@@ -73,15 +72,15 @@ func (r *mutationResolver) UpdateAccountSuspension(ctx context.Context, id int) 
 	}
 
 	var user model.User
+	var request model.SuspensionRequest
 
 	db.Preload(clause.Associations).Where("id = ?", id).First(&user)
 
 	if user.IsSuspend {
 		user.IsSuspend = false
-		user.SuspensionRequest = &model.SuspensionRequest{ID: 1}
+		db.Where("user_id = ?", user.ID).Delete(&request)
 	} else {
 		user.IsSuspend = true
-		user.SuspensionRequest = &model.SuspensionRequest{ID: 2}
 	}
 	db.Save(&user)
 	return true, nil
@@ -111,6 +110,19 @@ func (r *queryResolver) GetUserByID(ctx context.Context, id *int) (*model.User, 
 	var user model.User
 
 	db.Preload(clause.Associations).Where("id = ?", id).First(&user)
+
+	return &user, nil
+}
+
+func (r *queryResolver) GetUseByAccountName(ctx context.Context, accountName string) (*model.User, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var user model.User
+
+	db.Preload(clause.Associations).Where("account_name = ?", accountName).First(&user)
 
 	return &user, nil
 }

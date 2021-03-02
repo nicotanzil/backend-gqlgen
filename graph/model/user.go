@@ -26,9 +26,6 @@ type User struct {
 	Experience int        	`json:"experience"`
 	IsSuspend  bool       	`json:"isSuspend"`
 
-	SuspensionRequestID		int	`json:"suspensionRequestId"`
-	SuspensionRequest     *SuspensionRequest `json:"suspensionRequest" gorm:"foreignKey:SuspensionRequestID"`
-
 	CreatedAt  time.Time  	`json:"createdAt"`
 	UpdatedAt  time.Time  	`json:"updatedAt"`
 	DeletedAt  *time.Time 	`json:"deletedAt"`

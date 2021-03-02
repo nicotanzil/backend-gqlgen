@@ -19,7 +19,6 @@ func Seed() {
 	// SEED ALL NECESSARY TABLE
 
 	SeedAdmin(db)
-	SeedSuspensionRequest(db)
 	SeedTag(db)
 	SeedSystem(db)
 	SeedReview(db)
@@ -33,6 +32,7 @@ func Seed() {
 	SeedGameVideo(db)
 	SeedCountry(db)
 	SeedUser(db)
+	SeedSuspensionRequest(db)
 	SeedUserReport(db)
 
 	fmt.Println("[INFO] SEEDED.")
@@ -840,7 +840,6 @@ func SeedUser(db *gorm.DB) {
 			},
 			Experience:        550,
 			IsSuspend:         true,
-			SuspensionRequest: &model.SuspensionRequest{ID: 2},
 		},
 		{
 			AccountName:       "william",
@@ -854,7 +853,6 @@ func SeedUser(db *gorm.DB) {
 			Avatar:            firebase_data.Avatar,
 			ProfileBackground: firebase_data.ProfileBackground,
 			Country:           &model.Country{ID: 2},
-			SuspensionRequest: &model.SuspensionRequest{ID: 1},
 		},
 		{
 			AccountName:       "ricko",
@@ -868,7 +866,6 @@ func SeedUser(db *gorm.DB) {
 			Avatar:            firebase_data.Avatar,
 			ProfileBackground: firebase_data.ProfileBackground,
 			Country:           &model.Country{ID: 3},
-			SuspensionRequest: &model.SuspensionRequest{ID: 1},
 		},
 	}
 
@@ -899,10 +896,12 @@ func SeedUserReport(db *gorm.DB) {
 func SeedSuspensionRequest(db *gorm.DB) {
 	suspensionRequests := []model.SuspensionRequest{
 		{
-			Description: "No suspension request.",
+			Description: "Please unsuspend me!",
+			User: &model.User{ID: 1},
 		},
 		{
-			Description: "Please unsuspend me!",
+			Description: "Respond please!",
+			User: &model.User{ID: 1},
 		},
 	}
 

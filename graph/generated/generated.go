@@ -141,7 +141,7 @@ type ComplexityRoot struct {
 		CreateOtp               func(childComplexity int, input model.NewOtp) int
 		CreatePromo             func(childComplexity int, input model.NewPromo) int
 		CreatePublisher         func(childComplexity int, input model.NewPublisher) int
-		CreateSuspensionRequest func(childComplexity int, request *model.InputSuspensionRequest) int
+		CreateSuspensionRequest func(childComplexity int, request model.InputSuspensionRequest) int
 		CreateTag               func(childComplexity int, input model.NewTag) int
 		CreateUser              func(childComplexity int, user *model.NewUser, otp *model.NewOtp) int
 		DeleteGame              func(childComplexity int, id int) int
@@ -190,38 +190,40 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Countries               func(childComplexity int) int
-		Developers              func(childComplexity int) int
-		GameByID                func(childComplexity int, id int) int
-		GameImages              func(childComplexity int) int
-		GameSearch              func(childComplexity int, keyword string) int
-		GameSearchPage          func(childComplexity int, keyword string, page int, price int, tag []*model.InputTag) int
-		GameVideos              func(childComplexity int) int
-		Games                   func(childComplexity int) int
-		Genres                  func(childComplexity int) int
-		GetGameByPromoID        func(childComplexity int, id int) int
-		GetGamePaginationAdmin  func(childComplexity int, page *int) int
-		GetOtpByCode            func(childComplexity int, code *string) int
-		GetPromoByID            func(childComplexity int, id int) int
-		GetPromoPaginationAdmin func(childComplexity int, page *int) int
-		GetReportByReported     func(childComplexity int, id int) int
-		GetTotalGame            func(childComplexity int) int
-		GetTotalPromo           func(childComplexity int) int
-		GetTotalUser            func(childComplexity int) int
-		GetUserAuth             func(childComplexity int) int
-		GetUserByID             func(childComplexity int, id *int) int
-		GetUserByURL            func(childComplexity int, input *string) int
-		GetUserPaginationAdmin  func(childComplexity int, page int) int
-		GetVotesByReviewID      func(childComplexity int, input *string) int
-		Otps                    func(childComplexity int) int
-		Promos                  func(childComplexity int) int
-		Publishers              func(childComplexity int) int
-		Reports                 func(childComplexity int) int
-		Reviews                 func(childComplexity int) int
-		SuspensionRequests      func(childComplexity int) int
-		Systems                 func(childComplexity int) int
-		Tags                    func(childComplexity int) int
-		Users                   func(childComplexity int) int
+		Countries                  func(childComplexity int) int
+		Developers                 func(childComplexity int) int
+		GameByID                   func(childComplexity int, id int) int
+		GameImages                 func(childComplexity int) int
+		GameSearch                 func(childComplexity int, keyword string) int
+		GameSearchPage             func(childComplexity int, keyword string, page int, price int, tag []*model.InputTag) int
+		GameVideos                 func(childComplexity int) int
+		Games                      func(childComplexity int) int
+		Genres                     func(childComplexity int) int
+		GetGameByPromoID           func(childComplexity int, id int) int
+		GetGamePaginationAdmin     func(childComplexity int, page *int) int
+		GetOtpByCode               func(childComplexity int, code *string) int
+		GetPromoByID               func(childComplexity int, id int) int
+		GetPromoPaginationAdmin    func(childComplexity int, page *int) int
+		GetReportByReported        func(childComplexity int, id int) int
+		GetTotalGame               func(childComplexity int) int
+		GetTotalPromo              func(childComplexity int) int
+		GetTotalUser               func(childComplexity int) int
+		GetUseByAccountName        func(childComplexity int, accountName string) int
+		GetUserAuth                func(childComplexity int) int
+		GetUserByID                func(childComplexity int, id *int) int
+		GetUserByURL               func(childComplexity int, input *string) int
+		GetUserPaginationAdmin     func(childComplexity int, page int) int
+		GetVotesByReviewID         func(childComplexity int, input *string) int
+		Otps                       func(childComplexity int) int
+		Promos                     func(childComplexity int) int
+		Publishers                 func(childComplexity int) int
+		Reports                    func(childComplexity int) int
+		Reviews                    func(childComplexity int) int
+		SuspensionRequests         func(childComplexity int) int
+		SuspensionRequestsByUserID func(childComplexity int, id int) int
+		Systems                    func(childComplexity int) int
+		Tags                       func(childComplexity int) int
+		Users                      func(childComplexity int) int
 	}
 
 	Review struct {
@@ -294,7 +296,6 @@ type ComplexityRoot struct {
 		ProfileName           func(childComplexity int) int
 		RealName              func(childComplexity int) int
 		Summary               func(childComplexity int) int
-		SuspensionRequest     func(childComplexity int) int
 		Theme                 func(childComplexity int) int
 		UpdatedAt             func(childComplexity int) int
 	}
@@ -344,12 +345,13 @@ type MutationResolver interface {
 	UpdatePromo(ctx context.Context, input model.NewPromo, id int) (*model.Promo, error)
 	DeletePromo(ctx context.Context, id int) (*model.Promo, error)
 	CreatePublisher(ctx context.Context, input model.NewPublisher) (*model.Publisher, error)
-	CreateSuspensionRequest(ctx context.Context, request *model.InputSuspensionRequest) (*model.SuspensionRequest, error)
+	CreateSuspensionRequest(ctx context.Context, request model.InputSuspensionRequest) (bool, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
 }
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
 	GetUserByID(ctx context.Context, id *int) (*model.User, error)
+	GetUseByAccountName(ctx context.Context, accountName string) (*model.User, error)
 	GetTotalUser(ctx context.Context) (int, error)
 	GetUserByURL(ctx context.Context, input *string) (*model.User, error)
 	GetUserPaginationAdmin(ctx context.Context, page int) ([]*model.User, error)
@@ -376,6 +378,7 @@ type QueryResolver interface {
 	Reviews(ctx context.Context) ([]*model.Review, error)
 	GetVotesByReviewID(ctx context.Context, input *string) ([]*model.ReviewVote, error)
 	SuspensionRequests(ctx context.Context) ([]*model.SuspensionRequest, error)
+	SuspensionRequestsByUserID(ctx context.Context, id int) ([]*model.SuspensionRequest, error)
 	Systems(ctx context.Context) ([]*model.System, error)
 	Tags(ctx context.Context) ([]*model.Tag, error)
 	Reports(ctx context.Context) ([]*model.UserReport, error)
@@ -925,7 +928,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateSuspensionRequest(childComplexity, args["request"].(*model.InputSuspensionRequest)), true
+		return e.complexity.Mutation.CreateSuspensionRequest(childComplexity, args["request"].(model.InputSuspensionRequest)), true
 
 	case "Mutation.createTag":
 		if e.complexity.Mutation.CreateTag == nil {
@@ -1430,6 +1433,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetTotalUser(childComplexity), true
 
+	case "Query.getUseByAccountName":
+		if e.complexity.Query.GetUseByAccountName == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getUseByAccountName_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetUseByAccountName(childComplexity, args["accountName"].(string)), true
+
 	case "Query.getUserAuth":
 		if e.complexity.Query.GetUserAuth == nil {
 			break
@@ -1526,6 +1541,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.SuspensionRequests(childComplexity), true
+
+	case "Query.suspensionRequestsByUserId":
+		if e.complexity.Query.SuspensionRequestsByUserID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_suspensionRequestsByUserId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.SuspensionRequestsByUserID(childComplexity, args["id"].(int)), true
 
 	case "Query.systems":
 		if e.complexity.Query.Systems == nil {
@@ -1925,13 +1952,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Summary(childComplexity), true
-
-	case "User.suspensionRequest":
-		if e.complexity.User.SuspensionRequest == nil {
-			break
-		}
-
-		return e.complexity.User.SuspensionRequest(childComplexity), true
 
 	case "User.theme":
 		if e.complexity.User.Theme == nil {
@@ -2432,10 +2452,11 @@ input InputSuspensionRequest {
 
 extend type Query {
     suspensionRequests: [SuspensionRequest!]!
+    suspensionRequestsByUserId(id: Int!): [SuspensionRequest!]!
 }
 
 extend type Mutation {
-    createSuspensionRequest(request:InputSuspensionRequest): SuspensionRequest
+    createSuspensionRequest(request:InputSuspensionRequest!): Boolean!
 }`, BuiltIn: false},
 	{Name: "graph/system.graphqls", Input: `type System {
     id: Int!
@@ -2521,7 +2542,6 @@ type User {
 
     experience: Int!
     isSuspend: Boolean!
-    suspensionRequest: SuspensionRequest
 
     createdAt: Time!
     updatedAt: Time!
@@ -2555,6 +2575,7 @@ input UpdateUser {
 type Query {
     users: [User!]!
     getUserById(id: Int): User!
+    getUseByAccountName(accountName: String!): User!
     getTotalUser: Int!
     getUserByUrl(input: String): User!
     getUserPaginationAdmin(page: Int!): [User!]!
@@ -2691,10 +2712,10 @@ func (ec *executionContext) field_Mutation_createPublisher_args(ctx context.Cont
 func (ec *executionContext) field_Mutation_createSuspensionRequest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.InputSuspensionRequest
+	var arg0 model.InputSuspensionRequest
 	if tmp, ok := rawArgs["request"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("request"))
-		arg0, err = ec.unmarshalOInputSuspensionRequest2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputSuspensionRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNInputSuspensionRequest2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputSuspensionRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3183,6 +3204,21 @@ func (ec *executionContext) field_Query_getReportByReported_args(ctx context.Con
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_getUseByAccountName_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["accountName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["accountName"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_getUserById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3240,6 +3276,21 @@ func (ec *executionContext) field_Query_getVotesByReviewId_args(ctx context.Cont
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_suspensionRequestsByUserId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -6432,18 +6483,21 @@ func (ec *executionContext) _Mutation_createSuspensionRequest(ctx context.Contex
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateSuspensionRequest(rctx, args["request"].(*model.InputSuspensionRequest))
+		return ec.resolvers.Mutation().CreateSuspensionRequest(rctx, args["request"].(model.InputSuspensionRequest))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.SuspensionRequest)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalOSuspensionRequest2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐSuspensionRequest(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createTag(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -7214,6 +7268,48 @@ func (ec *executionContext) _Query_getUserById(ctx context.Context, field graphq
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().GetUserByID(rctx, args["id"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getUseByAccountName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getUseByAccountName_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetUseByAccountName(rctx, args["accountName"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8201,6 +8297,48 @@ func (ec *executionContext) _Query_suspensionRequests(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().SuspensionRequests(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.SuspensionRequest)
+	fc.Result = res
+	return ec.marshalNSuspensionRequest2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐSuspensionRequestᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_suspensionRequestsByUserId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_suspensionRequestsByUserId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SuspensionRequestsByUserID(rctx, args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10288,38 +10426,6 @@ func (ec *executionContext) _User_isSuspend(ctx context.Context, field graphql.C
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_suspensionRequest(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SuspensionRequest, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.SuspensionRequest)
-	fc.Result = res
-	return ec.marshalOSuspensionRequest2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐSuspensionRequest(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -13261,6 +13367,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createSuspensionRequest":
 			out.Values[i] = ec._Mutation_createSuspensionRequest(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createTag":
 			out.Values[i] = ec._Mutation_createTag(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -13476,6 +13585,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getUserById(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getUseByAccountName":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getUseByAccountName(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -13840,6 +13963,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_suspensionRequests(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "suspensionRequestsByUserId":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_suspensionRequestsByUserId(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -14302,8 +14439,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "suspensionRequest":
-			out.Values[i] = ec._User_suspensionRequest(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._User_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -15130,6 +15265,11 @@ func (ec *executionContext) unmarshalNInputGenre2ᚕᚖgithubᚗcomᚋnicotanzil
 func (ec *executionContext) unmarshalNInputGenre2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputGenre(ctx context.Context, v interface{}) (*model.InputGenre, error) {
 	res, err := ec.unmarshalInputInputGenre(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNInputSuspensionRequest2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputSuspensionRequest(ctx context.Context, v interface{}) (model.InputSuspensionRequest, error) {
+	res, err := ec.unmarshalInputInputSuspensionRequest(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNInputTag2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputTagᚄ(ctx context.Context, v interface{}) ([]*model.InputTag, error) {
@@ -16057,14 +16197,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
-func (ec *executionContext) unmarshalOInputSuspensionRequest2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputSuspensionRequest(ctx context.Context, v interface{}) (*model.InputSuspensionRequest, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputInputSuspensionRequest(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
 	if v == nil {
 		return nil, nil
@@ -16133,13 +16265,6 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return graphql.MarshalString(*v)
-}
-
-func (ec *executionContext) marshalOSuspensionRequest2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐSuspensionRequest(ctx context.Context, sel ast.SelectionSet, v *model.SuspensionRequest) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._SuspensionRequest(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

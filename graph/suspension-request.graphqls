@@ -15,8 +15,9 @@ input InputSuspensionRequest {
 
 extend type Query {
     suspensionRequests: [SuspensionRequest!]!
+    suspensionRequestsByUserId(id: Int!): [SuspensionRequest!]!
 }
 
 extend type Mutation {
-    createSuspensionRequest(request:InputSuspensionRequest): SuspensionRequest
+    createSuspensionRequest(request:InputSuspensionRequest!): Boolean!
 }

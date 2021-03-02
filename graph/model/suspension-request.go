@@ -5,7 +5,8 @@ import "time"
 type SuspensionRequest struct {
 	ID          int       `json:"id"`
 	Description string    `json:"description"`
-	User        *User     `json:"user"`
+	UserID		int			`json:"userId"`
+	User        *User     `json:"user" gorm:"foreignKey:UserID"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 	DeletedAt   time.Time `json:"deletedAt"`
