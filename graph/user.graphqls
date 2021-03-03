@@ -24,6 +24,9 @@ type User {
     experience: Int!
     isSuspend: Boolean!
 
+    featuredBadge: Badge!
+    badges: [Badge!]!
+
     createdAt: Time!
     updatedAt: Time!
     deletedAt: Time!
@@ -66,4 +69,5 @@ type Mutation {
     createUser(user: NewUser, otp: NewOtp): Boolean!
     updateUser(user: UpdateUser!): Boolean!
     updateAccountSuspension(id: Int!): Boolean!
+    addFriend(userId: Int!, friendId: Int!): Boolean!
 }

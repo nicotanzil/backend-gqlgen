@@ -1,0 +1,14 @@
+type Badge {
+    id: Int!
+    name: String!
+    link: String!
+    xp: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    badges: [Badge!]!
+}

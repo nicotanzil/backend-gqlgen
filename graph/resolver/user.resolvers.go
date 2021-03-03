@@ -87,6 +87,26 @@ func (r *mutationResolver) UpdateAccountSuspension(ctx context.Context, id int) 
 	return true, nil
 }
 
+func (r *mutationResolver) AddFriend(ctx context.Context, userID int, friendID int) (bool, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	var user model.User
+	var friend model.User
+
+	db.Preload(clause.Associations).First(&user, userID)
+	db.Preload(clause.Associations).First(&friend, friendID)
+
+	user.Friends = []*model.User{{ID: friendID}}
+	friend.Friends = []*model.User{{ID: userID}}
+	db.Save(&user)
+	db.Save(&friend)
+
+	return true, nil
+}
+
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	db, err := database.Connect()
 	if err != nil {

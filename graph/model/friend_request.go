@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type FriendRequest struct {
 	ID        		int    	`json:"id" gorm:"primaryKey"`
 	RequesterID 	int  	`json:"requesterId"`
@@ -7,4 +9,8 @@ type FriendRequest struct {
 	RequestedID 	int  	`json:"requestedId"`
 	Requested 		*User  	`json:"requested" gorm:"foreignKey:RequestedID"`
 	Status    		string 	`json:"status"`
+
+	CreatedAt  time.Time  	`json:"createdAt"`
+	UpdatedAt  time.Time  	`json:"updatedAt"`
+	DeletedAt  *time.Time 	`json:"deletedAt"`
 }

@@ -3,4 +3,18 @@ type FriendRequest {
     requester: User!
     requested: User!
     status: String!
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    friendRequests: [FriendRequest!]!
+    getFriendRequestByRequestedId(id:Int!): [FriendRequest!]!
+    validateFriendRequestExists(requesterId:Int!, requestedId:Int!): Boolean!
+}
+
+extend type Mutation {
+    createFriendRequest(requesterId:Int!, requestedId:Int!): Boolean!
+    acceptFriendRequest(id:Int!): Boolean!
 }

@@ -1,0 +1,14 @@
+type Cart {
+    user: User!
+    game: Game!
+}
+
+extend type Query {
+    carts: [Cart!]!
+    getCartGamesByUserId(id:Int!): [Game!]!
+}
+
+extend type Mutation {
+    insertGameToCart(gameId:Int!, userId:Int!): Boolean!
+    removeGameFromCart(gameId:Int!, userId:Int!): Boolean!
+}

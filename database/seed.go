@@ -18,6 +18,7 @@ func Seed() {
 	fmt.Println("[INFO] SEEDING...")
 	// SEED ALL NECESSARY TABLE
 
+	SeedBadge(db)
 	SeedAdmin(db)
 	SeedTag(db)
 	SeedSystem(db)
@@ -34,8 +35,38 @@ func Seed() {
 	SeedUser(db)
 	SeedSuspensionRequest(db)
 	SeedUserReport(db)
+	SeedCart(db)
 
 	fmt.Println("[INFO] SEEDED.")
+}
+
+func SeedBadge(db *gorm.DB) {
+	badges := []model.Badge{
+		{
+			Name: "Community Patron",
+			Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fbadges%2Fcommunity%20patron.png?alt=media&token=89bd7b7c-31eb-4640-b10a-5f6f4dba086d",
+			Xp:   0,
+		},
+		{
+			Name: "Years of Service",
+			Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fbadges%2Fyears%20of%20service.png?alt=media&token=d6f98e67-d7b5-4223-be5e-5a59a83cf6b6",
+			Xp:   100,
+		},
+		{
+			Name: "Game Mechanic",
+			Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fbadges%2Fgame%20mechanic.png?alt=media&token=192f2fd3-111c-4b0e-97fa-f1f1007ef3a6",
+			Xp:   500,
+		},
+		{
+			Name: "Ganker",
+			Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fbadges%2Fganker.png?alt=media&token=00f8c813-0a12-41e9-b2aa-11aa745b982a",
+			Xp:   550,
+		},
+	}
+
+	for _, badge := range badges {
+		db.Create(&badge)
+	}
 }
 
 func SeedAdmin(db *gorm.DB) {
@@ -94,9 +125,9 @@ func SeedGameImage(db *gorm.DB) {
 }
 
 func SeedGameVideo(db *gorm.DB) {
-	gameVideos := []model.GameVideo {
-		{ GameID:   1, 	Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fvideos%2F1.mp4?alt=media&token=915b8004-f5d1-4279-81fc-2c1f7e56f102",},
-		{ GameID: 	1,	Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fvideos%2F2.mp4?alt=media&token=4cbc40d4-0f03-41e7-97f4-1c3154d34bbc",},
+	gameVideos := []model.GameVideo{
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fvideos%2F1.mp4?alt=media&token=915b8004-f5d1-4279-81fc-2c1f7e56f102"},
+		{GameID: 1, Link: "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fgames%2F1%2Fvideos%2F2.mp4?alt=media&token=4cbc40d4-0f03-41e7-97f4-1c3154d34bbc"},
 	}
 
 	for _, gameVideo := range gameVideos {
@@ -246,7 +277,7 @@ func SeedPromo(db *gorm.DB) {
 	promos := []model.Promo{
 		{
 			DiscountPercentage: 0,
-			ValidUntil: int(time.Now().Add(time.Hour * 24 * 30).Unix()),
+			ValidUntil:         int(time.Now().Add(time.Hour * 24 * 30).Unix()),
 		},
 		{
 			DiscountPercentage: 50,
@@ -293,8 +324,8 @@ func SeedGame(db *gorm.DB) {
 					ID: 2,
 				},
 			},
-			OriginalPrice:      0,
-			PromoID: 1,
+			OriginalPrice: 0,
+			PromoID:       1,
 			Developers: []*model.Developer{
 				{
 					ID: 1,
@@ -328,8 +359,8 @@ func SeedGame(db *gorm.DB) {
 					ID: 5,
 				},
 			},
-			OriginalPrice:      562000,
-			PromoID: 2,
+			OriginalPrice: 562000,
+			PromoID:       2,
 			Developers: []*model.Developer{
 				{
 					ID: 2,
@@ -363,8 +394,8 @@ func SeedGame(db *gorm.DB) {
 					ID: 7,
 				},
 			},
-			OriginalPrice:      650000,
-			PromoID: 3,
+			OriginalPrice: 650000,
+			PromoID:       3,
 			Developers: []*model.Developer{
 				{
 					ID: 3,
@@ -404,8 +435,8 @@ func SeedGame(db *gorm.DB) {
 					ID: 12,
 				},
 			},
-			OriginalPrice:      0,
-			PromoID: 1,
+			OriginalPrice: 0,
+			PromoID:       1,
 			Developers: []*model.Developer{
 				{
 					ID: 1,
@@ -448,8 +479,8 @@ func SeedGame(db *gorm.DB) {
 					ID: 12,
 				},
 			},
-			OriginalPrice:      300000,
-			PromoID: 4,
+			OriginalPrice: 300000,
+			PromoID:       4,
 			Developers: []*model.Developer{
 				{
 					ID: 5,
@@ -486,8 +517,8 @@ func SeedGame(db *gorm.DB) {
 					ID: 7,
 				},
 			},
-			OriginalPrice:      89999,
-			PromoID: 1,
+			OriginalPrice: 89999,
+			PromoID:       1,
 			Developers: []*model.Developer{
 				{
 					ID: 6,
@@ -524,8 +555,8 @@ func SeedGame(db *gorm.DB) {
 					ID: 11,
 				},
 			},
-			OriginalPrice:      0,
-			PromoID: 1,
+			OriginalPrice: 0,
+			PromoID:       1,
 			Developers: []*model.Developer{
 				{
 					ID: 1,
@@ -836,14 +867,17 @@ func SeedUser(db *gorm.DB) {
 			Summary:           "No information given.",
 			Avatar:            firebase_data.Avatar,
 			ProfileBackground: firebase_data.ProfileBackground,
-			Country:           &model.Country{ID: 102},
+			CountryID:         102,
 			Games: []*model.Game{
 				{
 					ID: 1,
 				},
 			},
-			Experience:        550,
-			IsSuspend:         true,
+			Experience: 550,
+			FeaturedBadge: &model.Badge{ID: 3},
+			Badges: []*model.Badge{
+				{ID: 1}, {ID: 2}, {ID: 3},
+			},
 		},
 		{
 			AccountName:       "william",
@@ -856,7 +890,14 @@ func SeedUser(db *gorm.DB) {
 			Summary:           "No information given.",
 			Avatar:            firebase_data.Avatar,
 			ProfileBackground: firebase_data.ProfileBackground,
-			Country:           &model.Country{ID: 2},
+			CountryID:         2,
+			Friends: []*model.User{
+				{ID: 1},
+			},
+			FeaturedBadge: &model.Badge{ID: 1},
+			Badges: []*model.Badge{
+				{ID: 1}, {ID: 2},
+			},
 		},
 		{
 			AccountName:       "ricko",
@@ -869,13 +910,23 @@ func SeedUser(db *gorm.DB) {
 			Summary:           "No information given.",
 			Avatar:            firebase_data.Avatar,
 			ProfileBackground: firebase_data.ProfileBackground,
-			Country:           &model.Country{ID: 3},
+			CountryID:         3,
+			IsSuspend:         true,
+			FeaturedBadge: &model.Badge{ID: 1},
+			Badges: []*model.Badge{
+				{ID: 1}, {ID: 2},
+			},
 		},
 	}
 
 	for _, user := range users {
 		db.Create(&user)
 	}
+
+	var user model.User
+	db.First(&user, "id = ?", 1)
+	user.Friends = []*model.User{{ID: 2}}
+	db.Save(&user)
 }
 
 func SeedUserReport(db *gorm.DB) {
@@ -901,15 +952,32 @@ func SeedSuspensionRequest(db *gorm.DB) {
 	suspensionRequests := []model.SuspensionRequest{
 		{
 			Description: "Please unsuspend me!",
-			User: &model.User{ID: 1},
+			User:        &model.User{ID: 3},
 		},
 		{
 			Description: "Respond please!",
-			User: &model.User{ID: 1},
+			User:        &model.User{ID: 3},
 		},
 	}
 
 	for _, request := range suspensionRequests {
 		db.Create(&request)
+	}
+}
+
+func SeedCart(db *gorm.DB) {
+	carts := []model.Cart{
+		{
+			User: &model.User{ID: 1},
+			Game: &model.Game{ID: 2},
+		},
+		{
+			User: &model.User{ID: 1},
+			Game: &model.Game{ID: 3},
+		},
+	}
+
+	for _, cart := range carts {
+		db.Create(&cart)
 	}
 }
