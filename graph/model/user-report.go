@@ -3,7 +3,7 @@ package model
 import "time"
 
 type UserReport struct {
-	ID          int       `json:"id"`
+	ID          int       `json:"id" gorm:"primaryKey"`
 	ReportedId 	int		  `json:"ReportedId"`
 	Reported    *User     `json:"Reported" gorm:"foreignKey:ReportedId;"`
 	ReporterId 	int		  `json:"ReporterId"`

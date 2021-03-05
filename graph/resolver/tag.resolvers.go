@@ -20,6 +20,8 @@ func (r *queryResolver) Tags(ctx context.Context) ([]*model.Tag, error) {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var tags []*model.Tag
 

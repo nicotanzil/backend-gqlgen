@@ -15,6 +15,8 @@ func (r *mutationResolver) InsertGameVideo(ctx context.Context, gameVideos []*mo
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	for i := 0; i < len(gameVideos); i++ {
 		var newGameVideos model.GameVideo
@@ -35,6 +37,8 @@ func (r *mutationResolver) UpdateGameVideo(ctx context.Context, id []int, videos
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	length := len(id)
 
@@ -53,6 +57,8 @@ func (r *queryResolver) GameVideos(ctx context.Context) ([]*model.GameVideo, err
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var gameVideos []*model.GameVideo
 

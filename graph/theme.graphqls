@@ -1,0 +1,13 @@
+type Theme {
+    id: Int!
+    name: String!
+    color: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    themes: [Theme!]!
+}

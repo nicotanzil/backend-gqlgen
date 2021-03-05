@@ -17,6 +17,8 @@ func (r *mutationResolver) CreateOtp(ctx context.Context, input model.NewOtp) (*
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var temp model.Otp
 
@@ -50,6 +52,8 @@ func (r *queryResolver) Otps(ctx context.Context) ([]*model.Otp, error) {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var otps []*model.Otp
 
@@ -63,6 +67,8 @@ func (r *queryResolver) GetOtpByCode(ctx context.Context, code *string) (*model.
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var otp model.Otp
 

@@ -15,6 +15,8 @@ func (r *queryResolver) Systems(ctx context.Context) ([]*model.System, error) {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var systems []*model.System
 

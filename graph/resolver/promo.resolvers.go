@@ -17,6 +17,8 @@ func (r *mutationResolver) CreatePromo(ctx context.Context, input model.NewPromo
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var newPromo model.Promo
 
@@ -34,6 +36,8 @@ func (r *mutationResolver) UpdatePromo(ctx context.Context, input model.NewPromo
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var promo model.Promo
 
@@ -50,6 +54,8 @@ func (r *mutationResolver) DeletePromo(ctx context.Context, id int) (*model.Prom
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var promo model.Promo
 
@@ -64,6 +70,8 @@ func (r *queryResolver) Promos(ctx context.Context) ([]*model.Promo, error) {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var promos []*model.Promo
 
@@ -77,6 +85,8 @@ func (r *queryResolver) GetTotalPromo(ctx context.Context) (int, error) {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var count int64
 
@@ -90,6 +100,8 @@ func (r *queryResolver) GetPromoByID(ctx context.Context, id int) (*model.Promo,
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var promo model.Promo
 
@@ -103,6 +115,8 @@ func (r *queryResolver) GetPromoPaginationAdmin(ctx context.Context, page *int) 
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var promos []*model.Promo
 

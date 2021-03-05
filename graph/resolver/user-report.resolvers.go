@@ -17,6 +17,8 @@ func (r *queryResolver) Reports(ctx context.Context) ([]*model.UserReport, error
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var reports []*model.UserReport
 
@@ -30,6 +32,8 @@ func (r *queryResolver) GetReportByReported(ctx context.Context, id int) ([]*mod
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var reports []*model.UserReport
 

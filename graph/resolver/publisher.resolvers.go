@@ -20,6 +20,8 @@ func (r *queryResolver) Publishers(ctx context.Context) ([]*model.Publisher, err
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var publishers []*model.Publisher
 

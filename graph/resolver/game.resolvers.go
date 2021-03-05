@@ -18,6 +18,8 @@ func (r *mutationResolver) CreateGame(ctx context.Context, input model.NewGame) 
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	genres := []*model.Genre{}
 	tags := []*model.Tag{}
@@ -65,6 +67,8 @@ func (r *mutationResolver) UpdateGame(ctx context.Context, id int, input model.N
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	genres := []*model.Genre{}
 	tags := []*model.Tag{}
@@ -108,6 +112,8 @@ func (r *mutationResolver) DeleteGame(ctx context.Context, id int) (*model.Game,
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	db.Exec("DELETE FROM game_images WHERE game_id = ?", id)
 	db.Exec("DELETE FROM game_videos WHERE game_id = ?", id)
@@ -125,6 +131,8 @@ func (r *mutationResolver) InsertGameBanner(ctx context.Context, id int, link st
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var game model.Game
 
@@ -140,6 +148,8 @@ func (r *mutationResolver) SetGamePromo(ctx context.Context, gameID int, promoID
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var game model.Game
 
@@ -155,6 +165,8 @@ func (r *queryResolver) Games(ctx context.Context) ([]*model.Game, error) {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var games []*model.Game
 
@@ -168,6 +180,8 @@ func (r *queryResolver) GameByID(ctx context.Context, id int) (*model.Game, erro
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var game model.Game
 
@@ -181,6 +195,8 @@ func (r *queryResolver) GetGameByPromoID(ctx context.Context, id int) (*model.Ga
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var game model.Game
 
@@ -193,6 +209,8 @@ func (r *queryResolver) GetGamePaginationAdmin(ctx context.Context, page *int) (
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var games []*model.Game
 
@@ -206,6 +224,8 @@ func (r *queryResolver) GetTotalGame(ctx context.Context) (int, error) {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var count int64
 
@@ -219,6 +239,8 @@ func (r *queryResolver) GameSearch(ctx context.Context, keyword string) ([]*mode
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var games []*model.Game
 
@@ -233,6 +255,8 @@ func (r *queryResolver) GameSearchPage(ctx context.Context, keyword string, page
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var games []*model.Game
 	var tagsId []int
@@ -269,6 +293,8 @@ func (r *queryResolver) GetSpecialOfferGame(ctx context.Context) ([]*model.Game,
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var games []*model.Game
 
@@ -282,6 +308,8 @@ func (r *queryResolver) GetNewTrendingGame(ctx context.Context) ([]*model.Game, 
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var games []*model.Game
 

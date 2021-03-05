@@ -8,14 +8,19 @@ type User {
     email: String!
     password: String!
     balance: Float!
+    points: Int!
     customURL: String!
     summary: String!
 
     avatar: String!
-    avatarFrame: String!
-    profileBackground: String!
-    miniProfileBackground: String!
-    theme: String!
+    avatarFrame: AvatarFrame!
+    profileBackground: ProfileBackground!
+    miniProfileBackground: MiniProfileBackground!
+    theme: Theme!
+
+    avatarFrames: [AvatarFrame!]!
+    profileBackgrounds: [ProfileBackground!]!
+    miniProfileBackgrounds: [MiniProfileBackground!]!
 
     country: Country!
     games: [Game!]!
@@ -48,11 +53,11 @@ input UpdateUser {
     customURL: String!
     summary: String!
     avatar: String!
-    avatarFrame: String!
-    profileBackground: String!
-    miniProfileBackground: String!
-    theme: String!
-
+    avatarFrameId: Int!
+    profileBackgroundId: Int!
+    miniProfileBackgroundId: Int!
+    themeId: Int!
+    featuredBadgeId: Int!
     CountryId: Int!
 }
 
@@ -70,4 +75,6 @@ type Mutation {
     updateUser(user: UpdateUser!): Boolean!
     updateAccountSuspension(id: Int!): Boolean!
     addFriend(userId: Int!, friendId: Int!): Boolean!
+
+    updateAccountGeneral(accountName: String!, profileName: String!, realName: String!, customUrl: String!, countryId: Int!, summary: String!): Boolean!
 }

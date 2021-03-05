@@ -15,6 +15,8 @@ func (r *mutationResolver) InsertGameImage(ctx context.Context, gameImages []*mo
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	for i := 0; i < len(gameImages); i++ {
 		var newGameImage model.GameImage
@@ -35,6 +37,8 @@ func (r *mutationResolver) UpdateGameImage(ctx context.Context, id []int, images
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	length := len(id)
 
@@ -53,6 +57,8 @@ func (r *queryResolver) GameImages(ctx context.Context) ([]*model.GameImage, err
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var gameImages []*model.GameImage
 

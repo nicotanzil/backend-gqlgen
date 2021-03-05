@@ -1,0 +1,14 @@
+type MiniProfileBackground {
+    id: Int!
+    name: String!
+    link: String!
+    price: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    miniProfileBackgrounds: [MiniProfileBackground!]!
+}

@@ -16,6 +16,8 @@ func (r *mutationResolver) CreateFriendRequest(ctx context.Context, requesterID 
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	request := model.FriendRequest{
 		Requester: &model.User{ID: requesterID},
@@ -33,6 +35,8 @@ func (r *mutationResolver) AcceptFriendRequest(ctx context.Context, id int) (boo
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var request model.FriendRequest
 
@@ -49,6 +53,8 @@ func (r *queryResolver) FriendRequests(ctx context.Context) ([]*model.FriendRequ
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var requests []*model.FriendRequest
 
@@ -62,6 +68,8 @@ func (r *queryResolver) GetFriendRequestByRequestedID(ctx context.Context, id in
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var requests []*model.FriendRequest
 
@@ -75,6 +83,8 @@ func (r *queryResolver) ValidateFriendRequestExists(ctx context.Context, request
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var request model.FriendRequest
 

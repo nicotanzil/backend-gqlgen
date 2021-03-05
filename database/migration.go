@@ -12,11 +12,17 @@ func Migrate() {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	fmt.Println("[INFO] MIGRATING...")
 	// MIGRATE ALL TABLE
 	db.Exec("DROP TABLE user_friends")
 	db.Exec("DROP TABLE user_badges")
+	db.Exec("DROP TABLE user_avatar_frames")
+	db.Exec("DROP TABLE user_profile_backgrounds")
+	db.Exec("DROP TABLE user_mini_profile_backgrounds")
+
 	db.Exec("DROP TABLE game_users")
 	db.Exec("DROP TABLE game_developers")
 	db.Exec("DROP TABLE game_genres")
@@ -42,11 +48,19 @@ func UserMigrate(db *gorm.DB) {
 		&model.Otp{},
 		&model.SuspensionRequest{},
 		&model.Badge{},
+		&model.AvatarFrame{},
+		&model.ProfileBackground{},
+		&model.MiniProfileBackground{},
+		&model.Theme{},
 	)
 
 	// CREATING ALL TABLE
 	db.AutoMigrate(
 		&model.Badge{},
+		&model.AvatarFrame{},
+		&model.ProfileBackground{},
+		&model.MiniProfileBackground{},
+		&model.Theme{},
 		&model.Admin{},
 		&model.SuspensionRequest{},
 		&model.Country{},

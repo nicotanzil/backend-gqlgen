@@ -53,6 +53,16 @@ type ComplexityRoot struct {
 		UpdatedAt   func(childComplexity int) int
 	}
 
+	AvatarFrame struct {
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Link      func(childComplexity int) int
+		Name      func(childComplexity int) int
+		Price     func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+	}
+
 	Badge struct {
 		CreatedAt func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
@@ -82,12 +92,6 @@ type ComplexityRoot struct {
 		ID        func(childComplexity int) int
 		Name      func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
-	}
-
-	File struct {
-		Content func(childComplexity int) int
-		ID      func(childComplexity int) int
-		Name    func(childComplexity int) int
 	}
 
 	FriendRequest struct {
@@ -151,6 +155,16 @@ type ComplexityRoot struct {
 		UpdatedAt   func(childComplexity int) int
 	}
 
+	MiniProfileBackground struct {
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Link      func(childComplexity int) int
+		Name      func(childComplexity int) int
+		Price     func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+	}
+
 	Mutation struct {
 		AcceptFriendRequest     func(childComplexity int, id int) int
 		AddFriend               func(childComplexity int, userID int, friendID int) int
@@ -175,6 +189,7 @@ type ComplexityRoot struct {
 		Logout                  func(childComplexity int) int
 		RemoveGameFromCart      func(childComplexity int, gameID int, userID int) int
 		SetGamePromo            func(childComplexity int, gameID int, promoID int) int
+		UpdateAccountGeneral    func(childComplexity int, accountName string, profileName string, realName string, customURL string, countryID int, summary string) int
 		UpdateAccountSuspension func(childComplexity int, id int) int
 		UpdateGame              func(childComplexity int, id int, input model.NewGame) int
 		UpdateGameImage         func(childComplexity int, id []int, images []*model.InputGameImage) int
@@ -195,6 +210,16 @@ type ComplexityRoot struct {
 		ValidUntil func(childComplexity int) int
 	}
 
+	ProfileBackground struct {
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Link      func(childComplexity int) int
+		Name      func(childComplexity int) int
+		Price     func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+	}
+
 	Promo struct {
 		CreatedAt          func(childComplexity int) int
 		DeletedAt          func(childComplexity int) int
@@ -213,6 +238,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		AvatarFrames                  func(childComplexity int) int
 		Badges                        func(childComplexity int) int
 		Carts                         func(childComplexity int) int
 		Countries                     func(childComplexity int) int
@@ -244,7 +270,9 @@ type ComplexityRoot struct {
 		GetUserByURL                  func(childComplexity int, input *string) int
 		GetUserPaginationAdmin        func(childComplexity int, page int) int
 		GetVotesByReviewID            func(childComplexity int, input *string) int
+		MiniProfileBackgrounds        func(childComplexity int) int
 		Otps                          func(childComplexity int) int
+		ProfileBackgrounds            func(childComplexity int) int
 		Promos                        func(childComplexity int) int
 		Publishers                    func(childComplexity int) int
 		Reports                       func(childComplexity int) int
@@ -253,6 +281,7 @@ type ComplexityRoot struct {
 		SuspensionRequestsByUserID    func(childComplexity int, id int) int
 		Systems                       func(childComplexity int) int
 		Tags                          func(childComplexity int) int
+		Themes                        func(childComplexity int) int
 		Users                         func(childComplexity int) int
 		ValidateFriendRequestExists   func(childComplexity int, requesterID int, requestedID int) int
 	}
@@ -306,31 +335,44 @@ type ComplexityRoot struct {
 		UpdatedAt func(childComplexity int) int
 	}
 
+	Theme struct {
+		Color     func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+	}
+
 	User struct {
-		AccountName           func(childComplexity int) int
-		Avatar                func(childComplexity int) int
-		AvatarFrame           func(childComplexity int) int
-		Badges                func(childComplexity int) int
-		Balance               func(childComplexity int) int
-		Country               func(childComplexity int) int
-		CreatedAt             func(childComplexity int) int
-		CustomURL             func(childComplexity int) int
-		DeletedAt             func(childComplexity int) int
-		Email                 func(childComplexity int) int
-		Experience            func(childComplexity int) int
-		FeaturedBadge         func(childComplexity int) int
-		Friends               func(childComplexity int) int
-		Games                 func(childComplexity int) int
-		ID                    func(childComplexity int) int
-		IsSuspend             func(childComplexity int) int
-		MiniProfileBackground func(childComplexity int) int
-		Password              func(childComplexity int) int
-		ProfileBackground     func(childComplexity int) int
-		ProfileName           func(childComplexity int) int
-		RealName              func(childComplexity int) int
-		Summary               func(childComplexity int) int
-		Theme                 func(childComplexity int) int
-		UpdatedAt             func(childComplexity int) int
+		AccountName            func(childComplexity int) int
+		Avatar                 func(childComplexity int) int
+		AvatarFrame            func(childComplexity int) int
+		AvatarFrames           func(childComplexity int) int
+		Badges                 func(childComplexity int) int
+		Balance                func(childComplexity int) int
+		Country                func(childComplexity int) int
+		CreatedAt              func(childComplexity int) int
+		CustomURL              func(childComplexity int) int
+		DeletedAt              func(childComplexity int) int
+		Email                  func(childComplexity int) int
+		Experience             func(childComplexity int) int
+		FeaturedBadge          func(childComplexity int) int
+		Friends                func(childComplexity int) int
+		Games                  func(childComplexity int) int
+		ID                     func(childComplexity int) int
+		IsSuspend              func(childComplexity int) int
+		MiniProfileBackground  func(childComplexity int) int
+		MiniProfileBackgrounds func(childComplexity int) int
+		Password               func(childComplexity int) int
+		Points                 func(childComplexity int) int
+		ProfileBackground      func(childComplexity int) int
+		ProfileBackgrounds     func(childComplexity int) int
+		ProfileName            func(childComplexity int) int
+		RealName               func(childComplexity int) int
+		Summary                func(childComplexity int) int
+		Theme                  func(childComplexity int) int
+		UpdatedAt              func(childComplexity int) int
 	}
 
 	UserComment struct {
@@ -359,6 +401,7 @@ type MutationResolver interface {
 	UpdateUser(ctx context.Context, user model.UpdateUser) (bool, error)
 	UpdateAccountSuspension(ctx context.Context, id int) (bool, error)
 	AddFriend(ctx context.Context, userID int, friendID int) (bool, error)
+	UpdateAccountGeneral(ctx context.Context, accountName string, profileName string, realName string, customURL string, countryID int, summary string) (bool, error)
 	Login(ctx context.Context, input *model.Login) (string, error)
 	Logout(ctx context.Context) (bool, error)
 	AdminLogin(ctx context.Context, input *model.Login) (bool, error)
@@ -394,6 +437,7 @@ type QueryResolver interface {
 	GetUserByURL(ctx context.Context, input *string) (*model.User, error)
 	GetUserPaginationAdmin(ctx context.Context, page int) ([]*model.User, error)
 	GetUserAuth(ctx context.Context) (*model.User, error)
+	AvatarFrames(ctx context.Context) ([]*model.AvatarFrame, error)
 	Badges(ctx context.Context) ([]*model.Badge, error)
 	Carts(ctx context.Context) ([]*model.Cart, error)
 	GetCartGamesByUserID(ctx context.Context, id int) ([]*model.Game, error)
@@ -414,8 +458,10 @@ type QueryResolver interface {
 	GetSpecialOfferGame(ctx context.Context) ([]*model.Game, error)
 	GetNewTrendingGame(ctx context.Context) ([]*model.Game, error)
 	Genres(ctx context.Context) ([]*model.Genre, error)
+	MiniProfileBackgrounds(ctx context.Context) ([]*model.MiniProfileBackground, error)
 	Otps(ctx context.Context) ([]*model.Otp, error)
 	GetOtpByCode(ctx context.Context, code *string) (*model.Otp, error)
+	ProfileBackgrounds(ctx context.Context) ([]*model.ProfileBackground, error)
 	Promos(ctx context.Context) ([]*model.Promo, error)
 	GetTotalPromo(ctx context.Context) (int, error)
 	GetPromoByID(ctx context.Context, id int) (*model.Promo, error)
@@ -427,6 +473,7 @@ type QueryResolver interface {
 	SuspensionRequestsByUserID(ctx context.Context, id int) ([]*model.SuspensionRequest, error)
 	Systems(ctx context.Context) ([]*model.System, error)
 	Tags(ctx context.Context) ([]*model.Tag, error)
+	Themes(ctx context.Context) ([]*model.Theme, error)
 	Reports(ctx context.Context) ([]*model.UserReport, error)
 	GetReportByReported(ctx context.Context, id int) ([]*model.UserReport, error)
 }
@@ -487,6 +534,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Admin.UpdatedAt(childComplexity), true
+
+	case "AvatarFrame.createdAt":
+		if e.complexity.AvatarFrame.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.AvatarFrame.CreatedAt(childComplexity), true
+
+	case "AvatarFrame.deletedAt":
+		if e.complexity.AvatarFrame.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.AvatarFrame.DeletedAt(childComplexity), true
+
+	case "AvatarFrame.id":
+		if e.complexity.AvatarFrame.ID == nil {
+			break
+		}
+
+		return e.complexity.AvatarFrame.ID(childComplexity), true
+
+	case "AvatarFrame.link":
+		if e.complexity.AvatarFrame.Link == nil {
+			break
+		}
+
+		return e.complexity.AvatarFrame.Link(childComplexity), true
+
+	case "AvatarFrame.name":
+		if e.complexity.AvatarFrame.Name == nil {
+			break
+		}
+
+		return e.complexity.AvatarFrame.Name(childComplexity), true
+
+	case "AvatarFrame.price":
+		if e.complexity.AvatarFrame.Price == nil {
+			break
+		}
+
+		return e.complexity.AvatarFrame.Price(childComplexity), true
+
+	case "AvatarFrame.updatedAt":
+		if e.complexity.AvatarFrame.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.AvatarFrame.UpdatedAt(childComplexity), true
 
 	case "Badge.createdAt":
 		if e.complexity.Badge.CreatedAt == nil {
@@ -620,27 +716,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Developer.UpdatedAt(childComplexity), true
-
-	case "File.content":
-		if e.complexity.File.Content == nil {
-			break
-		}
-
-		return e.complexity.File.Content(childComplexity), true
-
-	case "File.id":
-		if e.complexity.File.ID == nil {
-			break
-		}
-
-		return e.complexity.File.ID(childComplexity), true
-
-	case "File.name":
-		if e.complexity.File.Name == nil {
-			break
-		}
-
-		return e.complexity.File.Name(childComplexity), true
 
 	case "FriendRequest.createdAt":
 		if e.complexity.FriendRequest.CreatedAt == nil {
@@ -964,6 +1039,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Genre.UpdatedAt(childComplexity), true
 
+	case "MiniProfileBackground.createdAt":
+		if e.complexity.MiniProfileBackground.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.MiniProfileBackground.CreatedAt(childComplexity), true
+
+	case "MiniProfileBackground.deletedAt":
+		if e.complexity.MiniProfileBackground.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.MiniProfileBackground.DeletedAt(childComplexity), true
+
+	case "MiniProfileBackground.id":
+		if e.complexity.MiniProfileBackground.ID == nil {
+			break
+		}
+
+		return e.complexity.MiniProfileBackground.ID(childComplexity), true
+
+	case "MiniProfileBackground.link":
+		if e.complexity.MiniProfileBackground.Link == nil {
+			break
+		}
+
+		return e.complexity.MiniProfileBackground.Link(childComplexity), true
+
+	case "MiniProfileBackground.name":
+		if e.complexity.MiniProfileBackground.Name == nil {
+			break
+		}
+
+		return e.complexity.MiniProfileBackground.Name(childComplexity), true
+
+	case "MiniProfileBackground.price":
+		if e.complexity.MiniProfileBackground.Price == nil {
+			break
+		}
+
+		return e.complexity.MiniProfileBackground.Price(childComplexity), true
+
+	case "MiniProfileBackground.updatedAt":
+		if e.complexity.MiniProfileBackground.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.MiniProfileBackground.UpdatedAt(childComplexity), true
+
 	case "Mutation.acceptFriendRequest":
 		if e.complexity.Mutation.AcceptFriendRequest == nil {
 			break
@@ -1235,6 +1359,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.SetGamePromo(childComplexity, args["gameId"].(int), args["promoId"].(int)), true
 
+	case "Mutation.updateAccountGeneral":
+		if e.complexity.Mutation.UpdateAccountGeneral == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateAccountGeneral_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateAccountGeneral(childComplexity, args["accountName"].(string), args["profileName"].(string), args["realName"].(string), args["customUrl"].(string), args["countryId"].(int), args["summary"].(string)), true
+
 	case "Mutation.updateAccountSuspension":
 		if e.complexity.Mutation.UpdateAccountSuspension == nil {
 			break
@@ -1375,6 +1511,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Otp.ValidUntil(childComplexity), true
 
+	case "ProfileBackground.createdAt":
+		if e.complexity.ProfileBackground.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ProfileBackground.CreatedAt(childComplexity), true
+
+	case "ProfileBackground.deletedAt":
+		if e.complexity.ProfileBackground.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.ProfileBackground.DeletedAt(childComplexity), true
+
+	case "ProfileBackground.id":
+		if e.complexity.ProfileBackground.ID == nil {
+			break
+		}
+
+		return e.complexity.ProfileBackground.ID(childComplexity), true
+
+	case "ProfileBackground.link":
+		if e.complexity.ProfileBackground.Link == nil {
+			break
+		}
+
+		return e.complexity.ProfileBackground.Link(childComplexity), true
+
+	case "ProfileBackground.name":
+		if e.complexity.ProfileBackground.Name == nil {
+			break
+		}
+
+		return e.complexity.ProfileBackground.Name(childComplexity), true
+
+	case "ProfileBackground.price":
+		if e.complexity.ProfileBackground.Price == nil {
+			break
+		}
+
+		return e.complexity.ProfileBackground.Price(childComplexity), true
+
+	case "ProfileBackground.updatedAt":
+		if e.complexity.ProfileBackground.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.ProfileBackground.UpdatedAt(childComplexity), true
+
 	case "Promo.createdAt":
 		if e.complexity.Promo.CreatedAt == nil {
 			break
@@ -1451,6 +1636,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Publisher.UpdatedAt(childComplexity), true
+
+	case "Query.avatarFrames":
+		if e.complexity.Query.AvatarFrames == nil {
+			break
+		}
+
+		return e.complexity.Query.AvatarFrames(childComplexity), true
 
 	case "Query.badges":
 		if e.complexity.Query.Badges == nil {
@@ -1749,12 +1941,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetVotesByReviewID(childComplexity, args["input"].(*string)), true
 
+	case "Query.miniProfileBackgrounds":
+		if e.complexity.Query.MiniProfileBackgrounds == nil {
+			break
+		}
+
+		return e.complexity.Query.MiniProfileBackgrounds(childComplexity), true
+
 	case "Query.otps":
 		if e.complexity.Query.Otps == nil {
 			break
 		}
 
 		return e.complexity.Query.Otps(childComplexity), true
+
+	case "Query.profileBackgrounds":
+		if e.complexity.Query.ProfileBackgrounds == nil {
+			break
+		}
+
+		return e.complexity.Query.ProfileBackgrounds(childComplexity), true
 
 	case "Query.promos":
 		if e.complexity.Query.Promos == nil {
@@ -1816,6 +2022,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Tags(childComplexity), true
+
+	case "Query.themes":
+		if e.complexity.Query.Themes == nil {
+			break
+		}
+
+		return e.complexity.Query.Themes(childComplexity), true
 
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
@@ -2074,6 +2287,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Tag.UpdatedAt(childComplexity), true
 
+	case "Theme.color":
+		if e.complexity.Theme.Color == nil {
+			break
+		}
+
+		return e.complexity.Theme.Color(childComplexity), true
+
+	case "Theme.createdAt":
+		if e.complexity.Theme.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Theme.CreatedAt(childComplexity), true
+
+	case "Theme.deletedAt":
+		if e.complexity.Theme.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.Theme.DeletedAt(childComplexity), true
+
+	case "Theme.id":
+		if e.complexity.Theme.ID == nil {
+			break
+		}
+
+		return e.complexity.Theme.ID(childComplexity), true
+
+	case "Theme.name":
+		if e.complexity.Theme.Name == nil {
+			break
+		}
+
+		return e.complexity.Theme.Name(childComplexity), true
+
+	case "Theme.updatedAt":
+		if e.complexity.Theme.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Theme.UpdatedAt(childComplexity), true
+
 	case "User.accountName":
 		if e.complexity.User.AccountName == nil {
 			break
@@ -2094,6 +2349,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.AvatarFrame(childComplexity), true
+
+	case "User.avatarFrames":
+		if e.complexity.User.AvatarFrames == nil {
+			break
+		}
+
+		return e.complexity.User.AvatarFrames(childComplexity), true
 
 	case "User.badges":
 		if e.complexity.User.Badges == nil {
@@ -2193,6 +2455,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.MiniProfileBackground(childComplexity), true
 
+	case "User.miniProfileBackgrounds":
+		if e.complexity.User.MiniProfileBackgrounds == nil {
+			break
+		}
+
+		return e.complexity.User.MiniProfileBackgrounds(childComplexity), true
+
 	case "User.password":
 		if e.complexity.User.Password == nil {
 			break
@@ -2200,12 +2469,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Password(childComplexity), true
 
+	case "User.points":
+		if e.complexity.User.Points == nil {
+			break
+		}
+
+		return e.complexity.User.Points(childComplexity), true
+
 	case "User.profileBackground":
 		if e.complexity.User.ProfileBackground == nil {
 			break
 		}
 
 		return e.complexity.User.ProfileBackground(childComplexity), true
+
+	case "User.profileBackgrounds":
+		if e.complexity.User.ProfileBackgrounds == nil {
+			break
+		}
+
+		return e.complexity.User.ProfileBackgrounds(childComplexity), true
 
 	case "User.profileName":
 		if e.complexity.User.ProfileName == nil {
@@ -2433,6 +2716,20 @@ extend type Mutation {
     adminLogin(input: Login): Boolean!
 }
 `, BuiltIn: false},
+	{Name: "graph/avatar-frame.graphqls", Input: `type AvatarFrame {
+    id: Int!
+    name: String!
+    link: String!
+    price: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    avatarFrames: [AvatarFrame!]!
+}`, BuiltIn: false},
 	{Name: "graph/badge.graphqls", Input: `type Badge {
     id: Int!
     name: String!
@@ -2496,18 +2793,6 @@ extend type Mutation {
 }
 
 `, BuiltIn: false},
-	{Name: "graph/file-upload.graphqls", Input: `scalar Upload
-
-type File {
-    id: Int!
-    name: String!
-    content: String!
-}
-
-input UploadFile {
-    id: Int!
-    file: Upload!
-}`, BuiltIn: false},
 	{Name: "graph/friendrequest.graphqls", Input: `type FriendRequest {
     id: Int!
     requester: User!
@@ -2658,6 +2943,20 @@ extend type Query {
 extend type Mutation {
     createGenre(input: NewGenre!): Genre!
 }`, BuiltIn: false},
+	{Name: "graph/mini-profile-background.graphqls", Input: `type MiniProfileBackground {
+    id: Int!
+    name: String!
+    link: String!
+    price: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    miniProfileBackgrounds: [MiniProfileBackground!]!
+}`, BuiltIn: false},
 	{Name: "graph/otp.graphqls", Input: `type Otp {
     id: Int!
     code: String!
@@ -2682,6 +2981,20 @@ extend type Query {
 extend type Mutation {
     createOtp(input: NewOtp!): Otp!
     updateOtp(code: String!): Otp!
+}`, BuiltIn: false},
+	{Name: "graph/profile-background.graphqls", Input: `type ProfileBackground {
+    id: Int!
+    name: String!
+    link: String!
+    price: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    profileBackgrounds: [ProfileBackground!]!
 }`, BuiltIn: false},
 	{Name: "graph/promo.graphqls", Input: `type Promo {
     id: Int!
@@ -2824,6 +3137,19 @@ extend type Query {
 extend type Mutation {
     createTag(input: NewTag!): Tag!
 }`, BuiltIn: false},
+	{Name: "graph/theme.graphqls", Input: `type Theme {
+    id: Int!
+    name: String!
+    color: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    themes: [Theme!]!
+}`, BuiltIn: false},
 	{Name: "graph/user-report.graphqls", Input: `type UserReport {
     id: Int!
     reported: User!
@@ -2849,14 +3175,19 @@ type User {
     email: String!
     password: String!
     balance: Float!
+    points: Int!
     customURL: String!
     summary: String!
 
     avatar: String!
-    avatarFrame: String!
-    profileBackground: String!
-    miniProfileBackground: String!
-    theme: String!
+    avatarFrame: AvatarFrame!
+    profileBackground: ProfileBackground!
+    miniProfileBackground: MiniProfileBackground!
+    theme: Theme!
+
+    avatarFrames: [AvatarFrame!]!
+    profileBackgrounds: [ProfileBackground!]!
+    miniProfileBackgrounds: [MiniProfileBackground!]!
 
     country: Country!
     games: [Game!]!
@@ -2889,11 +3220,11 @@ input UpdateUser {
     customURL: String!
     summary: String!
     avatar: String!
-    avatarFrame: String!
-    profileBackground: String!
-    miniProfileBackground: String!
-    theme: String!
-
+    avatarFrameId: Int!
+    profileBackgroundId: Int!
+    miniProfileBackgroundId: Int!
+    themeId: Int!
+    featuredBadgeId: Int!
     CountryId: Int!
 }
 
@@ -2911,6 +3242,8 @@ type Mutation {
     updateUser(user: UpdateUser!): Boolean!
     updateAccountSuspension(id: Int!): Boolean!
     addFriend(userId: Int!, friendId: Int!): Boolean!
+
+    updateAccountGeneral(accountName: String!, profileName: String!, realName: String!, customUrl: String!, countryId: Int!, summary: String!): Boolean!
 }`, BuiltIn: false},
 	{Name: "graph/usercomment.graphqls", Input: `
 type UserComment {
@@ -3320,6 +3653,66 @@ func (ec *executionContext) field_Mutation_setGamePromo_args(ctx context.Context
 		}
 	}
 	args["promoId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateAccountGeneral_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["accountName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["accountName"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["profileName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileName"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["profileName"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["realName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("realName"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["realName"] = arg2
+	var arg3 string
+	if tmp, ok := rawArgs["customUrl"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("customUrl"))
+		arg3, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["customUrl"] = arg3
+	var arg4 int
+	if tmp, ok := rawArgs["countryId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("countryId"))
+		arg4, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["countryId"] = arg4
+	var arg5 string
+	if tmp, ok := rawArgs["summary"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("summary"))
+		arg5, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["summary"] = arg5
 	return args, nil
 }
 
@@ -4033,6 +4426,251 @@ func (ec *executionContext) _Admin_deletedAt(ctx context.Context, field graphql.
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _AvatarFrame_id(ctx context.Context, field graphql.CollectedField, obj *model.AvatarFrame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AvatarFrame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AvatarFrame_name(ctx context.Context, field graphql.CollectedField, obj *model.AvatarFrame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AvatarFrame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AvatarFrame_link(ctx context.Context, field graphql.CollectedField, obj *model.AvatarFrame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AvatarFrame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Link, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AvatarFrame_price(ctx context.Context, field graphql.CollectedField, obj *model.AvatarFrame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AvatarFrame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Price, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AvatarFrame_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.AvatarFrame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AvatarFrame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AvatarFrame_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.AvatarFrame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AvatarFrame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AvatarFrame_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.AvatarFrame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AvatarFrame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Badge_id(ctx context.Context, field graphql.CollectedField, obj *model.Badge) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -4696,111 +5334,6 @@ func (ec *executionContext) _Developer_deletedAt(ctx context.Context, field grap
 	res := resTmp.(*time.Time)
 	fc.Result = res
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _File_id(ctx context.Context, field graphql.CollectedField, obj *model.File) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "File",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _File_name(ctx context.Context, field graphql.CollectedField, obj *model.File) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "File",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _File_content(ctx context.Context, field graphql.CollectedField, obj *model.File) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "File",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Content, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _FriendRequest_id(ctx context.Context, field graphql.CollectedField, obj *model.FriendRequest) (ret graphql.Marshaler) {
@@ -6410,6 +6943,251 @@ func (ec *executionContext) _Genre_deletedAt(ctx context.Context, field graphql.
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _MiniProfileBackground_id(ctx context.Context, field graphql.CollectedField, obj *model.MiniProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MiniProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MiniProfileBackground_name(ctx context.Context, field graphql.CollectedField, obj *model.MiniProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MiniProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MiniProfileBackground_link(ctx context.Context, field graphql.CollectedField, obj *model.MiniProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MiniProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Link, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MiniProfileBackground_price(ctx context.Context, field graphql.CollectedField, obj *model.MiniProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MiniProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Price, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MiniProfileBackground_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.MiniProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MiniProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MiniProfileBackground_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.MiniProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MiniProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _MiniProfileBackground_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.MiniProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MiniProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6562,6 +7340,48 @@ func (ec *executionContext) _Mutation_addFriend(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().AddFriend(rctx, args["userId"].(int), args["friendId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateAccountGeneral(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateAccountGeneral_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateAccountGeneral(rctx, args["accountName"].(string), args["profileName"].(string), args["realName"].(string), args["customUrl"].(string), args["countryId"].(int), args["summary"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7943,6 +8763,251 @@ func (ec *executionContext) _Otp_deletedAt(ctx context.Context, field graphql.Co
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ProfileBackground_id(ctx context.Context, field graphql.CollectedField, obj *model.ProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProfileBackground_name(ctx context.Context, field graphql.CollectedField, obj *model.ProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProfileBackground_link(ctx context.Context, field graphql.CollectedField, obj *model.ProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Link, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProfileBackground_price(ctx context.Context, field graphql.CollectedField, obj *model.ProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Price, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProfileBackground_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.ProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProfileBackground_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.ProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProfileBackground_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.ProfileBackground) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProfileBackground",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Promo_id(ctx context.Context, field graphql.CollectedField, obj *model.Promo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8599,6 +9664,41 @@ func (ec *executionContext) _Query_getUserAuth(ctx context.Context, field graphq
 	res := resTmp.(*model.User)
 	fc.Result = res
 	return ec.marshalNUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_avatarFrames(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().AvatarFrames(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.AvatarFrame)
+	fc.Result = res
+	return ec.marshalNAvatarFrame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐAvatarFrameᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_badges(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -9357,6 +10457,41 @@ func (ec *executionContext) _Query_genres(ctx context.Context, field graphql.Col
 	return ec.marshalNGenre2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGenreᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_miniProfileBackgrounds(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().MiniProfileBackgrounds(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.MiniProfileBackground)
+	fc.Result = res
+	return ec.marshalNMiniProfileBackground2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐMiniProfileBackgroundᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_otps(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -9432,6 +10567,41 @@ func (ec *executionContext) _Query_getOtpByCode(ctx context.Context, field graph
 	res := resTmp.(*model.Otp)
 	fc.Result = res
 	return ec.marshalNOtp2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐOtp(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_profileBackgrounds(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ProfileBackgrounds(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ProfileBackground)
+	fc.Result = res
+	return ec.marshalNProfileBackground2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐProfileBackgroundᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_promos(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -9845,6 +11015,41 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 	res := resTmp.([]*model.Tag)
 	fc.Result = res
 	return ec.marshalNTag2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTagᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_themes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Themes(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Theme)
+	fc.Result = res
+	return ec.marshalNTheme2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐThemeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_reports(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -11185,6 +12390,216 @@ func (ec *executionContext) _Tag_deletedAt(ctx context.Context, field graphql.Co
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Theme_id(ctx context.Context, field graphql.CollectedField, obj *model.Theme) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Theme",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Theme_name(ctx context.Context, field graphql.CollectedField, obj *model.Theme) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Theme",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Theme_color(ctx context.Context, field graphql.CollectedField, obj *model.Theme) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Theme",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Color, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Theme_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Theme) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Theme",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Theme_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Theme) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Theme",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Theme_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.Theme) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Theme",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11430,6 +12845,41 @@ func (ec *executionContext) _User_balance(ctx context.Context, field graphql.Col
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_points(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Points, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_customURL(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11565,9 +13015,9 @@ func (ec *executionContext) _User_avatarFrame(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.AvatarFrame)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNAvatarFrame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐAvatarFrame(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_profileBackground(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -11600,9 +13050,9 @@ func (ec *executionContext) _User_profileBackground(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.ProfileBackground)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNProfileBackground2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐProfileBackground(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_miniProfileBackground(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -11635,9 +13085,9 @@ func (ec *executionContext) _User_miniProfileBackground(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.MiniProfileBackground)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNMiniProfileBackground2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐMiniProfileBackground(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_theme(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -11670,9 +13120,114 @@ func (ec *executionContext) _User_theme(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.Theme)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNTheme2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTheme(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_avatarFrames(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AvatarFrames, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.AvatarFrame)
+	fc.Result = res
+	return ec.marshalNAvatarFrame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐAvatarFrameᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_profileBackgrounds(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProfileBackgrounds, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ProfileBackground)
+	fc.Result = res
+	return ec.marshalNProfileBackground2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐProfileBackgroundᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_miniProfileBackgrounds(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MiniProfileBackgrounds, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.MiniProfileBackground)
+	fc.Result = res
+	return ec.marshalNMiniProfileBackground2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐMiniProfileBackgroundᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_country(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -14140,35 +15695,43 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj in
 			if err != nil {
 				return it, err
 			}
-		case "avatarFrame":
+		case "avatarFrameId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarFrame"))
-			it.AvatarFrame, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarFrameId"))
+			it.AvatarFrameID, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "profileBackground":
+		case "profileBackgroundId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileBackground"))
-			it.ProfileBackground, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileBackgroundId"))
+			it.ProfileBackgroundID, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "miniProfileBackground":
+		case "miniProfileBackgroundId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("miniProfileBackground"))
-			it.MiniProfileBackground, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("miniProfileBackgroundId"))
+			it.MiniProfileBackgroundID, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "theme":
+		case "themeId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("theme"))
-			it.Theme, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("themeId"))
+			it.ThemeID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "featuredBadgeId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("featuredBadgeId"))
+			it.FeaturedBadgeID, err = ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14177,34 +15740,6 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj in
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("CountryId"))
 			it.CountryID, err = ec.unmarshalNInt2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputUploadFile(ctx context.Context, obj interface{}) (model.UploadFile, error) {
-	var it model.UploadFile
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNInt2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "file":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
-			it.File, err = ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -14260,6 +15795,63 @@ func (ec *executionContext) _Admin(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Admin_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var avatarFrameImplementors = []string{"AvatarFrame"}
+
+func (ec *executionContext) _AvatarFrame(ctx context.Context, sel ast.SelectionSet, obj *model.AvatarFrame) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, avatarFrameImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AvatarFrame")
+		case "id":
+			out.Values[i] = ec._AvatarFrame_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._AvatarFrame_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link":
+			out.Values[i] = ec._AvatarFrame_link(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "price":
+			out.Values[i] = ec._AvatarFrame_price(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._AvatarFrame_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._AvatarFrame_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._AvatarFrame_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -14443,43 +16035,6 @@ func (ec *executionContext) _Developer(ctx context.Context, sel ast.SelectionSet
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Developer_deletedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var fileImplementors = []string{"File"}
-
-func (ec *executionContext) _File(ctx context.Context, sel ast.SelectionSet, obj *model.File) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, fileImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("File")
-		case "id":
-			out.Values[i] = ec._File_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "name":
-			out.Values[i] = ec._File_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "content":
-			out.Values[i] = ec._File_content(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -14831,6 +16386,63 @@ func (ec *executionContext) _Genre(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
+var miniProfileBackgroundImplementors = []string{"MiniProfileBackground"}
+
+func (ec *executionContext) _MiniProfileBackground(ctx context.Context, sel ast.SelectionSet, obj *model.MiniProfileBackground) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, miniProfileBackgroundImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MiniProfileBackground")
+		case "id":
+			out.Values[i] = ec._MiniProfileBackground_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._MiniProfileBackground_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link":
+			out.Values[i] = ec._MiniProfileBackground_link(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "price":
+			out.Values[i] = ec._MiniProfileBackground_price(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._MiniProfileBackground_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._MiniProfileBackground_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._MiniProfileBackground_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -14863,6 +16475,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "addFriend":
 			out.Values[i] = ec._Mutation_addFriend(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateAccountGeneral":
+			out.Values[i] = ec._Mutation_updateAccountGeneral(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -15055,6 +16672,63 @@ func (ec *executionContext) _Otp(ctx context.Context, sel ast.SelectionSet, obj 
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Otp_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var profileBackgroundImplementors = []string{"ProfileBackground"}
+
+func (ec *executionContext) _ProfileBackground(ctx context.Context, sel ast.SelectionSet, obj *model.ProfileBackground) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, profileBackgroundImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProfileBackground")
+		case "id":
+			out.Values[i] = ec._ProfileBackground_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._ProfileBackground_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link":
+			out.Values[i] = ec._ProfileBackground_link(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "price":
+			out.Values[i] = ec._ProfileBackground_price(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._ProfileBackground_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._ProfileBackground_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._ProfileBackground_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -15276,6 +16950,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getUserAuth(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "avatarFrames":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_avatarFrames(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -15561,6 +17249,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "miniProfileBackgrounds":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_miniProfileBackgrounds(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "otps":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -15584,6 +17286,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getOtpByCode(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "profileBackgrounds":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_profileBackgrounds(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -15738,6 +17454,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_tags(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "themes":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_themes(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -16066,6 +17796,58 @@ func (ec *executionContext) _Tag(ctx context.Context, sel ast.SelectionSet, obj 
 	return out
 }
 
+var themeImplementors = []string{"Theme"}
+
+func (ec *executionContext) _Theme(ctx context.Context, sel ast.SelectionSet, obj *model.Theme) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, themeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Theme")
+		case "id":
+			out.Values[i] = ec._Theme_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._Theme_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "color":
+			out.Values[i] = ec._Theme_color(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._Theme_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._Theme_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._Theme_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var userImplementors = []string{"User"}
 
 func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *model.User) graphql.Marshaler {
@@ -16112,6 +17894,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "points":
+			out.Values[i] = ec._User_points(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "customURL":
 			out.Values[i] = ec._User_customURL(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -16144,6 +17931,21 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "theme":
 			out.Values[i] = ec._User_theme(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "avatarFrames":
+			out.Values[i] = ec._User_avatarFrames(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "profileBackgrounds":
+			out.Values[i] = ec._User_profileBackgrounds(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "miniProfileBackgrounds":
+			out.Values[i] = ec._User_miniProfileBackgrounds(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -16566,6 +18368,53 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
+
+func (ec *executionContext) marshalNAvatarFrame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐAvatarFrameᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AvatarFrame) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAvatarFrame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐAvatarFrame(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNAvatarFrame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐAvatarFrame(ctx context.Context, sel ast.SelectionSet, v *model.AvatarFrame) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._AvatarFrame(ctx, sel, v)
+}
 
 func (ec *executionContext) marshalNBadge2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐBadgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Badge) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
@@ -17232,6 +19081,53 @@ func (ec *executionContext) marshalNInt2ᚕintᚄ(ctx context.Context, sel ast.S
 	return ret
 }
 
+func (ec *executionContext) marshalNMiniProfileBackground2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐMiniProfileBackgroundᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MiniProfileBackground) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMiniProfileBackground2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐMiniProfileBackground(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNMiniProfileBackground2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐMiniProfileBackground(ctx context.Context, sel ast.SelectionSet, v *model.MiniProfileBackground) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._MiniProfileBackground(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNNewDeveloper2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐNewDeveloper(ctx context.Context, v interface{}) (model.NewDeveloper, error) {
 	res, err := ec.unmarshalInputNewDeveloper(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -17316,6 +19212,53 @@ func (ec *executionContext) marshalNOtp2ᚖgithubᚗcomᚋnicotanzilᚋbackend�
 		return graphql.Null
 	}
 	return ec._Otp(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNProfileBackground2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐProfileBackgroundᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ProfileBackground) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProfileBackground2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐProfileBackground(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNProfileBackground2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐProfileBackground(ctx context.Context, sel ast.SelectionSet, v *model.ProfileBackground) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ProfileBackground(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPromo2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPromo(ctx context.Context, sel ast.SelectionSet, v model.Promo) graphql.Marshaler {
@@ -17674,6 +19617,53 @@ func (ec *executionContext) marshalNTag2ᚖgithubᚗcomᚋnicotanzilᚋbackend�
 	return ec._Tag(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNTheme2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐThemeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Theme) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTheme2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTheme(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNTheme2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTheme(ctx context.Context, sel ast.SelectionSet, v *model.Theme) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Theme(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
 	res, err := graphql.UnmarshalTime(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -17713,21 +19703,6 @@ func (ec *executionContext) marshalNTime2ᚖtimeᚐTime(ctx context.Context, sel
 func (ec *executionContext) unmarshalNUpdateUser2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUpdateUser(ctx context.Context, v interface{}) (model.UpdateUser, error) {
 	res, err := ec.unmarshalInputUpdateUser(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (graphql.Upload, error) {
-	res, err := graphql.UnmarshalUpload(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v graphql.Upload) graphql.Marshaler {
-	res := graphql.MarshalUpload(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
 }
 
 func (ec *executionContext) marshalNUser2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {

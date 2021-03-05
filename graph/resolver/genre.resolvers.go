@@ -21,6 +21,8 @@ func (r *queryResolver) Genres(ctx context.Context) ([]*model.Genre, error) {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var genres []*model.Genre
 

@@ -16,6 +16,8 @@ func (r *mutationResolver) CreateSuspensionRequest(ctx context.Context, request 
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var suspensionRequest model.SuspensionRequest
 
@@ -33,6 +35,8 @@ func (r *queryResolver) SuspensionRequests(ctx context.Context) ([]*model.Suspen
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var requests []*model.SuspensionRequest
 
@@ -46,6 +50,8 @@ func (r *queryResolver) SuspensionRequestsByUserID(ctx context.Context, id int) 
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var requests []*model.SuspensionRequest
 

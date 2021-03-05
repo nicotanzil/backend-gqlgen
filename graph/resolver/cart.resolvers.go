@@ -17,6 +17,9 @@ func (r *mutationResolver) InsertGameToCart(ctx context.Context, gameID int, use
 		panic(err)
 	}
 
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
 	cart := model.Cart{
 		User: &model.User{ID: userID},
 		Game: &model.Game{ID: gameID},
@@ -32,6 +35,9 @@ func (r *mutationResolver) RemoveGameFromCart(ctx context.Context, gameID int, u
 		panic(err)
 	}
 
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
 	var cart model.Cart
 
 	db.Where("user_id = ?", userID).Where("game_id = ?", gameID).Delete(&cart)
@@ -43,6 +49,9 @@ func (r *queryResolver) Carts(ctx context.Context) ([]*model.Cart, error) {
 	if err != nil {
 		panic(err)
 	}
+
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var carts []*model.Cart
 
@@ -56,6 +65,9 @@ func (r *queryResolver) GetCartGamesByUserID(ctx context.Context, id int) ([]*mo
 	if err != nil {
 		panic(err)
 	}
+
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var carts []*model.Cart
 	var games []*model.Game

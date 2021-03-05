@@ -10,14 +10,24 @@ type User struct {
 	Email       string  `json:"email"`
 	Password    string  `json:"password"`
 	Balance     float64 `json:"balance"`
-	CustomURL   string  `json:"customURL"`
-	Summary     string  `json:"summary"`
+	Points                 int                      `json:"points"`
+	CustomURL              string                   `json:"customURL"`
+	Summary                string                   `json:"summary"`
 
-	Avatar                string `json:"avatar"`
-	AvatarFrame           string `json:"avatarFrames"`
-	ProfileBackground     string `json:"profileBackground"`
-	MiniProfileBackground string `json:"miniProfileBackground"`
-	Theme                 string `json:"theme"`
+
+	Avatar                 string                   `json:"avatar"`
+	AvatarFrameID			int						`json:"avatarFrameId"`
+	AvatarFrame            *AvatarFrame             `json:"avatarFrame" gorm:"foreignKey:AvatarFrameID"`
+	ProfileBackgroundID		int						`json:"profileBackgroundId"`
+	ProfileBackground      *ProfileBackground       `json:"profileBackground" gorm:"foreignKey:ProfileBackgroundID"`
+	MiniProfileBackgroundID	int						`json:"miniProfileBackgroundId"`
+	MiniProfileBackground  *MiniProfileBackground   `json:"miniProfileBackground" gorm:"foreignKey:MiniProfileBackgroundID"`
+	ThemeID					int						`json:"themeId"`
+	Theme                  *Theme                   `json:"theme" gorm:"foreignKey:ThemeID"`
+	AvatarFrames           []*AvatarFrame           `json:"avatarFrames" gorm:"many2many:user_avatarFrames;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	ProfileBackgrounds     []*ProfileBackground     `json:"profileBackgrounds" gorm:"many2many:user_profileBackgrounds;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	MiniProfileBackgrounds []*MiniProfileBackground `json:"miniProfileBackgrounds" gorm:"many2many:user_miniProfileBackgrounds;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+
 
 	CountryID  int      `json:"countryId"`
 	Country    *Country `json:"country" gorm:"foreignKey:CountryID"`
@@ -30,28 +40,31 @@ type User struct {
 	FeaturedBadge   *Badge   `json:"featuredBadge" gorm:"foreignKey:FeaturedBadgeID"`
 	Badges          []*Badge `json:"badges" gorm:"many2many:user_badges;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
-	DeletedAt *time.Time `json:"deletedAt"`
+
+	CreatedAt              time.Time                `json:"createdAt"`
+	UpdatedAt              time.Time                `json:"updatedAt"`
+	DeletedAt              *time.Time                `json:"deletedAt"`
 }
+
+type UpdateUser struct {
+	AccountName             string `json:"accountName"`
+	ProfileName             string `json:"profileName"`
+	RealName                string `json:"realName"`
+	CustomURL               string `json:"customURL"`
+	Summary                 string `json:"summary"`
+	Avatar                  string `json:"avatar"`
+	AvatarFrameID           int    `json:"avatarFrameId"`
+	ProfileBackgroundID     int    `json:"profileBackgroundId"`
+	MiniProfileBackgroundID int    `json:"miniProfileBackgroundId"`
+	ThemeID                 int    `json:"themeId"`
+	FeaturedBadgeID         int    `json:"featuredBadgeId"`
+	CountryID               int    `json:"CountryId"`
+}
+
 
 type NewUser struct {
 	AccountName string `json:"accountName"`
 	Password    string `json:"password"`
-}
-
-type UpdateUser struct {
-	AccountName           string `json:"accountName"`
-	ProfileName           string `json:"profileName"`
-	RealName              string `json:"realName"`
-	CustomURL             string `json:"customURL"`
-	Summary               string `json:"summary"`
-	Avatar                string `json:"avatar"`
-	AvatarFrame           string `json:"avatarFrames"`
-	ProfileBackground     string `json:"profileBackground"`
-	MiniProfileBackground string `json:"miniProfileBackground"`
-	Theme                 string `json:"theme"`
-	CountryID             int    `json:"CountryId"`
 }
 
 type InputUser struct {

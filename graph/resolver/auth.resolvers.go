@@ -22,6 +22,8 @@ func (r *mutationResolver) Login(ctx context.Context, input *model.Login) (strin
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var user model.User
 
@@ -88,6 +90,9 @@ func (r *mutationResolver) AdminLogin(ctx context.Context, input *model.Login) (
 	if err != nil {
 		panic(err)
 	}
+
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var admin model.Admin
 

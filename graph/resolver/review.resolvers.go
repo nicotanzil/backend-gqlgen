@@ -15,6 +15,8 @@ func (r *queryResolver) Reviews(ctx context.Context) ([]*model.Review, error) {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var reviews []*model.Review
 

@@ -5,28 +5,22 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 )
 
-func (r *mutationResolver) CreateDeveloper(ctx context.Context, input model.NewDeveloper) (*model.Developer, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) Developers(ctx context.Context) ([]*model.Developer, error) {
+func (r *queryResolver) AvatarFrames(ctx context.Context) ([]*model.AvatarFrame, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
 	}
-
 	dbClose, _ := db.DB()
 	defer dbClose.Close()
 
-	var developers []*model.Developer
+	var frames []*model.AvatarFrame
 
-	db.Find(&developers)
+	db.Find(&frames)
 
-	return developers, nil
+	return frames, nil
 }

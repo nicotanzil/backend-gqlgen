@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-
 	firebase_data "github.com/nicotanzil/backend-gqlgen/app/firebase-data"
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
@@ -19,21 +18,35 @@ func (r *mutationResolver) CreateUser(ctx context.Context, user *model.NewUser, 
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var newUser model.User
 
 	newUser = model.User{
-		AccountName:       user.AccountName,
-		ProfileName:       user.AccountName,
-		RealName:          "",
-		Email:             otp.Email,
-		Password:          providers.HashPassword(user.Password),
-		Balance:           0,
-		CustomURL:         user.AccountName,
-		Summary:           "No information given.",
-		Avatar:            firebase_data.Avatar,
-		ProfileBackground: firebase_data.ProfileBackground,
-		Country:           &model.Country{ID: otp.CountryId},
+		AccountName: user.AccountName,
+		ProfileName: user.AccountName,
+		RealName:    "",
+		Email:       otp.Email,
+		Password:    providers.HashPassword(user.Password),
+		Balance:     0,
+		CustomURL:   user.AccountName,
+		Summary:     "No information given.",
+		Avatar:      firebase_data.Avatar,
+		ProfileBackgrounds: []*model.ProfileBackground{
+			{ID: 1},
+		},
+		ProfileBackgroundID: 1,
+		MiniProfileBackgrounds: []*model.MiniProfileBackground{
+			{ID: 1},
+		},
+		MiniProfileBackgroundID: 1,
+		AvatarFrames: []*model.AvatarFrame{
+			{ID: 1},
+		},
+		AvatarFrameID: 1,
+		ThemeID:       1,
+		Country:       &model.Country{ID: otp.CountryId},
 	}
 
 	db.Create(&newUser)
@@ -45,6 +58,8 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUser
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var u model.User
 
@@ -55,10 +70,11 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUser
 	u.CustomURL = user.CustomURL
 	u.Summary = user.Summary
 	u.Avatar = user.Avatar
-	u.AvatarFrame = user.AvatarFrame
-	u.ProfileBackground = user.ProfileBackground
-	u.MiniProfileBackground = user.MiniProfileBackground
-	u.Theme = user.Theme
+	u.AvatarFrameID = user.AvatarFrameID
+	u.ProfileBackgroundID = user.ProfileBackgroundID
+	u.MiniProfileBackgroundID = user.MiniProfileBackgroundID
+	u.ThemeID = user.ThemeID
+	u.FeaturedBadgeID = user.FeaturedBadgeID
 	u.CountryID = user.CountryID
 
 	db.Save(&u)
@@ -71,6 +87,8 @@ func (r *mutationResolver) UpdateAccountSuspension(ctx context.Context, id int) 
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var user model.User
 	var request model.SuspensionRequest
@@ -92,6 +110,8 @@ func (r *mutationResolver) AddFriend(ctx context.Context, userID int, friendID i
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var user model.User
 	var friend model.User
@@ -107,11 +127,36 @@ func (r *mutationResolver) AddFriend(ctx context.Context, userID int, friendID i
 	return true, nil
 }
 
+func (r *mutationResolver) UpdateAccountGeneral(ctx context.Context, accountName string, profileName string, realName string, customURL string, countryID int, summary string) (bool, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
+	var u model.User
+
+	db.Where("account_name = ?", accountName).First(&u)
+
+	u.ProfileName = profileName
+	u.RealName = realName
+	u.CustomURL = customURL
+	u.CountryID = countryID
+	u.Summary = summary
+
+	db.Save(&u)
+
+	return true, nil
+}
+
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var users []*model.User
 
@@ -127,6 +172,8 @@ func (r *queryResolver) GetUserByID(ctx context.Context, id *int) (*model.User, 
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var user model.User
 
@@ -140,6 +187,8 @@ func (r *queryResolver) GetUseByAccountName(ctx context.Context, accountName str
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var user model.User
 
@@ -153,6 +202,8 @@ func (r *queryResolver) GetTotalUser(ctx context.Context) (int, error) {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var count int64
 
@@ -166,6 +217,8 @@ func (r *queryResolver) GetUserByURL(ctx context.Context, input *string) (*model
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var user model.User
 
@@ -179,6 +232,8 @@ func (r *queryResolver) GetUserPaginationAdmin(ctx context.Context, page int) ([
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var promos []*model.User
 

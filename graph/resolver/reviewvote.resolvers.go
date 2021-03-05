@@ -15,6 +15,8 @@ func (r *queryResolver) GetVotesByReviewID(ctx context.Context, input *string) (
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	var reviewVotes []*model.ReviewVote
 

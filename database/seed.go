@@ -14,11 +14,18 @@ func Seed() {
 	if err != nil {
 		panic(err)
 	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
 
 	fmt.Println("[INFO] SEEDING...")
 	// SEED ALL NECESSARY TABLE
 
 	SeedBadge(db)
+	SeedProfileBackground(db)
+	SeedMiniProfileBackground(db)
+	SeedAvatarFrames(db)
+	SeedTheme(db)
+
 	SeedAdmin(db)
 	SeedTag(db)
 	SeedSystem(db)
@@ -66,6 +73,136 @@ func SeedBadge(db *gorm.DB) {
 
 	for _, badge := range badges {
 		db.Create(&badge)
+	}
+}
+
+func SeedProfileBackground(db *gorm.DB) {
+	profileBackgrounds := []model.ProfileBackground{
+		{
+			Name:  "Default",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fusers%2Fdefault%2Fprofile_background.jpg?alt=media&token=d5b3f65c-37d3-45b8-ad72-7bb74948985f",
+			Price: 0,
+		},
+		{
+			Name:  "Cabin Lake",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fprofile_backgrounds%2Fcabin%20lake.jpg?alt=media&token=7d2bf329-6dd8-4d3d-a913-34f321dbc6c5",
+			Price: 500,
+		},
+		{
+			Name:  "Cliff's Edge",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fprofile_backgrounds%2Fcliff's%20edge.jpg?alt=media&token=6ca20d50-5f48-436e-9925-fab701e307f6",
+			Price: 500,
+		},
+		{
+			Name:  "Dying Light",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fprofile_backgrounds%2Fdying%20light.jpg?alt=media&token=8206d03b-84f0-412b-af8b-df79abbef4e2",
+			Price: 1000,
+		},
+		{
+			Name:  "Portrait",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fprofile_backgrounds%2Fportrait.jpg?alt=media&token=437912bc-331f-4be9-b345-eeb7e2806fde",
+			Price: 500,
+		},
+		{
+			Name:  "Rose Petals",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fprofile_backgrounds%2Frose%20petals.jpg?alt=media&token=1bb4be96-4b73-4bbe-89b4-7ce41e2a1e8e",
+			Price: 750,
+		},
+	}
+
+	for _, profileBackground := range profileBackgrounds {
+		db.Create(&profileBackground)
+	}
+}
+
+func SeedMiniProfileBackground(db *gorm.DB) {
+	miniProfileBackgrounds := []model.MiniProfileBackground{
+		{
+			Name:  "Default",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fmini_profile_backgrounds%2Fdefault.gif?alt=media&token=5c0c7bd7-195a-4098-b251-d392b1ff3f74",
+			Price: 0,
+		},
+		{
+			Name:  "Retro",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fmini_profile_backgrounds%2FRetro.gif?alt=media&token=f3d4d523-9fea-47f7-b6f6-5187990b2579",
+			Price: 1000,
+		},
+		{
+			Name:  "Sunset",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fmini_profile_backgrounds%2Fsunset.gif?alt=media&token=a339f7cd-099d-4b2d-ad20-987bfb654394",
+			Price: 500,
+		},
+		{
+			Name:  "Universe",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fmini_profile_backgrounds%2Funiverse.gif?alt=media&token=e4dae938-f563-42f4-a5e8-706710cf8881",
+			Price: 1000,
+		},
+	}
+
+	for _, miniProfileBackground := range miniProfileBackgrounds {
+		db.Create(&miniProfileBackground)
+	}
+}
+
+func SeedAvatarFrames(db *gorm.DB) {
+	avatarFrames := []model.AvatarFrame{
+		{
+			Name:  "Chase",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Favatar_frames%2Fchase.png?alt=media&token=72bca6bd-df64-485e-890e-467372d554dc",
+			Price: 2000,
+		},
+		{
+			Name:  "Glitch",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Favatar_frames%2Fglitch.png?alt=media&token=cf488486-e76b-49b3-8c42-78c4efd25dd5",
+			Price: 1500,
+		},
+		{
+			Name:  "Neon Glitch",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Favatar_frames%2Fneon%20glitch.png?alt=media&token=20d201fd-fcce-4926-a39e-8df02630ca20",
+			Price: 2000,
+		},
+		{
+			Name:  "Shadow Fire",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Favatar_frames%2Fshadow%20fire.png?alt=media&token=4557315a-390b-4535-a581-b09b45ab426c",
+			Price: 2000,
+		},
+	}
+
+	for _, avatarFrame := range avatarFrames {
+		db.Create(&avatarFrame)
+	}
+}
+
+func SeedTheme(db *gorm.DB) {
+	themes := []model.Theme{
+		{
+			Name:  "Default Theme",
+			Color: "#2C3144",
+		},
+		{
+			Name:  "Summer",
+			Color: "#A66F17",
+		},
+		{
+			Name:  "Midnight",
+			Color: "#16145E",
+		},
+		{
+			Name:  "Steel",
+			Color: "#313944",
+		},
+		{
+			Name:  "Cosmic",
+			Color: "#5A215F",
+		},
+		{
+			Name:  "Dark Mode",
+			Color: "#131313",
+		},
+	}
+
+	for _, theme := range themes {
+		db.Create(&theme)
 	}
 }
 
@@ -857,40 +994,85 @@ func SeedCountry(db *gorm.DB) {
 func SeedUser(db *gorm.DB) {
 	users := []model.User{
 		{
-			AccountName:       "nico",
-			ProfileName:       "nico tanzil",
-			RealName:          "Nico Tanzil",
-			Email:             "nico@mail.com",
-			Password:          providers.HashPassword("password"),
-			Balance:           100,
-			CustomURL:         "nico",
-			Summary:           "No information given.",
-			Avatar:            firebase_data.Avatar,
-			ProfileBackground: firebase_data.ProfileBackground,
-			CountryID:         102,
+			AccountName: "nico",
+			ProfileName: "nico tanzil",
+			RealName:    "Nico Tanzil",
+			Email:       "nico@mail.com",
+			Password:    providers.HashPassword("password"),
+			Balance:     100,
+			CustomURL:   "nico",
+			Summary:     "No information given.",
+			Avatar:      firebase_data.Avatar,
+
+			ProfileBackgrounds: []*model.ProfileBackground{
+				{ID: 1},
+				{ID: 2},
+				{ID: 3},
+				{ID: 4},
+				{ID: 5},
+				{ID: 6},
+			},
+			MiniProfileBackgrounds: []*model.MiniProfileBackground{
+				{ID: 1},
+				{ID: 2},
+				{ID: 3},
+				{ID: 4},
+			},
+			ProfileBackgroundID: 1,
+			AvatarFrames: []*model.AvatarFrame{
+				{ID: 1},
+				{ID: 2},
+				{ID: 3},
+				{ID: 4},
+			},
+			MiniProfileBackgroundID: 1,
+			AvatarFrameID: 1,
+			ThemeID:       1,
+
+			CountryID: 102,
 			Games: []*model.Game{
 				{
 					ID: 1,
 				},
 			},
-			Experience: 550,
-			FeaturedBadge: &model.Badge{ID: 3},
+			Experience:    550,
 			Badges: []*model.Badge{
-				{ID: 1}, {ID: 2}, {ID: 3},
+				{ID: 1},
+				{ID: 2},
+				{ID: 3},
 			},
+			FeaturedBadge: &model.Badge{ID: 3},
 		},
 		{
-			AccountName:       "william",
-			ProfileName:       "William",
-			RealName:          "William Martin",
-			Email:             "will@mail.com",
-			Password:          providers.HashPassword("password"),
-			Balance:           100,
-			CustomURL:         "william",
-			Summary:           "No information given.",
-			Avatar:            firebase_data.Avatar,
-			ProfileBackground: firebase_data.ProfileBackground,
-			CountryID:         2,
+			AccountName: "william",
+			ProfileName: "William",
+			RealName:    "William Martin",
+			Email:       "will@mail.com",
+			Password:    providers.HashPassword("password"),
+			Balance:     100,
+			CustomURL:   "william",
+			Summary:     "No information given.",
+			Avatar:      firebase_data.Avatar,
+
+			ProfileBackgrounds: []*model.ProfileBackground{
+				{ID: 1},
+				{ID: 2},
+				{ID: 3},
+			},
+			ProfileBackgroundID: 1,
+			MiniProfileBackgrounds: []*model.MiniProfileBackground{
+				{ID: 1},
+				{ID: 3},
+			},
+			MiniProfileBackgroundID: 1,
+			AvatarFrames: []*model.AvatarFrame{
+				{ID: 1},
+				{ID: 2},
+			},
+			AvatarFrameID: 1,
+			ThemeID:       1,
+
+			CountryID: 2,
 			Friends: []*model.User{
 				{ID: 1},
 			},
@@ -900,18 +1082,36 @@ func SeedUser(db *gorm.DB) {
 			},
 		},
 		{
-			AccountName:       "ricko",
-			ProfileName:       "Ricko",
-			RealName:          "Ricko Adrio",
-			Email:             "rick@mail.com",
-			Password:          providers.HashPassword("password"),
-			Balance:           100,
-			CustomURL:         "rick",
-			Summary:           "No information given.",
-			Avatar:            firebase_data.Avatar,
-			ProfileBackground: firebase_data.ProfileBackground,
-			CountryID:         3,
-			IsSuspend:         true,
+			AccountName: "ricko",
+			ProfileName: "Ricko",
+			RealName:    "Ricko Adrio",
+			Email:       "rick@mail.com",
+			Password:    providers.HashPassword("password"),
+			Balance:     100,
+			CustomURL:   "rick",
+			Summary:     "No information given.",
+			Avatar:      firebase_data.Avatar,
+
+			ProfileBackgrounds: []*model.ProfileBackground{
+				{ID: 1},
+				{ID: 2},
+				{ID: 3},
+			},
+			ProfileBackgroundID: 1,
+			MiniProfileBackgrounds: []*model.MiniProfileBackground{
+				{ID: 1},
+				{ID: 3},
+			},
+			MiniProfileBackgroundID: 1,
+			AvatarFrames: []*model.AvatarFrame{
+				{ID: 1},
+				{ID: 2},
+			},
+			AvatarFrameID: 1,
+			ThemeID:       1,
+
+			CountryID:     3,
+			IsSuspend:     true,
 			FeaturedBadge: &model.Badge{ID: 1},
 			Badges: []*model.Badge{
 				{ID: 1}, {ID: 2},
@@ -932,13 +1132,13 @@ func SeedUser(db *gorm.DB) {
 func SeedUserReport(db *gorm.DB) {
 	userReports := []model.UserReport{
 		{
-			Reported:    &model.User{ID: 1},
-			Reporter:    &model.User{ID: 2},
+			ReportedId:  1,
+			ReporterId:  2,
 			Description: "Toxic user!",
 		},
 		{
-			Reported:    &model.User{ID: 1},
-			Reporter:    &model.User{ID: 3},
+			ReportedId:  1,
+			ReporterId:  3,
 			Description: "Careful scammer!",
 		},
 	}
