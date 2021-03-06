@@ -20,6 +20,7 @@ func Connect() (*gorm.DB, error) {
 	dbUrl := os.Getenv("DATABASE_URL")
 	fmt.Println("DATABASE_URL")
 	fmt.Println(dbUrl)
+	dbUrl = "postgres://anhpmuqtndijza:80948d2eaf2c71fe40802de49395e831585593bf47dd3386358dcc500716c30f@ec2-54-197-228-62.compute-1.amazonaws.com:5432/dfml307bpvk1ek"
 	if dbUrl != "" {
 		return gorm.Open(postgres.Open(dbUrl), &gorm.Config{
 			PrepareStmt: true,
