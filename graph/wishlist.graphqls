@@ -1,0 +1,14 @@
+type Wishlist {
+    user: User!
+    game: Game!
+}
+
+extend type Query {
+    wishlists: [Wishlist!]!
+    getWishlistByUserId(id:Int!): [Game!]!
+}
+
+extend type Mutation {
+    insertGameToWishlist(gameId:Int!, userId:Int!): Boolean!
+    removeGameFromWishlist(gameId:Int!, userId:Int!): Boolean!
+}

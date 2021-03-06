@@ -107,10 +107,12 @@ func GameMigrate(db *gorm.DB) {
 func TransactionMigrate(db *gorm.DB) {
 	db.Migrator().DropTable(
 		&model.Cart{},
+		&model.Wishlist{},
 	)
 
 	db.AutoMigrate(
 		&model.Cart{},
+		&model.Wishlist{},
 	)
 }
 

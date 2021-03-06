@@ -184,10 +184,12 @@ type ComplexityRoot struct {
 		InsertGameBanner        func(childComplexity int, id int, link string) int
 		InsertGameImage         func(childComplexity int, gameImages []*model.InputGameImage) int
 		InsertGameToCart        func(childComplexity int, gameID int, userID int) int
+		InsertGameToWishlist    func(childComplexity int, gameID int, userID int) int
 		InsertGameVideo         func(childComplexity int, gameVideos []*model.InputGameVideo) int
 		Login                   func(childComplexity int, input *model.Login) int
 		Logout                  func(childComplexity int) int
 		RemoveGameFromCart      func(childComplexity int, gameID int, userID int) int
+		RemoveGameFromWishlist  func(childComplexity int, gameID int, userID int) int
 		SetGamePromo            func(childComplexity int, gameID int, promoID int) int
 		UpdateAccountGeneral    func(childComplexity int, accountName string, profileName string, realName string, customURL string, countryID int, summary string) int
 		UpdateAccountSuspension func(childComplexity int, id int) int
@@ -270,6 +272,7 @@ type ComplexityRoot struct {
 		GetUserByURL                  func(childComplexity int, input *string) int
 		GetUserPaginationAdmin        func(childComplexity int, page int) int
 		GetVotesByReviewID            func(childComplexity int, input *string) int
+		GetWishlistByUserID           func(childComplexity int, id int) int
 		MiniProfileBackgrounds        func(childComplexity int) int
 		Otps                          func(childComplexity int) int
 		ProfileBackgrounds            func(childComplexity int) int
@@ -284,6 +287,7 @@ type ComplexityRoot struct {
 		Themes                        func(childComplexity int) int
 		Users                         func(childComplexity int) int
 		ValidateFriendRequestExists   func(childComplexity int, requesterID int, requestedID int) int
+		Wishlists                     func(childComplexity int) int
 	}
 
 	Review struct {
@@ -394,6 +398,11 @@ type ComplexityRoot struct {
 		Reporter    func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 	}
+
+	Wishlist struct {
+		Game func(childComplexity int) int
+		User func(childComplexity int) int
+	}
 }
 
 type MutationResolver interface {
@@ -428,6 +437,8 @@ type MutationResolver interface {
 	CreatePublisher(ctx context.Context, input model.NewPublisher) (*model.Publisher, error)
 	CreateSuspensionRequest(ctx context.Context, request model.InputSuspensionRequest) (bool, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
+	InsertGameToWishlist(ctx context.Context, gameID int, userID int) (bool, error)
+	RemoveGameFromWishlist(ctx context.Context, gameID int, userID int) (bool, error)
 }
 type QueryResolver interface {
 	Users(ctx context.Context) ([]*model.User, error)
@@ -476,6 +487,8 @@ type QueryResolver interface {
 	Themes(ctx context.Context) ([]*model.Theme, error)
 	Reports(ctx context.Context) ([]*model.UserReport, error)
 	GetReportByReported(ctx context.Context, id int) ([]*model.UserReport, error)
+	Wishlists(ctx context.Context) ([]*model.Wishlist, error)
+	GetWishlistByUserID(ctx context.Context, id int) ([]*model.Game, error)
 }
 
 type executableSchema struct {
@@ -1304,6 +1317,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.InsertGameToCart(childComplexity, args["gameId"].(int), args["userId"].(int)), true
 
+	case "Mutation.insertGameToWishlist":
+		if e.complexity.Mutation.InsertGameToWishlist == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_insertGameToWishlist_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.InsertGameToWishlist(childComplexity, args["gameId"].(int), args["userId"].(int)), true
+
 	case "Mutation.insertGameVideo":
 		if e.complexity.Mutation.InsertGameVideo == nil {
 			break
@@ -1346,6 +1371,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveGameFromCart(childComplexity, args["gameId"].(int), args["userId"].(int)), true
+
+	case "Mutation.removeGameFromWishlist":
+		if e.complexity.Mutation.RemoveGameFromWishlist == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeGameFromWishlist_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveGameFromWishlist(childComplexity, args["gameId"].(int), args["userId"].(int)), true
 
 	case "Mutation.setGamePromo":
 		if e.complexity.Mutation.SetGamePromo == nil {
@@ -1941,6 +1978,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetVotesByReviewID(childComplexity, args["input"].(*string)), true
 
+	case "Query.getWishlistByUserId":
+		if e.complexity.Query.GetWishlistByUserID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getWishlistByUserId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetWishlistByUserID(childComplexity, args["id"].(int)), true
+
 	case "Query.miniProfileBackgrounds":
 		if e.complexity.Query.MiniProfileBackgrounds == nil {
 			break
@@ -2048,6 +2097,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ValidateFriendRequestExists(childComplexity, args["requesterId"].(int), args["requestedId"].(int)), true
+
+	case "Query.wishlists":
+		if e.complexity.Query.Wishlists == nil {
+			break
+		}
+
+		return e.complexity.Query.Wishlists(childComplexity), true
 
 	case "Review.content":
 		if e.complexity.Review.Content == nil {
@@ -2622,6 +2678,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UserReport.UpdatedAt(childComplexity), true
+
+	case "Wishlist.game":
+		if e.complexity.Wishlist.Game == nil {
+			break
+		}
+
+		return e.complexity.Wishlist.Game(childComplexity), true
+
+	case "Wishlist.user":
+		if e.complexity.Wishlist.User == nil {
+			break
+		}
+
+		return e.complexity.Wishlist.User(childComplexity), true
 
 	}
 	return 0, false
@@ -3256,6 +3326,20 @@ type UserComment {
     updatedAt: Time!
     deletedAt: Time!
 }`, BuiltIn: false},
+	{Name: "graph/wishlist.graphqls", Input: `type Wishlist {
+    user: User!
+    game: Game!
+}
+
+extend type Query {
+    wishlists: [Wishlist!]!
+    getWishlistByUserId(id:Int!): [Game!]!
+}
+
+extend type Mutation {
+    insertGameToWishlist(gameId:Int!, userId:Int!): Boolean!
+    removeGameFromWishlist(gameId:Int!, userId:Int!): Boolean!
+}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -3578,6 +3662,30 @@ func (ec *executionContext) field_Mutation_insertGameToCart_args(ctx context.Con
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_insertGameToWishlist_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["gameId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gameId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_insertGameVideo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3609,6 +3717,30 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 }
 
 func (ec *executionContext) field_Mutation_removeGameFromCart_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["gameId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gameId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_removeGameFromWishlist_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -4136,6 +4268,21 @@ func (ec *executionContext) field_Query_getVotesByReviewId_args(ctx context.Cont
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getWishlistByUserId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -8483,6 +8630,90 @@ func (ec *executionContext) _Mutation_createTag(ctx context.Context, field graph
 	return ec.marshalNTag2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTag(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_insertGameToWishlist(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_insertGameToWishlist_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().InsertGameToWishlist(rctx, args["gameId"].(int), args["userId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_removeGameFromWishlist(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_removeGameFromWishlist_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveGameFromWishlist(rctx, args["gameId"].(int), args["userId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Otp_id(ctx context.Context, field graphql.CollectedField, obj *model.Otp) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11127,6 +11358,83 @@ func (ec *executionContext) _Query_getReportByReported(ctx context.Context, fiel
 	res := resTmp.([]*model.UserReport)
 	fc.Result = res
 	return ec.marshalNUserReport2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUserReportᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_wishlists(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Wishlists(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Wishlist)
+	fc.Result = res
+	return ec.marshalNWishlist2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐWishlistᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getWishlistByUserId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getWishlistByUserId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetWishlistByUserID(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -14070,6 +14378,76 @@ func (ec *executionContext) _UserReport_deletedAt(ctx context.Context, field gra
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Wishlist_user(ctx context.Context, field graphql.CollectedField, obj *model.Wishlist) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Wishlist",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Wishlist_game(ctx context.Context, field graphql.CollectedField, obj *model.Wishlist) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Wishlist",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Game, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -16613,6 +16991,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "insertGameToWishlist":
+			out.Values[i] = ec._Mutation_insertGameToWishlist(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removeGameFromWishlist":
+			out.Values[i] = ec._Mutation_removeGameFromWishlist(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -17501,6 +17889,34 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "wishlists":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_wishlists(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getWishlistByUserId":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getWishlistByUserId(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -18110,6 +18526,38 @@ func (ec *executionContext) _UserReport(ctx context.Context, sel ast.SelectionSe
 			}
 		case "deletedAt":
 			out.Values[i] = ec._UserReport_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var wishlistImplementors = []string{"Wishlist"}
+
+func (ec *executionContext) _Wishlist(ctx context.Context, sel ast.SelectionSet, obj *model.Wishlist) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, wishlistImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Wishlist")
+		case "user":
+			out.Values[i] = ec._Wishlist_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game":
+			out.Values[i] = ec._Wishlist_game(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -19801,6 +20249,53 @@ func (ec *executionContext) marshalNUserReport2ᚖgithubᚗcomᚋnicotanzilᚋba
 		return graphql.Null
 	}
 	return ec._UserReport(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWishlist2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐWishlistᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Wishlist) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWishlist2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐWishlist(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNWishlist2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐWishlist(ctx context.Context, sel ast.SelectionSet, v *model.Wishlist) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Wishlist(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {

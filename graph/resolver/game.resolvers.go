@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
@@ -153,9 +154,21 @@ func (r *mutationResolver) SetGamePromo(ctx context.Context, gameID int, promoID
 
 	var game model.Game
 
-	db.Where("id = ?", game).First(&game)
+	db.Where("id = ?", gameID).First(&game)
 	game.Promo = &model.Promo{ID: promoID}
 	db.Save(&game)
+
+	var users []model.User
+	db.Joins("JOIN wishlists ON wishlists.user_id = users.id").
+		Where("wishlists.game_id = ?", game.ID).
+		Find(&users)
+
+	// INSERT FIND GAME LOGIC AND USER
+	// SEND EMAIL
+	for _, user := range users {
+		fmt.Println("Sending email to ", user.Email)
+		model.SendEmailPromo(game, user)
+	}
 
 	return &game, nil
 }

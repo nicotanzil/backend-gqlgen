@@ -42,7 +42,9 @@ func Seed() {
 	SeedUser(db)
 	SeedSuspensionRequest(db)
 	SeedUserReport(db)
+
 	SeedCart(db)
+	SeedWishlist(db)
 
 	fmt.Println("[INFO] SEEDED.")
 }
@@ -997,9 +999,9 @@ func SeedUser(db *gorm.DB) {
 			AccountName: "nico",
 			ProfileName: "nico tanzil",
 			RealName:    "Nico Tanzil",
-			Email:       "nico@mail.com",
+			Email:       "tanzilclementius@gmail.com",
 			Password:    providers.HashPassword("password"),
-			Balance:     100,
+			Balance:     10000000,
 			CustomURL:   "nico",
 			Summary:     "No information given.",
 			Avatar:      firebase_data.Avatar,
@@ -1179,5 +1181,18 @@ func SeedCart(db *gorm.DB) {
 
 	for _, cart := range carts {
 		db.Create(&cart)
+	}
+}
+
+func SeedWishlist(db *gorm.DB) {
+	wishlists := []model.Wishlist {
+		{
+			User: &model.User{ID: 1},
+			Game: &model.Game{ID: 5},
+		},
+	}
+
+	for _, wishlist := range wishlists {
+		db.Create(&wishlist)
 	}
 }

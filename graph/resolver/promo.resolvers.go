@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
@@ -28,6 +27,7 @@ func (r *mutationResolver) CreatePromo(ctx context.Context, input model.NewPromo
 	}
 
 	db.Create(&newPromo)
+
 	return &newPromo, nil
 }
 

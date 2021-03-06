@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+
 	firebase_data "github.com/nicotanzil/backend-gqlgen/app/firebase-data"
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
