@@ -14,7 +14,6 @@ import (
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
-	"gorm.io/gorm/clause"
 )
 
 func (r *mutationResolver) Login(ctx context.Context, input *model.Login) (string, error) {
@@ -129,7 +128,20 @@ func (r *queryResolver) GetUserAuth(ctx context.Context) (*model.User, error) {
 
 	var fetchUser model.User
 
-	db.Preload(clause.Associations).Where("id = ?", user.ID).First(&fetchUser)
+	db.Preload("Avatar").
+		Preload("AvatarFrame").
+		Preload("ProfileBackground").
+		Preload("MiniProfileBackground").
+		Preload("Theme").
+		Preload("Country").
+		Preload("FeaturedBadge").
+		Preload("Badges").
+		Preload("Friends").
+		Preload("Friends.MiniProfileBackground").
+		Preload("Friends.AvatarFrame").
+		Preload("Friends.ProfileBackground").
+		Preload("Friends.FeaturedBadge").
+		Where("id = ?", user.ID).First(&fetchUser)
 
 	return &fetchUser, nil
 }

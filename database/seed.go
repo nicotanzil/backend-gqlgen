@@ -41,6 +41,7 @@ func Seed() {
 	SeedCountry(db)
 	SeedUser(db)
 	SeedSuspensionRequest(db)
+	SeedFriendRequest(db)
 	SeedUserReport(db)
 
 	SeedCart(db)
@@ -1129,6 +1130,20 @@ func SeedUser(db *gorm.DB) {
 	db.First(&user, "id = ?", 1)
 	user.Friends = []*model.User{{ID: 2}}
 	db.Save(&user)
+}
+
+func SeedFriendRequest(db *gorm.DB) {
+	friendRequests := []model.FriendRequest {
+		{
+			RequesterID: 3,
+			RequestedID: 1,
+			Status:      "Pending",
+		},
+	}
+
+	for _, report := range friendRequests {
+		db.Create(&report)
+	}
 }
 
 func SeedUserReport(db *gorm.DB) {

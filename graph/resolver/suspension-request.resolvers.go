@@ -27,6 +27,21 @@ func (r *mutationResolver) CreateSuspensionRequest(ctx context.Context, request 
 	}
 
 	db.Create(&suspensionRequest)
+
+	var reportCount int64
+	db.Model(&model.SuspensionRequest{}).
+		Where("user_id = ?", request.User.ID).
+		Where("DATE_PART('day', CURRENT_DATE) - DATE_PART('day', created_at) < 7").
+		Count(&reportCount)
+
+	if reportCount > 5 {
+		// Suspend user
+		var user model.User
+		db.Where("id = ?", request.User.ID).First(&user)
+		user.IsSuspend = true
+		db.Save(&user)
+	}
+
 	return true, nil
 }
 

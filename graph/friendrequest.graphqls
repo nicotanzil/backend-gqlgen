@@ -12,6 +12,8 @@ extend type Query {
     friendRequests: [FriendRequest!]!
     getFriendRequestByRequestedId(id:Int!): [FriendRequest!]!
     validateFriendRequestExists(requesterId:Int!, requestedId:Int!): Boolean!
+
+    getPendingFriendRequestCount(id:Int!): Int!
 }
 
 extend type Mutation {

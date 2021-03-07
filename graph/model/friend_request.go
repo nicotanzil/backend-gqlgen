@@ -8,7 +8,7 @@ type FriendRequest struct {
 	Requester 		*User  	`json:"requester" gorm:"foreignKey:RequesterID"`
 	RequestedID 	int  	`json:"requestedId"`
 	Requested 		*User  	`json:"requested" gorm:"foreignKey:RequestedID"`
-	Status    		string 	`json:"status"`
+	Status    		string 	`json:"status"` // Accepted, Pending, Ignored
 
 	CreatedAt  time.Time  	`json:"createdAt"`
 	UpdatedAt  time.Time  	`json:"updatedAt"`

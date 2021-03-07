@@ -163,7 +163,8 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 
 	//db.Find(&users)	//populate the users variable with `SELECT * FROM users`
 
-	db.Preload(clause.Associations).Find(&users) //populate the users with each corresponding countries
+	db.Preload(clause.Associations).
+		Find(&users) //populate the users with each corresponding countries
 
 	return users, nil
 }
@@ -223,7 +224,20 @@ func (r *queryResolver) GetUserByURL(ctx context.Context, input *string) (*model
 
 	var user model.User
 
-	db.Preload(clause.Associations).Where("custom_url = ?", input).First(&user)
+	db.Preload("Avatar").
+		Preload("AvatarFrame").
+		Preload("ProfileBackground").
+		Preload("MiniProfileBackground").
+		Preload("Theme").
+		Preload("Country").
+		Preload("FeaturedBadge").
+		Preload("Badges").
+		Preload("Friends").
+		Preload("Friends.MiniProfileBackground").
+		Preload("Friends.AvatarFrame").
+		Preload("Friends.ProfileBackground").
+		Preload("Friends.FeaturedBadge").
+		Where("custom_url = ?", input).First(&user)
 
 	return &user, nil
 }

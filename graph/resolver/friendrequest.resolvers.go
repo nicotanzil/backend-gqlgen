@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 	"gorm.io/gorm/clause"
@@ -88,11 +87,30 @@ func (r *queryResolver) ValidateFriendRequestExists(ctx context.Context, request
 
 	var request model.FriendRequest
 
-	db.Where("requested_id = ? AND requester_id = ? AND status LIKE ?", requestedID, requesterID, "Pending").First(&request)
-
-	if request.ID != 0 {
-		return true, nil
+	if requestedID != requesterID {
+		db.Where("requested_id = ? AND requester_id = ? AND status LIKE ? OR status LIKE ?", requestedID, requesterID, "Pending", "Ignored").First(&request)
+	} else {
+		request.ID = 0
 	}
 
-	return false, nil
+	if request.ID != 0 {
+		return true, nil // Stranger Pending / Ignored
+	}
+
+	return false, nil // Stranger Declined / No Interaction
+}
+
+func (r *queryResolver) GetPendingFriendRequestCount(ctx context.Context, id int) (int, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
+	var requestCount int64
+
+	db.Model(model.FriendRequest{}).Where("requested_id = ? AND status = ?", id, "Pending").Count(&requestCount)
+
+	return int(requestCount), nil
 }
