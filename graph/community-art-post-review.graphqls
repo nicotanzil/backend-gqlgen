@@ -1,0 +1,20 @@
+type CommunityArtPostReview {
+    id: Int!
+    post: CommunityArtPost!
+    user: User!
+    comment: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    communityArtPostReviews: [CommunityArtPostReview!]!
+    getCommunityArtPostReviewsByPostId(postId: Int!, page: Int!): [CommunityArtPostReview!]!
+    getTotalReviewsByPostId(postId: Int!): Int!
+}
+
+extend type Mutation {
+    addCommentByPostId(postId: Int!, userId: Int!, comment:String!): Boolean!
+}

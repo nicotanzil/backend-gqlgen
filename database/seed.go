@@ -44,6 +44,9 @@ func Seed() {
 	SeedFriendRequest(db)
 	SeedUserReport(db)
 
+	SeedCommunityArtPost(db)
+	SeedCommunityArtPostReview(db)
+
 	SeedCart(db)
 	SeedWishlist(db)
 
@@ -1029,8 +1032,8 @@ func SeedUser(db *gorm.DB) {
 				{ID: 4},
 			},
 			MiniProfileBackgroundID: 1,
-			AvatarFrameID: 1,
-			ThemeID:       1,
+			AvatarFrameID:           1,
+			ThemeID:                 1,
 
 			CountryID: 102,
 			Games: []*model.Game{
@@ -1038,7 +1041,7 @@ func SeedUser(db *gorm.DB) {
 					ID: 1,
 				},
 			},
-			Experience:    550,
+			Experience: 550,
 			Badges: []*model.Badge{
 				{ID: 1},
 				{ID: 2},
@@ -1133,7 +1136,7 @@ func SeedUser(db *gorm.DB) {
 }
 
 func SeedFriendRequest(db *gorm.DB) {
-	friendRequests := []model.FriendRequest {
+	friendRequests := []model.FriendRequest{
 		{
 			RequesterID: 3,
 			RequestedID: 1,
@@ -1200,7 +1203,7 @@ func SeedCart(db *gorm.DB) {
 }
 
 func SeedWishlist(db *gorm.DB) {
-	wishlists := []model.Wishlist {
+	wishlists := []model.Wishlist{
 		{
 			User: &model.User{ID: 1},
 			Game: &model.Game{ID: 5},
@@ -1209,5 +1212,104 @@ func SeedWishlist(db *gorm.DB) {
 
 	for _, wishlist := range wishlists {
 		db.Create(&wishlist)
+	}
+}
+
+func SeedCommunityArtPost(db *gorm.DB) {
+	communityArtPosts := []model.CommunityArtPost{
+		{
+			Link:        "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fcommunity-art-post%2F1.jpg?alt=media&token=c4636eb2-e642-4be2-9566-7460a1bb0d14",
+			Description: "Sunset",
+			IsImage:     true,
+			User:        &model.User{ID: 1},
+			Like:        5,
+		},
+		{
+			Link:        "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fcommunity-art-post%2F2.jpg?alt=media&token=61260093-4558-4582-810c-4509b18bacea",
+			Description: "Nature",
+			IsImage:     true,
+			User:        &model.User{ID: 1},
+			Like:        -3,
+		},
+		{
+			Link:        "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fcommunity-art-post%2F3.jpg?alt=media&token=878e2002-1684-4f64-a3e7-ffadd4656514",
+			Description: "Holy tree",
+			IsImage:     true,
+			User:        &model.User{ID: 1},
+			Like:        12,
+		},
+		{
+			Link:        "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fcommunity-art-post%2F4.jpg?alt=media&token=65c255e5-9d45-4516-b1c2-3f05f98f11db",
+			Description: "Lonely Road",
+			IsImage:     true,
+			User:        &model.User{ID: 2},
+			Like:        50,
+		},
+		{
+			Link:        "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fcommunity-art-post%2F1.mp4?alt=media&token=cc3bfb4c-1b7e-46ff-9ee4-389144321d1a",
+			Description: "Video 1",
+			IsImage:     false,
+			User:        &model.User{ID: 2},
+			Like:        25,
+		},
+		{
+			Link:        "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fcommunity-art-post%2F2.mp4?alt=media&token=191ba8ae-cb0c-4da6-8ddb-153b6c92aab9",
+			Description: "Video 2",
+			IsImage:     false,
+			User:        &model.User{ID: 3},
+			Like:        0,
+		},
+	}
+
+	for _, communityArtPost := range communityArtPosts {
+		db.Create(&communityArtPost)
+	}
+}
+
+func SeedCommunityArtPostReview(db *gorm.DB) {
+	communityArtPostReviews := []model.CommunityArtPostReview{
+		{
+			Post:    &model.CommunityArtPost{ID: 1},
+			User:    &model.User{ID: 2},
+			Comment: "Cool artwork bro!",
+		},
+		{
+			Post:    &model.CommunityArtPost{ID: 1},
+			User:    &model.User{ID: 3},
+			Comment: "Cool!",
+		},
+		{
+			Post:    &model.CommunityArtPost{ID: 2},
+			User:    &model.User{ID: 2},
+			Comment: "hehe!",
+		},
+		{
+			Post:    &model.CommunityArtPost{ID: 1},
+			User:    &model.User{ID: 2},
+			Comment: "Cool artwork bro 1!",
+		},
+		{
+			Post:    &model.CommunityArtPost{ID: 1},
+			User:    &model.User{ID: 2},
+			Comment: "Cool artwork bro 2!",
+		},
+		{
+			Post:    &model.CommunityArtPost{ID: 1},
+			User:    &model.User{ID: 2},
+			Comment: "Cool artwork bro 3!",
+		}, {
+			Post:    &model.CommunityArtPost{ID: 1},
+			User:    &model.User{ID: 2},
+			Comment: "Cool artwork bro 4!",
+		},
+		{
+			Post:    &model.CommunityArtPost{ID: 1},
+			User:    &model.User{ID: 2},
+			Comment: "Cool artwork bro 5!",
+		},
+	}
+
+	for _, communityArtPostReview := range communityArtPostReviews {
+		db.Create(&communityArtPostReview)
 	}
 }

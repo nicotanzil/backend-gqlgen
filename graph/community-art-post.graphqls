@@ -1,0 +1,22 @@
+type CommunityArtPost {
+    id: Int!
+    description: String!
+    link: String!
+    isImage: Boolean!
+    user: User!
+    like: Int!
+    reviews: [CommunityArtPostReview!]!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    communityArtPosts: [CommunityArtPost!]!
+}
+
+extend type Mutation {
+    communityPostLike(postId: Int!): Int!
+    communityPostDislike(postId: Int!): Int!
+}

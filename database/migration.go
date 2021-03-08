@@ -40,6 +40,10 @@ func UserMigrate(db *gorm.DB) {
 	// DROPPING ALL TABLE
 	db.Migrator().DropTable(
 		&model.Admin{},
+
+		&model.CommunityArtPostReview{},
+		&model.CommunityArtPost{},
+
 		&model.UserReport{},
 		&model.FriendRequest{},
 		&model.UserComment{},
@@ -68,6 +72,10 @@ func UserMigrate(db *gorm.DB) {
 		&model.UserComment{},
 		&model.FriendRequest{},
 		&model.UserReport{},
+
+		&model.CommunityArtPost{},
+		&model.CommunityArtPostReview{},
+
 		&model.Otp{},
 	)
 

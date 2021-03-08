@@ -258,7 +258,7 @@ func (r *queryResolver) GameSearch(ctx context.Context, keyword string) ([]*mode
 	var games []*model.Game
 
 	keyword = "%" + keyword + "%"
-	db.Preload(clause.Associations).Limit(providers.GAME_SEARCH_LIMIT).Where("name LIKE ?", keyword).Find(&games)
+	db.Preload(clause.Associations).Limit(providers.GAME_SEARCH_LIMIT).Where("LOWER(name) LIKE LOWER(?)", keyword).Find(&games)
 
 	return games, nil
 }

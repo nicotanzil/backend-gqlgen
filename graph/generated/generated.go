@@ -78,6 +78,29 @@ type ComplexityRoot struct {
 		User func(childComplexity int) int
 	}
 
+	CommunityArtPost struct {
+		CreatedAt   func(childComplexity int) int
+		DeletedAt   func(childComplexity int) int
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		IsImage     func(childComplexity int) int
+		Like        func(childComplexity int) int
+		Link        func(childComplexity int) int
+		Reviews     func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		User        func(childComplexity int) int
+	}
+
+	CommunityArtPostReview struct {
+		Comment   func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Post      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		User      func(childComplexity int) int
+	}
+
 	Country struct {
 		CreatedAt func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
@@ -167,8 +190,11 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AcceptFriendRequest     func(childComplexity int, id int) int
+		AddCommentByPostID      func(childComplexity int, postID int, userID int, comment string) int
 		AddFriend               func(childComplexity int, userID int, friendID int) int
 		AdminLogin              func(childComplexity int, input *model.Login) int
+		CommunityPostDislike    func(childComplexity int, postID int) int
+		CommunityPostLike       func(childComplexity int, postID int) int
 		CreateDeveloper         func(childComplexity int, input model.NewDeveloper) int
 		CreateFriendRequest     func(childComplexity int, requesterID int, requestedID int) int
 		CreateGame              func(childComplexity int, input model.NewGame) int
@@ -240,55 +266,59 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AvatarFrames                  func(childComplexity int) int
-		Badges                        func(childComplexity int) int
-		Carts                         func(childComplexity int) int
-		Countries                     func(childComplexity int) int
-		Developers                    func(childComplexity int) int
-		FriendRequests                func(childComplexity int) int
-		GameByID                      func(childComplexity int, id int) int
-		GameImages                    func(childComplexity int) int
-		GameSearch                    func(childComplexity int, keyword string) int
-		GameSearchPage                func(childComplexity int, keyword string, page int, price int, tag []*model.InputTag) int
-		GameVideos                    func(childComplexity int) int
-		Games                         func(childComplexity int) int
-		Genres                        func(childComplexity int) int
-		GetCartGamesByUserID          func(childComplexity int, id int) int
-		GetFriendRequestByRequestedID func(childComplexity int, id int) int
-		GetGameByPromoID              func(childComplexity int, id int) int
-		GetGamePaginationAdmin        func(childComplexity int, page *int) int
-		GetNewTrendingGame            func(childComplexity int) int
-		GetOtpByCode                  func(childComplexity int, code *string) int
-		GetPendingFriendRequestCount  func(childComplexity int, id int) int
-		GetPromoByID                  func(childComplexity int, id int) int
-		GetPromoPaginationAdmin       func(childComplexity int, page *int) int
-		GetReportByReported           func(childComplexity int, id int) int
-		GetSpecialOfferGame           func(childComplexity int) int
-		GetTotalGame                  func(childComplexity int) int
-		GetTotalPromo                 func(childComplexity int) int
-		GetTotalUser                  func(childComplexity int) int
-		GetUseByAccountName           func(childComplexity int, accountName string) int
-		GetUserAuth                   func(childComplexity int) int
-		GetUserByID                   func(childComplexity int, id *int) int
-		GetUserByURL                  func(childComplexity int, input *string) int
-		GetUserPaginationAdmin        func(childComplexity int, page int) int
-		GetVotesByReviewID            func(childComplexity int, input *string) int
-		GetWishlistByUserID           func(childComplexity int, id int) int
-		MiniProfileBackgrounds        func(childComplexity int) int
-		Otps                          func(childComplexity int) int
-		ProfileBackgrounds            func(childComplexity int) int
-		Promos                        func(childComplexity int) int
-		Publishers                    func(childComplexity int) int
-		Reports                       func(childComplexity int) int
-		Reviews                       func(childComplexity int) int
-		SuspensionRequests            func(childComplexity int) int
-		SuspensionRequestsByUserID    func(childComplexity int, id int) int
-		Systems                       func(childComplexity int) int
-		Tags                          func(childComplexity int) int
-		Themes                        func(childComplexity int) int
-		Users                         func(childComplexity int) int
-		ValidateFriendRequestExists   func(childComplexity int, requesterID int, requestedID int) int
-		Wishlists                     func(childComplexity int) int
+		AvatarFrames                       func(childComplexity int) int
+		Badges                             func(childComplexity int) int
+		Carts                              func(childComplexity int) int
+		CommunityArtPostReviews            func(childComplexity int) int
+		CommunityArtPosts                  func(childComplexity int) int
+		Countries                          func(childComplexity int) int
+		Developers                         func(childComplexity int) int
+		FriendRequests                     func(childComplexity int) int
+		GameByID                           func(childComplexity int, id int) int
+		GameImages                         func(childComplexity int) int
+		GameSearch                         func(childComplexity int, keyword string) int
+		GameSearchPage                     func(childComplexity int, keyword string, page int, price int, tag []*model.InputTag) int
+		GameVideos                         func(childComplexity int) int
+		Games                              func(childComplexity int) int
+		Genres                             func(childComplexity int) int
+		GetCartGamesByUserID               func(childComplexity int, id int) int
+		GetCommunityArtPostReviewsByPostID func(childComplexity int, postID int, page int) int
+		GetFriendRequestByRequestedID      func(childComplexity int, id int) int
+		GetGameByPromoID                   func(childComplexity int, id int) int
+		GetGamePaginationAdmin             func(childComplexity int, page *int) int
+		GetNewTrendingGame                 func(childComplexity int) int
+		GetOtpByCode                       func(childComplexity int, code *string) int
+		GetPendingFriendRequestCount       func(childComplexity int, id int) int
+		GetPromoByID                       func(childComplexity int, id int) int
+		GetPromoPaginationAdmin            func(childComplexity int, page *int) int
+		GetReportByReported                func(childComplexity int, id int) int
+		GetSpecialOfferGame                func(childComplexity int) int
+		GetTotalGame                       func(childComplexity int) int
+		GetTotalPromo                      func(childComplexity int) int
+		GetTotalReviewsByPostID            func(childComplexity int, postID int) int
+		GetTotalUser                       func(childComplexity int) int
+		GetUseByAccountName                func(childComplexity int, accountName string) int
+		GetUserAuth                        func(childComplexity int) int
+		GetUserByID                        func(childComplexity int, id *int) int
+		GetUserByURL                       func(childComplexity int, input *string) int
+		GetUserPaginationAdmin             func(childComplexity int, page int) int
+		GetVotesByReviewID                 func(childComplexity int, input *string) int
+		GetWishlistByUserID                func(childComplexity int, id int) int
+		MiniProfileBackgrounds             func(childComplexity int) int
+		Otps                               func(childComplexity int) int
+		ProfileBackgrounds                 func(childComplexity int) int
+		Promos                             func(childComplexity int) int
+		Publishers                         func(childComplexity int) int
+		Reports                            func(childComplexity int) int
+		Reviews                            func(childComplexity int) int
+		SuspensionRequests                 func(childComplexity int) int
+		SuspensionRequestsByUserID         func(childComplexity int, id int) int
+		Systems                            func(childComplexity int) int
+		Tags                               func(childComplexity int) int
+		Themes                             func(childComplexity int) int
+		Users                              func(childComplexity int) int
+		ValidateFriendRequestExists        func(childComplexity int, requesterID int, requestedID int) int
+		Wishlists                          func(childComplexity int) int
 	}
 
 	Review struct {
@@ -417,6 +447,9 @@ type MutationResolver interface {
 	AdminLogin(ctx context.Context, input *model.Login) (bool, error)
 	InsertGameToCart(ctx context.Context, gameID int, userID int) (bool, error)
 	RemoveGameFromCart(ctx context.Context, gameID int, userID int) (bool, error)
+	AddCommentByPostID(ctx context.Context, postID int, userID int, comment string) (bool, error)
+	CommunityPostLike(ctx context.Context, postID int) (int, error)
+	CommunityPostDislike(ctx context.Context, postID int) (int, error)
 	CreateDeveloper(ctx context.Context, input model.NewDeveloper) (*model.Developer, error)
 	CreateFriendRequest(ctx context.Context, requesterID int, requestedID int) (bool, error)
 	AcceptFriendRequest(ctx context.Context, id int) (bool, error)
@@ -453,6 +486,10 @@ type QueryResolver interface {
 	Badges(ctx context.Context) ([]*model.Badge, error)
 	Carts(ctx context.Context) ([]*model.Cart, error)
 	GetCartGamesByUserID(ctx context.Context, id int) ([]*model.Game, error)
+	CommunityArtPostReviews(ctx context.Context) ([]*model.CommunityArtPostReview, error)
+	GetCommunityArtPostReviewsByPostID(ctx context.Context, postID int, page int) ([]*model.CommunityArtPostReview, error)
+	GetTotalReviewsByPostID(ctx context.Context, postID int) (int, error)
+	CommunityArtPosts(ctx context.Context) ([]*model.CommunityArtPost, error)
 	Countries(ctx context.Context) ([]*model.Country, error)
 	Developers(ctx context.Context) ([]*model.Developer, error)
 	FriendRequests(ctx context.Context) ([]*model.FriendRequest, error)
@@ -661,6 +698,125 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cart.User(childComplexity), true
+
+	case "CommunityArtPost.createdAt":
+		if e.complexity.CommunityArtPost.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPost.CreatedAt(childComplexity), true
+
+	case "CommunityArtPost.deletedAt":
+		if e.complexity.CommunityArtPost.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPost.DeletedAt(childComplexity), true
+
+	case "CommunityArtPost.description":
+		if e.complexity.CommunityArtPost.Description == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPost.Description(childComplexity), true
+
+	case "CommunityArtPost.id":
+		if e.complexity.CommunityArtPost.ID == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPost.ID(childComplexity), true
+
+	case "CommunityArtPost.isImage":
+		if e.complexity.CommunityArtPost.IsImage == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPost.IsImage(childComplexity), true
+
+	case "CommunityArtPost.like":
+		if e.complexity.CommunityArtPost.Like == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPost.Like(childComplexity), true
+
+	case "CommunityArtPost.link":
+		if e.complexity.CommunityArtPost.Link == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPost.Link(childComplexity), true
+
+	case "CommunityArtPost.reviews":
+		if e.complexity.CommunityArtPost.Reviews == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPost.Reviews(childComplexity), true
+
+	case "CommunityArtPost.updatedAt":
+		if e.complexity.CommunityArtPost.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPost.UpdatedAt(childComplexity), true
+
+	case "CommunityArtPost.user":
+		if e.complexity.CommunityArtPost.User == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPost.User(childComplexity), true
+
+	case "CommunityArtPostReview.comment":
+		if e.complexity.CommunityArtPostReview.Comment == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPostReview.Comment(childComplexity), true
+
+	case "CommunityArtPostReview.createdAt":
+		if e.complexity.CommunityArtPostReview.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPostReview.CreatedAt(childComplexity), true
+
+	case "CommunityArtPostReview.deletedAt":
+		if e.complexity.CommunityArtPostReview.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPostReview.DeletedAt(childComplexity), true
+
+	case "CommunityArtPostReview.id":
+		if e.complexity.CommunityArtPostReview.ID == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPostReview.ID(childComplexity), true
+
+	case "CommunityArtPostReview.post":
+		if e.complexity.CommunityArtPostReview.Post == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPostReview.Post(childComplexity), true
+
+	case "CommunityArtPostReview.updatedAt":
+		if e.complexity.CommunityArtPostReview.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPostReview.UpdatedAt(childComplexity), true
+
+	case "CommunityArtPostReview.user":
+		if e.complexity.CommunityArtPostReview.User == nil {
+			break
+		}
+
+		return e.complexity.CommunityArtPostReview.User(childComplexity), true
 
 	case "Country.createdAt":
 		if e.complexity.Country.CreatedAt == nil {
@@ -1115,6 +1271,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AcceptFriendRequest(childComplexity, args["id"].(int)), true
 
+	case "Mutation.addCommentByPostId":
+		if e.complexity.Mutation.AddCommentByPostID == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addCommentByPostId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddCommentByPostID(childComplexity, args["postId"].(int), args["userId"].(int), args["comment"].(string)), true
+
 	case "Mutation.addFriend":
 		if e.complexity.Mutation.AddFriend == nil {
 			break
@@ -1138,6 +1306,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AdminLogin(childComplexity, args["input"].(*model.Login)), true
+
+	case "Mutation.communityPostDislike":
+		if e.complexity.Mutation.CommunityPostDislike == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_communityPostDislike_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CommunityPostDislike(childComplexity, args["postId"].(int)), true
+
+	case "Mutation.communityPostLike":
+		if e.complexity.Mutation.CommunityPostLike == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_communityPostLike_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CommunityPostLike(childComplexity, args["postId"].(int)), true
 
 	case "Mutation.createDeveloper":
 		if e.complexity.Mutation.CreateDeveloper == nil {
@@ -1697,6 +1889,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Carts(childComplexity), true
 
+	case "Query.communityArtPostReviews":
+		if e.complexity.Query.CommunityArtPostReviews == nil {
+			break
+		}
+
+		return e.complexity.Query.CommunityArtPostReviews(childComplexity), true
+
+	case "Query.communityArtPosts":
+		if e.complexity.Query.CommunityArtPosts == nil {
+			break
+		}
+
+		return e.complexity.Query.CommunityArtPosts(childComplexity), true
+
 	case "Query.countries":
 		if e.complexity.Query.Countries == nil {
 			break
@@ -1793,6 +1999,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetCartGamesByUserID(childComplexity, args["id"].(int)), true
+
+	case "Query.getCommunityArtPostReviewsByPostId":
+		if e.complexity.Query.GetCommunityArtPostReviewsByPostID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getCommunityArtPostReviewsByPostId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetCommunityArtPostReviewsByPostID(childComplexity, args["postId"].(int), args["page"].(int)), true
 
 	case "Query.getFriendRequestByRequestedId":
 		if e.complexity.Query.GetFriendRequestByRequestedID == nil {
@@ -1917,6 +2135,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetTotalPromo(childComplexity), true
+
+	case "Query.getTotalReviewsByPostId":
+		if e.complexity.Query.GetTotalReviewsByPostID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getTotalReviewsByPostId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetTotalReviewsByPostID(childComplexity, args["postId"].(int)), true
 
 	case "Query.getTotalUser":
 		if e.complexity.Query.GetTotalUser == nil {
@@ -2842,6 +3072,48 @@ extend type Mutation {
     insertGameToCart(gameId:Int!, userId:Int!): Boolean!
     removeGameFromCart(gameId:Int!, userId:Int!): Boolean!
 }`, BuiltIn: false},
+	{Name: "graph/community-art-post-review.graphqls", Input: `type CommunityArtPostReview {
+    id: Int!
+    post: CommunityArtPost!
+    user: User!
+    comment: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    communityArtPostReviews: [CommunityArtPostReview!]!
+    getCommunityArtPostReviewsByPostId(postId: Int!, page: Int!): [CommunityArtPostReview!]!
+    getTotalReviewsByPostId(postId: Int!): Int!
+}
+
+extend type Mutation {
+    addCommentByPostId(postId: Int!, userId: Int!, comment:String!): Boolean!
+}`, BuiltIn: false},
+	{Name: "graph/community-art-post.graphqls", Input: `type CommunityArtPost {
+    id: Int!
+    description: String!
+    link: String!
+    isImage: Boolean!
+    user: User!
+    like: Int!
+    reviews: [CommunityArtPostReview!]!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    communityArtPosts: [CommunityArtPost!]!
+}
+
+extend type Mutation {
+    communityPostLike(postId: Int!): Int!
+    communityPostDislike(postId: Int!): Int!
+}`, BuiltIn: false},
 	{Name: "graph/country.graphqls", Input: `type Country {
     id: Int!
     name: String!
@@ -3378,6 +3650,39 @@ func (ec *executionContext) field_Mutation_acceptFriendRequest_args(ctx context.
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_addCommentByPostId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["postId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["postId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["comment"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comment"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["comment"] = arg2
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_addFriend_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3414,6 +3719,36 @@ func (ec *executionContext) field_Mutation_adminLogin_args(ctx context.Context, 
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_communityPostDislike_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["postId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["postId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_communityPostLike_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["postId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["postId"] = arg0
 	return args, nil
 }
 
@@ -4107,6 +4442,30 @@ func (ec *executionContext) field_Query_getCartGamesByUserId_args(ctx context.Co
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_getCommunityArtPostReviewsByPostId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["postId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["postId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["page"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["page"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_getFriendRequestByRequestedId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -4224,6 +4583,21 @@ func (ec *executionContext) field_Query_getReportByReported_args(ctx context.Con
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getTotalReviewsByPostId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["postId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["postId"] = arg0
 	return args, nil
 }
 
@@ -5162,6 +5536,601 @@ func (ec *executionContext) _Cart_game(ctx context.Context, field graphql.Collec
 	res := resTmp.(*model.Game)
 	fc.Result = res
 	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPost_id(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPost_description(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPost_link(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Link, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPost_isImage(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsImage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPost_user(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPost_like(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Like, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPost_reviews(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reviews, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CommunityArtPostReview)
+	fc.Result = res
+	return ec.marshalNCommunityArtPostReview2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityArtPostReviewᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPost_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPost_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPost_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPost) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPost",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPostReview_id(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPostReview) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPostReview",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPostReview_post(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPostReview) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPostReview",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Post, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.CommunityArtPost)
+	fc.Result = res
+	return ec.marshalNCommunityArtPost2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityArtPost(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPostReview_user(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPostReview) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPostReview",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPostReview_comment(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPostReview) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPostReview",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Comment, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPostReview_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPostReview) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPostReview",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPostReview_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPostReview) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPostReview",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CommunityArtPostReview_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.CommunityArtPostReview) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CommunityArtPostReview",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Country_id(ctx context.Context, field graphql.CollectedField, obj *model.Country) (ret graphql.Marshaler) {
@@ -7779,6 +8748,132 @@ func (ec *executionContext) _Mutation_removeGameFromCart(ctx context.Context, fi
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addCommentByPostId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addCommentByPostId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddCommentByPostID(rctx, args["postId"].(int), args["userId"].(int), args["comment"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_communityPostLike(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_communityPostLike_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CommunityPostLike(rctx, args["postId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_communityPostDislike(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_communityPostDislike_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CommunityPostDislike(rctx, args["postId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createDeveloper(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -10073,6 +11168,160 @@ func (ec *executionContext) _Query_getCartGamesByUserId(ctx context.Context, fie
 	res := resTmp.([]*model.Game)
 	fc.Result = res
 	return ec.marshalNGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_communityArtPostReviews(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CommunityArtPostReviews(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CommunityArtPostReview)
+	fc.Result = res
+	return ec.marshalNCommunityArtPostReview2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityArtPostReviewᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getCommunityArtPostReviewsByPostId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getCommunityArtPostReviewsByPostId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetCommunityArtPostReviewsByPostID(rctx, args["postId"].(int), args["page"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CommunityArtPostReview)
+	fc.Result = res
+	return ec.marshalNCommunityArtPostReview2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityArtPostReviewᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getTotalReviewsByPostId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getTotalReviewsByPostId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetTotalReviewsByPostID(rctx, args["postId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_communityArtPosts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CommunityArtPosts(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CommunityArtPost)
+	fc.Result = res
+	return ec.marshalNCommunityArtPost2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityArtPostᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_countries(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -16406,6 +17655,135 @@ func (ec *executionContext) _Cart(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
+var communityArtPostImplementors = []string{"CommunityArtPost"}
+
+func (ec *executionContext) _CommunityArtPost(ctx context.Context, sel ast.SelectionSet, obj *model.CommunityArtPost) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, communityArtPostImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CommunityArtPost")
+		case "id":
+			out.Values[i] = ec._CommunityArtPost_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "description":
+			out.Values[i] = ec._CommunityArtPost_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link":
+			out.Values[i] = ec._CommunityArtPost_link(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isImage":
+			out.Values[i] = ec._CommunityArtPost_isImage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user":
+			out.Values[i] = ec._CommunityArtPost_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "like":
+			out.Values[i] = ec._CommunityArtPost_like(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "reviews":
+			out.Values[i] = ec._CommunityArtPost_reviews(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._CommunityArtPost_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._CommunityArtPost_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._CommunityArtPost_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var communityArtPostReviewImplementors = []string{"CommunityArtPostReview"}
+
+func (ec *executionContext) _CommunityArtPostReview(ctx context.Context, sel ast.SelectionSet, obj *model.CommunityArtPostReview) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, communityArtPostReviewImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CommunityArtPostReview")
+		case "id":
+			out.Values[i] = ec._CommunityArtPostReview_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "post":
+			out.Values[i] = ec._CommunityArtPostReview_post(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user":
+			out.Values[i] = ec._CommunityArtPostReview_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "comment":
+			out.Values[i] = ec._CommunityArtPostReview_comment(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._CommunityArtPostReview_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._CommunityArtPostReview_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._CommunityArtPostReview_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var countryImplementors = []string{"Country"}
 
 func (ec *executionContext) _Country(ctx context.Context, sel ast.SelectionSet, obj *model.Country) graphql.Marshaler {
@@ -16959,6 +18337,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addCommentByPostId":
+			out.Values[i] = ec._Mutation_addCommentByPostId(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "communityPostLike":
+			out.Values[i] = ec._Mutation_communityPostLike(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "communityPostDislike":
+			out.Values[i] = ec._Mutation_communityPostDislike(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createDeveloper":
 			out.Values[i] = ec._Mutation_createDeveloper(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -17467,6 +18860,62 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getCartGamesByUserId(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "communityArtPostReviews":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_communityArtPostReviews(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getCommunityArtPostReviewsByPostId":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getCommunityArtPostReviewsByPostId(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getTotalReviewsByPostId":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getTotalReviewsByPostId(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "communityArtPosts":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_communityArtPosts(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -19058,6 +20507,100 @@ func (ec *executionContext) marshalNCart2ᚖgithubᚗcomᚋnicotanzilᚋbackend�
 		return graphql.Null
 	}
 	return ec._Cart(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNCommunityArtPost2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityArtPostᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CommunityArtPost) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCommunityArtPost2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityArtPost(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNCommunityArtPost2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityArtPost(ctx context.Context, sel ast.SelectionSet, v *model.CommunityArtPost) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._CommunityArtPost(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNCommunityArtPostReview2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityArtPostReviewᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CommunityArtPostReview) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCommunityArtPostReview2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityArtPostReview(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNCommunityArtPostReview2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityArtPostReview(ctx context.Context, sel ast.SelectionSet, v *model.CommunityArtPostReview) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._CommunityArtPostReview(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNCountry2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCountryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Country) graphql.Marshaler {
