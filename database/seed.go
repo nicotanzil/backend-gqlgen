@@ -50,6 +50,9 @@ func Seed() {
 	SeedCommunityGameReview(db)
 	SeedCommunityGameReviewComment(db)
 
+	SeedGameDiscussion(db)
+	SeedGameDiscussionReply(db)
+
 	SeedCart(db)
 	SeedWishlist(db)
 
@@ -1396,5 +1399,130 @@ func SeedCommunityGameReviewComment(db *gorm.DB) {
 
 	for _, communityGameReviewComment := range communityGameReviewComments {
 		db.Create(&communityGameReviewComment)
+	}
+}
+
+func SeedGameDiscussion(db *gorm.DB) {
+	gameDiscussions := []model.GameDiscussion {
+		{
+			Title:       "How to report players in Dota 2 ",
+			Description: "Some users on Dota 2 community discussions have misconceptions about how the report system works. Here is a guide on how to use the report feature and other relevant information about the report system.\n",
+			Game:        &model.Game{ID: 1},
+			User:        &model.User{ID: 1},
+		},
+		{
+			Title:       "HELP! - Q: \"Is this site a scam?\" A: Probably! ",
+			Description: "First of all, compliments for checking this thread and being vigilant.\n\nThe short answer is: Until proven otherwise, assume the website is indeed a scam.\n\nThere are many more scam sites out there than legitimate sites and it's impossible for us to list them all.\n\nWhile many scam sites are blocked (shown as {LINK REMOVED} ) it's easy to make a new site and spam this, especially when often the accounts hijacked are used to spread even more links, or if certain sites use referral programs to trick you into spreading the website even more.\n\nScam sites are often professionally built, have a convincing proposition and are well operated.\nThey also come in many forms and continuously evolve, as a result of various steps taken to protect you from these sites.",
+			Game:        &model.Game{ID: 1},
+			User:        &model.User{ID: 2},
+		},
+		{
+			Title:       "Trading is NOT allowed in this sub-forum.",
+			Description: "Why isn’t it allowed?\n\nIt's simple.\n\nFirstly, there is a dedicated Trading Sub Forum available.\n\nSecondly, there are thousands of trade topics created in the trading sub forum each day. The disruption caused by a large of them spilling over into this forum would be unacceptable.\n\nFinally, there are some users simply attempting to game the system. Trade topics are commonly duplicated in the trading sub forum and this one. That just isn’t fair to users doing the right thing keeping their trade topics in the right place.",
+			Game:        &model.Game{ID: 1},
+			User:        &model.User{ID: 1},
+		},
+		{
+			Title:       "Terraria Bugs ( Post Here! ) ",
+			Description: "Edit in 2021: Thank you to the people who have given awards, very kind of you! I hope this thread has helped keep the discussions a cleaner place, and has helped the community come together in order to solve eachothers problems. Remember; if you've solved your problem, there may be tens or hundreds of others that have that same problem! Drop a comment and help them solve it too! :) You can search your problem with keywords via the discussions search once someone has posted about it. Stay safe everyone ❤️\n\nPotential resolution save fix\n1) If in fullscreen press alt-enter to go to windowed mode\n2) Change the resolution to the desired setting and DO NOT PRESS APPLY\n3) Press alt-enter\nshould be fixed\n\n- Game crashes after 5ish minutes on multiplayer server, (lost connection). Allows immediate reconnection. Windows 8.1 - Also noted to be happening with Windows XP 32bit. Windows 7 Home Premium\n\n- Worlds have been deleted / Unaccessable after 1.3 update. (In-Game, Worlds still show in the game folder when accessed through computer.)\n\n- Players spawning into a new world with brand new character and recieving 2 achievements ( Heart fruit and Mana Star upgrade).\n\n- Problems changing the resolution from 1440x900 to 800x600.",
+			Game:        &model.Game{ID: 6},
+			User:        &model.User{ID: 1},
+		},
+		{
+			Title:       "Terraria 1.4.1 Hotfixes! Information inside! (updated as hotfixes release) ",
+			Description: "Hello everyone!\n\nAs with any release, new bugs will arise - so this will be your one-stop shop for the changelogs that are handed down with each Terraria 1.4.1 hotfix... the first of which went live just a few moments ago!\n\n",
+			Game:        &model.Game{ID: 6},
+			User:        &model.User{ID: 2},
+		},
+		{
+			Title:       "How to make a server!!! ",
+			Description: "Will look into updating this more when I have time. I'm a busy person so if yall could just chill the F out I would be greatful. Have a nice day.\n\n\nThank you all for the warm feed back and I'm happy that this thread has been helpful for so many of you. From now on please refrain from adding me I check this semi regularly and there are also plenty of other people that lurk here with helpful advice.\n\nNOTE: If I do actually take the time to respond/add/help you be respectful or I will either ignore you or block you. I'm taking my own personal time to do these things and it is a choice not and resposibility.\n\nFor simple knowledge of in game things your best friend is>>> http://wiki.terrariaonline.com/Terraria_Wiki\nEvery pro uses this I keep it open 24/7 while I play.\n\n\n\nSide note to all newbie server makers, NO your IP is not 127.0.0.1, nor will it be 192.168.0.0-200, these are internal IP addresses and are useless to anyone else. Go to www.whatismyip.com and THAT is your ip.\n",
+			Game:        &model.Game{ID: 6},
+			User:        &model.User{ID: 3},
+		},
+		{
+			Title:       "Help! Is this site a scam? Probably. ",
+			Description: "First of all, compliments for being vigilant and applying some critical thinking. Till we figure out if this is a legitimate site not trying to scam you, we should assume they are for all intents and purposes.\n\nThere are many more scam sites out there than legitimate sites and it's impossible for us to list them all.\n\nWhile we do block poor sites (shown as {LINK REMOVED} ) it's easy to make a new site and spam this, especially when often the accounts hijacked are used to spread even more links, or if certain sites use referral programs to trick you into spreading your site even more.\n\nScam sites are often professionally built, have a convincing proposition and are well operated.\nThey also come in many forms and continuously evolve, as a result of various steps taken to protect you from these sites.\n",
+			Game:        &model.Game{ID: 4},
+			User:        &model.User{ID: 1},
+		},
+		{
+			Title:       "Mythbuster: The unofficial FAQ ",
+			Description: "As people who visited the forums frequently have undoubtedly noticed, there are some recurring themes that often lead different people to make the same threads.\n\nIn some cases these people are simply poorly informed, in some cases it's persisting myths, and other times it's simply a case of not realising a search function and rules exist.\n\nWe plan on posting each and any of these topics as individual, open threads so that people can discussions there in and link to them.\n",
+			Game:        &model.Game{ID: 4},
+			User:        &model.User{ID: 1},
+		},
+		{
+			Title:       "Trading is just not allowed in this forum. ",
+			Description: "It's simple.\n\nFirstly, there is a dedicated Trading Sub Forum available.\n\nSecondly, there are thousands of trade topics created in the trading sub forum each day. The disruption caused by a large of them spilling over into this forum would be unacceptable.\n\nFinally, there are some users simply attempting to game the system. Trade topics are commonly duplicated in the trading sub forum and this one. That just isn’t fair to users doing the right thing keeping their trade topics in the right place.",
+			Game:        &model.Game{ID: 4},
+			User:        &model.User{ID: 2},
+		},
+	}
+
+	for _, gameDiscussion := range gameDiscussions {
+		db.Create(&gameDiscussion)
+	}
+}
+
+func SeedGameDiscussionReply(db *gorm.DB) {
+	gameDiscussionReplies := []model.GameDiscussionReply {
+		{
+			Description:  "nice thread! very useful and informative",
+			Discussion:   &model.GameDiscussion{ID: 1},
+			User:         &model.User{ID: 2},
+		},
+		{
+			Description:  "nice thread! very useful and informative 2",
+			Discussion:   &model.GameDiscussion{ID: 1},
+			User:         &model.User{ID: 1},
+		},
+		{
+			Description:  "nice thread! very useful and informative 3",
+			Discussion:   &model.GameDiscussion{ID: 1},
+			User:         &model.User{ID: 2},
+		},{
+			Description:  "nice thread! very useful and informative 4",
+			Discussion:   &model.GameDiscussion{ID: 2},
+			User:         &model.User{ID: 1},
+		},
+		{
+			Description:  "nice thread! very useful and informative 5",
+			Discussion:   &model.GameDiscussion{ID: 2},
+			User:         &model.User{ID: 3},
+		},
+		{
+			Description:  "nice thread! very useful and informative 6",
+			Discussion:   &model.GameDiscussion{ID: 2},
+			User:         &model.User{ID: 2},
+		},
+		{
+			Description:  "nice thread! very useful and informative 7",
+			Discussion:   &model.GameDiscussion{ID: 3},
+			User:         &model.User{ID: 1},
+		},
+		{
+			Description:  "nice thread! very useful and informative 8",
+			Discussion:   &model.GameDiscussion{ID: 3},
+			User:         &model.User{ID: 2},
+		},
+		{
+			Description:  "nice thread! very useful and informative 9",
+			Discussion:   &model.GameDiscussion{ID: 3},
+			User:         &model.User{ID: 3},
+		},
+		{
+			Description:  "nice thread! very useful and informative 10",
+			Discussion:   &model.GameDiscussion{ID: 4},
+			User:         &model.User{ID: 1},
+		},{
+			Description:  "nice thread! very useful and informative 11",
+			Discussion:   &model.GameDiscussion{ID: 4},
+			User:         &model.User{ID: 2},
+		},
+	}
+
+	for _, gameDiscussionReply := range gameDiscussionReplies {
+		db.Create(&gameDiscussionReply)
 	}
 }

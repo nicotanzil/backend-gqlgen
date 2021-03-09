@@ -18,6 +18,8 @@ type Game {
     video: [GameVideo!]!
     images: [GameImage!]!
 
+    discussions: [GameDiscussion!]!
+
     createdAt: Time!
     updatedAt: Time!
     deletedAt: Time!
@@ -46,6 +48,8 @@ extend type Query {
     getSpecialOfferGame: [Game!]!
 
     getNewTrendingGame: [Game!]!
+
+    getGamesForDiscussions(keyword:String!): [Game!]!
 
 }
 

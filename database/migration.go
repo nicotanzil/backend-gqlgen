@@ -45,6 +45,8 @@ func UserMigrate(db *gorm.DB) {
 		&model.CommunityArtPost{},
 		&model.CommunityGameReviewComment{},
 		&model.CommunityGameReview{},
+		&model.GameDiscussionReply{},
+		&model.GameDiscussion{},
 
 		&model.UserReport{},
 		&model.FriendRequest{},
@@ -79,6 +81,8 @@ func UserMigrate(db *gorm.DB) {
 		&model.CommunityArtPostReview{},
 		&model.CommunityGameReview{},
 		&model.CommunityGameReviewComment{},
+		&model.GameDiscussion{},
+		&model.GameDiscussionReply{},
 
 		&model.Otp{},
 	)

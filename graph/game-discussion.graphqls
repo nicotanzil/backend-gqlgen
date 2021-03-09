@@ -1,0 +1,21 @@
+type GameDiscussion {
+    id: Int!
+    title: String!
+    description: String!
+    game: Game!
+    user: User!
+    replies: [GameDiscussionReply!]!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    gameDiscussions: [GameDiscussion!]!
+    getGameDiscussionByDiscussionID(id:Int!): GameDiscussion!
+}
+
+extend type Mutation {
+    insertDiscussionThread(title: String!, description: String!, gameId: Int!, userId: Int!): Boolean!
+}

@@ -284,7 +284,7 @@ func (r *queryResolver) GameSearchPage(ctx context.Context, keyword string, page
 			Limit(providers.GAME_SEARCH_PAGE_LIMIT).
 			Offset(providers.GAME_SEARCH_PAGE_LIMIT*(page-1)).
 			Joins("JOIN game_tags ON game_tags.game_id = games.id").
-			Where("name LIKE ?", keyword).
+			Where("LOWER(name) LIKE LOWER(?)", keyword).
 			Where("original_price <= ?", price).
 			Where("game_tags.tag_id IN ?", tagsId).
 			Find(&games)
@@ -293,7 +293,7 @@ func (r *queryResolver) GameSearchPage(ctx context.Context, keyword string, page
 		db.Preload(clause.Associations).
 			Limit(providers.GAME_SEARCH_PAGE_LIMIT).
 			Offset(providers.GAME_SEARCH_PAGE_LIMIT*(page-1)).
-			Where("name LIKE ?", keyword).
+			Where("LOWER(name) LIKE LOWER(?)", keyword).
 			Where("original_price <= ?", price).
 			Find(&games)
 	}
@@ -327,6 +327,24 @@ func (r *queryResolver) GetNewTrendingGame(ctx context.Context) ([]*model.Game, 
 	var games []*model.Game
 
 	db.Preload(clause.Associations).Order("created_at desc").Limit(providers.DEFAULT_HOME_CATEGORY_ITEM).Find(&games)
+
+	return games, nil
+}
+
+func (r *queryResolver) GetGamesForDiscussions(ctx context.Context, keyword string) ([]*model.Game, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
+	var games []*model.Game
+	keyword = "%" + keyword + "%"
+	db.Preload("Discussions.User").
+		Preload("Discussions.Replies").
+		Where("LOWER(name) LIKE LOWER(?)", keyword).
+		Find(&games)
 
 	return games, nil
 }

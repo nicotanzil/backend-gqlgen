@@ -1,0 +1,18 @@
+type GameDiscussionReply {
+    id: Int!
+    description: String!
+    discussion: GameDiscussion!
+    user: User!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    gameDiscussionReplies: [GameDiscussionReply!]!
+}
+
+extend type Mutation {
+    insertCommentByReviewId(reviewId: Int!, userId: Int!, comment:String!): Boolean!
+}

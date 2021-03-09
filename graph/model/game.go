@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type Game struct {
+type Game struct{
 	ID            int          `json:"id" gorm:"primaryKey"`
 	Name          string       `json:"name"`
 	Description   string       `json:"description"`
@@ -30,6 +30,8 @@ type Game struct {
 	Banner string       `json:"banner"`
 	Video  []*GameVideo `json:"video" gorm:"foreignKey:GameID"`
 	Images []*GameImage `json:"images" gorm:"foreignKey:GameID"`
+
+	Discussions   []*GameDiscussion `json:"discussions" gorm:"foreignKey:GameID"`
 
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt time.Time  `json:"updatedAt"`

@@ -156,6 +156,7 @@ type ComplexityRoot struct {
 		DeletedAt     func(childComplexity int) int
 		Description   func(childComplexity int) int
 		Developers    func(childComplexity int) int
+		Discussions   func(childComplexity int) int
 		GamePlayHour  func(childComplexity int) int
 		GameReviews   func(childComplexity int) int
 		Genres        func(childComplexity int) int
@@ -171,6 +172,28 @@ type ComplexityRoot struct {
 		UpdatedAt     func(childComplexity int) int
 		Users         func(childComplexity int) int
 		Video         func(childComplexity int) int
+	}
+
+	GameDiscussion struct {
+		CreatedAt   func(childComplexity int) int
+		DeletedAt   func(childComplexity int) int
+		Description func(childComplexity int) int
+		Game        func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Replies     func(childComplexity int) int
+		Title       func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		User        func(childComplexity int) int
+	}
+
+	GameDiscussionReply struct {
+		CreatedAt   func(childComplexity int) int
+		DeletedAt   func(childComplexity int) int
+		Description func(childComplexity int) int
+		Discussion  func(childComplexity int) int
+		ID          func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		User        func(childComplexity int) int
 	}
 
 	GameImage struct {
@@ -233,6 +256,8 @@ type ComplexityRoot struct {
 		CreateUser                func(childComplexity int, user *model.NewUser, otp *model.NewOtp) int
 		DeleteGame                func(childComplexity int, id int) int
 		DeletePromo               func(childComplexity int, id int) int
+		InsertCommentByReviewID   func(childComplexity int, reviewID int, userID int, comment string) int
+		InsertDiscussionThread    func(childComplexity int, title string, description string, gameID int, userID int) int
 		InsertGameBanner          func(childComplexity int, id int, link string) int
 		InsertGameImage           func(childComplexity int, gameImages []*model.InputGameImage) int
 		InsertGameToCart          func(childComplexity int, gameID int, userID int) int
@@ -303,6 +328,8 @@ type ComplexityRoot struct {
 		Developers                              func(childComplexity int) int
 		FriendRequests                          func(childComplexity int) int
 		GameByID                                func(childComplexity int, id int) int
+		GameDiscussionReplies                   func(childComplexity int) int
+		GameDiscussions                         func(childComplexity int) int
 		GameImages                              func(childComplexity int) int
 		GameSearch                              func(childComplexity int, keyword string) int
 		GameSearchPage                          func(childComplexity int, keyword string, page int, price int, tag []*model.InputTag) int
@@ -314,7 +341,9 @@ type ComplexityRoot struct {
 		GetCommunityGameReviewCommentByReviewID func(childComplexity int, reviewID int, page int) int
 		GetFriendRequestByRequestedID           func(childComplexity int, id int) int
 		GetGameByPromoID                        func(childComplexity int, id int) int
+		GetGameDiscussionByDiscussionID         func(childComplexity int, id int) int
 		GetGamePaginationAdmin                  func(childComplexity int, page *int) int
+		GetGamesForDiscussions                  func(childComplexity int, keyword string) int
 		GetNewTrendingGame                      func(childComplexity int) int
 		GetOtpByCode                            func(childComplexity int, code *string) int
 		GetPendingFriendRequestCount            func(childComplexity int, id int) int
@@ -486,6 +515,8 @@ type MutationResolver interface {
 	CreateDeveloper(ctx context.Context, input model.NewDeveloper) (*model.Developer, error)
 	CreateFriendRequest(ctx context.Context, requesterID int, requestedID int) (bool, error)
 	AcceptFriendRequest(ctx context.Context, id int) (bool, error)
+	InsertCommentByReviewID(ctx context.Context, reviewID int, userID int, comment string) (bool, error)
+	InsertDiscussionThread(ctx context.Context, title string, description string, gameID int, userID int) (bool, error)
 	InsertGameImage(ctx context.Context, gameImages []*model.InputGameImage) (bool, error)
 	UpdateGameImage(ctx context.Context, id []int, images []*model.InputGameImage) (bool, error)
 	InsertGameVideo(ctx context.Context, gameVideos []*model.InputGameVideo) (bool, error)
@@ -533,6 +564,9 @@ type QueryResolver interface {
 	GetFriendRequestByRequestedID(ctx context.Context, id int) ([]*model.FriendRequest, error)
 	ValidateFriendRequestExists(ctx context.Context, requesterID int, requestedID int) (bool, error)
 	GetPendingFriendRequestCount(ctx context.Context, id int) (int, error)
+	GameDiscussionReplies(ctx context.Context) ([]*model.GameDiscussionReply, error)
+	GameDiscussions(ctx context.Context) ([]*model.GameDiscussion, error)
+	GetGameDiscussionByDiscussionID(ctx context.Context, id int) (*model.GameDiscussion, error)
 	GameImages(ctx context.Context) ([]*model.GameImage, error)
 	GameVideos(ctx context.Context) ([]*model.GameVideo, error)
 	Games(ctx context.Context) ([]*model.Game, error)
@@ -544,6 +578,7 @@ type QueryResolver interface {
 	GameSearchPage(ctx context.Context, keyword string, page int, price int, tag []*model.InputTag) ([]*model.Game, error)
 	GetSpecialOfferGame(ctx context.Context) ([]*model.Game, error)
 	GetNewTrendingGame(ctx context.Context) ([]*model.Game, error)
+	GetGamesForDiscussions(ctx context.Context, keyword string) ([]*model.Game, error)
 	Genres(ctx context.Context) ([]*model.Genre, error)
 	MiniProfileBackgrounds(ctx context.Context) ([]*model.MiniProfileBackground, error)
 	Otps(ctx context.Context) ([]*model.Otp, error)
@@ -1128,6 +1163,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Game.Developers(childComplexity), true
 
+	case "Game.discussions":
+		if e.complexity.Game.Discussions == nil {
+			break
+		}
+
+		return e.complexity.Game.Discussions(childComplexity), true
+
 	case "Game.gamePlayHour":
 		if e.complexity.Game.GamePlayHour == nil {
 			break
@@ -1232,6 +1274,118 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Game.Video(childComplexity), true
+
+	case "GameDiscussion.createdAt":
+		if e.complexity.GameDiscussion.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussion.CreatedAt(childComplexity), true
+
+	case "GameDiscussion.deletedAt":
+		if e.complexity.GameDiscussion.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussion.DeletedAt(childComplexity), true
+
+	case "GameDiscussion.description":
+		if e.complexity.GameDiscussion.Description == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussion.Description(childComplexity), true
+
+	case "GameDiscussion.game":
+		if e.complexity.GameDiscussion.Game == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussion.Game(childComplexity), true
+
+	case "GameDiscussion.id":
+		if e.complexity.GameDiscussion.ID == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussion.ID(childComplexity), true
+
+	case "GameDiscussion.replies":
+		if e.complexity.GameDiscussion.Replies == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussion.Replies(childComplexity), true
+
+	case "GameDiscussion.title":
+		if e.complexity.GameDiscussion.Title == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussion.Title(childComplexity), true
+
+	case "GameDiscussion.updatedAt":
+		if e.complexity.GameDiscussion.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussion.UpdatedAt(childComplexity), true
+
+	case "GameDiscussion.user":
+		if e.complexity.GameDiscussion.User == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussion.User(childComplexity), true
+
+	case "GameDiscussionReply.createdAt":
+		if e.complexity.GameDiscussionReply.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussionReply.CreatedAt(childComplexity), true
+
+	case "GameDiscussionReply.deletedAt":
+		if e.complexity.GameDiscussionReply.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussionReply.DeletedAt(childComplexity), true
+
+	case "GameDiscussionReply.description":
+		if e.complexity.GameDiscussionReply.Description == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussionReply.Description(childComplexity), true
+
+	case "GameDiscussionReply.discussion":
+		if e.complexity.GameDiscussionReply.Discussion == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussionReply.Discussion(childComplexity), true
+
+	case "GameDiscussionReply.id":
+		if e.complexity.GameDiscussionReply.ID == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussionReply.ID(childComplexity), true
+
+	case "GameDiscussionReply.updatedAt":
+		if e.complexity.GameDiscussionReply.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussionReply.UpdatedAt(childComplexity), true
+
+	case "GameDiscussionReply.user":
+		if e.complexity.GameDiscussionReply.User == nil {
+			break
+		}
+
+		return e.complexity.GameDiscussionReply.User(childComplexity), true
 
 	case "GameImage.createdAt":
 		if e.complexity.GameImage.CreatedAt == nil {
@@ -1666,6 +1820,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeletePromo(childComplexity, args["id"].(int)), true
+
+	case "Mutation.insertCommentByReviewId":
+		if e.complexity.Mutation.InsertCommentByReviewID == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_insertCommentByReviewId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.InsertCommentByReviewID(childComplexity, args["reviewId"].(int), args["userId"].(int), args["comment"].(string)), true
+
+	case "Mutation.insertDiscussionThread":
+		if e.complexity.Mutation.InsertDiscussionThread == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_insertDiscussionThread_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.InsertDiscussionThread(childComplexity, args["title"].(string), args["description"].(string), args["gameId"].(int), args["userId"].(int)), true
 
 	case "Mutation.insertGameBanner":
 		if e.complexity.Mutation.InsertGameBanner == nil {
@@ -2142,6 +2320,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GameByID(childComplexity, args["id"].(int)), true
 
+	case "Query.gameDiscussionReplies":
+		if e.complexity.Query.GameDiscussionReplies == nil {
+			break
+		}
+
+		return e.complexity.Query.GameDiscussionReplies(childComplexity), true
+
+	case "Query.gameDiscussions":
+		if e.complexity.Query.GameDiscussions == nil {
+			break
+		}
+
+		return e.complexity.Query.GameDiscussions(childComplexity), true
+
 	case "Query.gameImages":
 		if e.complexity.Query.GameImages == nil {
 			break
@@ -2254,6 +2446,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetGameByPromoID(childComplexity, args["id"].(int)), true
 
+	case "Query.getGameDiscussionByDiscussionID":
+		if e.complexity.Query.GetGameDiscussionByDiscussionID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getGameDiscussionByDiscussionID_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetGameDiscussionByDiscussionID(childComplexity, args["id"].(int)), true
+
 	case "Query.getGamePaginationAdmin":
 		if e.complexity.Query.GetGamePaginationAdmin == nil {
 			break
@@ -2265,6 +2469,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetGamePaginationAdmin(childComplexity, args["page"].(*int)), true
+
+	case "Query.getGamesForDiscussions":
+		if e.complexity.Query.GetGamesForDiscussions == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getGamesForDiscussions_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetGamesForDiscussions(childComplexity, args["keyword"].(string)), true
 
 	case "Query.getNewTrendingGame":
 		if e.complexity.Query.GetNewTrendingGame == nil {
@@ -3444,6 +3660,46 @@ extend type Mutation {
     createFriendRequest(requesterId:Int!, requestedId:Int!): Boolean!
     acceptFriendRequest(id:Int!): Boolean!
 }`, BuiltIn: false},
+	{Name: "graph/game-discussion-reply.graphqls", Input: `type GameDiscussionReply {
+    id: Int!
+    description: String!
+    discussion: GameDiscussion!
+    user: User!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    gameDiscussionReplies: [GameDiscussionReply!]!
+}
+
+extend type Mutation {
+    insertCommentByReviewId(reviewId: Int!, userId: Int!, comment:String!): Boolean!
+}
+`, BuiltIn: false},
+	{Name: "graph/game-discussion.graphqls", Input: `type GameDiscussion {
+    id: Int!
+    title: String!
+    description: String!
+    game: Game!
+    user: User!
+    replies: [GameDiscussionReply!]!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    gameDiscussions: [GameDiscussion!]!
+    getGameDiscussionByDiscussionID(id:Int!): GameDiscussion!
+}
+
+extend type Mutation {
+    insertDiscussionThread(title: String!, description: String!, gameId: Int!, userId: Int!): Boolean!
+}`, BuiltIn: false},
 	{Name: "graph/game-image.graphqls", Input: `type GameImage {
     id: Int!
     gameId: Int!
@@ -3510,6 +3766,8 @@ extend type Mutation {
     video: [GameVideo!]!
     images: [GameImage!]!
 
+    discussions: [GameDiscussion!]!
+
     createdAt: Time!
     updatedAt: Time!
     deletedAt: Time!
@@ -3538,6 +3796,8 @@ extend type Query {
     getSpecialOfferGame: [Game!]!
 
     getNewTrendingGame: [Game!]!
+
+    getGamesForDiscussions(keyword:String!): [Game!]!
 
 }
 
@@ -4286,6 +4546,81 @@ func (ec *executionContext) field_Mutation_deletePromo_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_insertCommentByReviewId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["reviewId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reviewId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["reviewId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["comment"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comment"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["comment"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_insertDiscussionThread_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["title"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["title"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["description"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["description"] = arg1
+	var arg2 int
+	if tmp, ok := rawArgs["gameId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameId"))
+		arg2, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gameId"] = arg2
+	var arg3 int
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg3, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg3
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_insertGameBanner_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -4856,6 +5191,21 @@ func (ec *executionContext) field_Query_getGameByPromoId_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_getGameDiscussionByDiscussionID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_getGamePaginationAdmin_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -4868,6 +5218,21 @@ func (ec *executionContext) field_Query_getGamePaginationAdmin_args(ctx context.
 		}
 	}
 	args["page"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getGamesForDiscussions_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["keyword"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keyword"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["keyword"] = arg0
 	return args, nil
 }
 
@@ -8290,6 +8655,41 @@ func (ec *executionContext) _Game_images(ctx context.Context, field graphql.Coll
 	return ec.marshalNGameImage2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImageᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Game_discussions(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Game",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Discussions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GameDiscussion)
+	fc.Result = res
+	return ec.marshalNGameDiscussion2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussionᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Game_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8369,6 +8769,566 @@ func (ec *executionContext) _Game_deletedAt(ctx context.Context, field graphql.C
 	}()
 	fc := &graphql.FieldContext{
 		Object:     "Game",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussion_id(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussion) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussion",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussion_title(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussion) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussion",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussion_description(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussion) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussion",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussion_game(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussion) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussion",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Game, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussion_user(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussion) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussion",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussion_replies(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussion) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussion",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Replies, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GameDiscussionReply)
+	fc.Result = res
+	return ec.marshalNGameDiscussionReply2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussionReplyᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussion_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussion) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussion",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussion_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussion) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussion",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussion_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussion) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussion",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussionReply_id(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussionReply) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussionReply",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussionReply_description(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussionReply) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussionReply",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussionReply_discussion(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussionReply) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussionReply",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Discussion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GameDiscussion)
+	fc.Result = res
+	return ec.marshalNGameDiscussion2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussion(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussionReply_user(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussionReply) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussionReply",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussionReply_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussionReply) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussionReply",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussionReply_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussionReply) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussionReply",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GameDiscussionReply_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussionReply) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GameDiscussionReply",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -10080,6 +11040,90 @@ func (ec *executionContext) _Mutation_acceptFriendRequest(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().AcceptFriendRequest(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_insertCommentByReviewId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_insertCommentByReviewId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().InsertCommentByReviewID(rctx, args["reviewId"].(int), args["userId"].(int), args["comment"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_insertDiscussionThread(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_insertDiscussionThread_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().InsertDiscussionThread(rctx, args["title"].(string), args["description"].(string), args["gameId"].(int), args["userId"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12805,6 +13849,118 @@ func (ec *executionContext) _Query_getPendingFriendRequestCount(ctx context.Cont
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_gameDiscussionReplies(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GameDiscussionReplies(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GameDiscussionReply)
+	fc.Result = res
+	return ec.marshalNGameDiscussionReply2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussionReplyᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_gameDiscussions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GameDiscussions(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GameDiscussion)
+	fc.Result = res
+	return ec.marshalNGameDiscussion2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getGameDiscussionByDiscussionID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getGameDiscussionByDiscussionID_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetGameDiscussionByDiscussionID(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GameDiscussion)
+	fc.Result = res
+	return ec.marshalNGameDiscussion2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussion(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_gameImages(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -13209,6 +14365,48 @@ func (ec *executionContext) _Query_getNewTrendingGame(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().GetNewTrendingGame(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getGamesForDiscussions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getGamesForDiscussions_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetGamesForDiscussions(rctx, args["keyword"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19407,6 +20605,11 @@ func (ec *executionContext) _Game(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "discussions":
+			out.Values[i] = ec._Game_discussions(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createdAt":
 			out.Values[i] = ec._Game_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -19419,6 +20622,130 @@ func (ec *executionContext) _Game(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Game_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var gameDiscussionImplementors = []string{"GameDiscussion"}
+
+func (ec *executionContext) _GameDiscussion(ctx context.Context, sel ast.SelectionSet, obj *model.GameDiscussion) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, gameDiscussionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GameDiscussion")
+		case "id":
+			out.Values[i] = ec._GameDiscussion_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "title":
+			out.Values[i] = ec._GameDiscussion_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "description":
+			out.Values[i] = ec._GameDiscussion_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game":
+			out.Values[i] = ec._GameDiscussion_game(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user":
+			out.Values[i] = ec._GameDiscussion_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "replies":
+			out.Values[i] = ec._GameDiscussion_replies(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._GameDiscussion_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._GameDiscussion_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._GameDiscussion_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var gameDiscussionReplyImplementors = []string{"GameDiscussionReply"}
+
+func (ec *executionContext) _GameDiscussionReply(ctx context.Context, sel ast.SelectionSet, obj *model.GameDiscussionReply) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, gameDiscussionReplyImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GameDiscussionReply")
+		case "id":
+			out.Values[i] = ec._GameDiscussionReply_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "description":
+			out.Values[i] = ec._GameDiscussionReply_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "discussion":
+			out.Values[i] = ec._GameDiscussionReply_discussion(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user":
+			out.Values[i] = ec._GameDiscussionReply_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._GameDiscussionReply_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._GameDiscussionReply_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._GameDiscussionReply_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -19758,6 +21085,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "acceptFriendRequest":
 			out.Values[i] = ec._Mutation_acceptFriendRequest(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "insertCommentByReviewId":
+			out.Values[i] = ec._Mutation_insertCommentByReviewId(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "insertDiscussionThread":
+			out.Values[i] = ec._Mutation_insertDiscussionThread(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -20455,6 +21792,48 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "gameDiscussionReplies":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_gameDiscussionReplies(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "gameDiscussions":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_gameDiscussions(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getGameDiscussionByDiscussionID":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getGameDiscussionByDiscussionID(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "gameImages":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -20604,6 +21983,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getNewTrendingGame(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getGamesForDiscussions":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getGamesForDiscussions(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -22356,6 +23749,104 @@ func (ec *executionContext) marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackend�
 		return graphql.Null
 	}
 	return ec._Game(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGameDiscussion2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussion(ctx context.Context, sel ast.SelectionSet, v model.GameDiscussion) graphql.Marshaler {
+	return ec._GameDiscussion(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGameDiscussion2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GameDiscussion) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNGameDiscussion2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussion(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNGameDiscussion2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussion(ctx context.Context, sel ast.SelectionSet, v *model.GameDiscussion) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._GameDiscussion(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGameDiscussionReply2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussionReplyᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GameDiscussionReply) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNGameDiscussionReply2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussionReply(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNGameDiscussionReply2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussionReply(ctx context.Context, sel ast.SelectionSet, v *model.GameDiscussionReply) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._GameDiscussionReply(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNGameImage2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameImageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GameImage) graphql.Marshaler {
