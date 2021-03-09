@@ -47,6 +47,9 @@ func Seed() {
 	SeedCommunityArtPost(db)
 	SeedCommunityArtPostReview(db)
 
+	SeedCommunityGameReview(db)
+	SeedCommunityGameReviewComment(db)
+
 	SeedCart(db)
 	SeedWishlist(db)
 
@@ -1311,5 +1314,87 @@ func SeedCommunityArtPostReview(db *gorm.DB) {
 
 	for _, communityArtPostReview := range communityArtPostReviews {
 		db.Create(&communityArtPostReview)
+	}
+}
+
+func SeedCommunityGameReview(db *gorm.DB) {
+	communityGameReviews := []model.CommunityGameReview {
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 1},
+			IsRecommended: true,
+			HelpfulCount:  2,
+		},
+		{
+			Description:   "Don't play this game",
+			User:          &model.User{ID: 2},
+			Game:          &model.Game{ID: 1},
+			IsRecommended: false,
+			HelpfulCount:  0,
+		},
+		{
+			Description:   "Really fun game 3",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 2},
+			IsRecommended: true,
+			HelpfulCount:  0,
+		},
+		{
+			Description:   "Really fun game 4",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 3},
+			IsRecommended: true,
+			HelpfulCount:  0,
+		},
+	}
+
+	for _, communityGameReview := range communityGameReviews {
+		db.Create(&communityGameReview)
+	}
+}
+
+func SeedCommunityGameReviewComment(db *gorm.DB) {
+	communityGameReviewComments := []model.CommunityGameReviewComment {
+		{
+			User:        &model.User{ID: 2},
+			Review:      &model.CommunityGameReview{ID: 1},
+			Description: "great review I find this really helpful",
+		},
+		{
+			User:        &model.User{ID: 2},
+			Review:      &model.CommunityGameReview{ID: 1},
+			Description: "great review I find this really helpful 2",
+		},
+		{
+			User:        &model.User{ID: 2},
+			Review:      &model.CommunityGameReview{ID: 1},
+			Description: "great review I find this really helpful 3",
+		},
+		{
+			User:        &model.User{ID: 2},
+			Review:      &model.CommunityGameReview{ID: 1},
+			Description: "great review I find this really helpful 4",
+		},
+		{
+			User:        &model.User{ID: 2},
+			Review:      &model.CommunityGameReview{ID: 1},
+			Description: "great review I find this really helpful 5",
+		},
+		{
+			User:        &model.User{ID: 2},
+			Review:      &model.CommunityGameReview{ID: 1},
+			Description: "great review I find this really helpful 6",
+		},
+		{
+			User:        &model.User{ID: 2},
+			Review:      &model.CommunityGameReview{ID: 1},
+			Description: "great review I find this really helpful 7",
+		},
+
+	}
+
+	for _, communityGameReviewComment := range communityGameReviewComments {
+		db.Create(&communityGameReviewComment)
 	}
 }

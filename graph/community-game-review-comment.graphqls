@@ -1,0 +1,20 @@
+type CommunityGameReviewComment {
+    id: Int!
+    user: User!
+    review: CommunityGameReview!
+    description: String!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    communityGameReviewComments: [CommunityGameReviewComment!]!
+    getCommunityGameReviewCommentByReviewId(reviewId: Int!, page: Int!): [CommunityGameReviewComment!]!
+    getTotalCommentByReviewId(reviewId: Int!):Int!
+}
+
+extend type Mutation {
+    addCommentByReviewId(reviewId: Int!, userId: Int!, comment:String!): Boolean!
+}

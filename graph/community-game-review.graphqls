@@ -1,0 +1,22 @@
+type CommunityGameReview {
+    id: Int!
+    description: String!
+    user: User!
+    game: Game!
+    isRecommended: Boolean!
+    comments: [CommunityGameReviewComment!]!
+    helpfulCount: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    communityGameReviews: [CommunityGameReview!]!
+}
+
+extend type Mutation {
+    communityReviewHelpful(reviewId: Int!): Int!
+    communityReviewNotHelpful(reviewId: Int!): Int!
+}
