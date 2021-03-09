@@ -56,6 +56,9 @@ func Seed() {
 	SeedCart(db)
 	SeedWishlist(db)
 
+	SeedPaymentType(db)
+	SeedGift(db)
+
 	fmt.Println("[INFO] SEEDED.")
 }
 
@@ -1524,5 +1527,37 @@ func SeedGameDiscussionReply(db *gorm.DB) {
 
 	for _, gameDiscussionReply := range gameDiscussionReplies {
 		db.Create(&gameDiscussionReply)
+	}
+}
+
+func SeedPaymentType(db *gorm.DB) {
+	paymentTypes := []model.PaymentType {
+		{ Name: "My Staem Wallet" },
+		{ Name: "Visa", },
+		{ Name: "MasterCard", },
+		{ Name: "eClub Points", },
+	}
+
+	for _, paymentType := range paymentTypes {
+		db.Create(&paymentType)
+	}
+}
+
+func SeedGift(db *gorm.DB) {
+	gifts := []*model.Gift {
+		{
+			Sender:     &model.User{ID: 1},
+			Receiver:   &model.User{ID: 2},
+			FirstName:  "hello",
+			Message:    "this is a gift",
+			Sentiment:  "XOXO",
+			Signature:  "sig",
+			IsComplete: false,
+			IsOpen: false,
+		},
+	}
+
+	for _, gift := range gifts {
+		db.Create(&gift)
 	}
 }

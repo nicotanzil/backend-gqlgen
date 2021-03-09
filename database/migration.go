@@ -48,6 +48,11 @@ func UserMigrate(db *gorm.DB) {
 		&model.GameDiscussionReply{},
 		&model.GameDiscussion{},
 
+		&model.Gift{},
+		&model.TransactionHeader{},
+		&model.TransactionDetail{},
+		&model.PaymentType{},
+
 		&model.UserReport{},
 		&model.FriendRequest{},
 		&model.UserComment{},
@@ -76,6 +81,11 @@ func UserMigrate(db *gorm.DB) {
 		&model.UserComment{},
 		&model.FriendRequest{},
 		&model.UserReport{},
+
+		&model.PaymentType{},
+		&model.TransactionDetail{},
+		&model.TransactionHeader{},
+		&model.Gift{},
 
 		&model.CommunityArtPost{},
 		&model.CommunityArtPostReview{},

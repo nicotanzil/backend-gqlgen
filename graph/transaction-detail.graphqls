@@ -1,0 +1,4 @@
+type TransactionDetail {
+    transactionHeader: TransactionHeader!
+    game: Game!
+}

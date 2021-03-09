@@ -1,0 +1,24 @@
+type TransactionHeader {
+    id: Int!
+    paymentType: PaymentType!
+    sender: User!
+    receiver: User!
+    total: Int!
+    transactionDetails: [TransactionDetail!]!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input InputTransactionHeader {
+    paymentTypeId: Int!
+    senderId: Int!
+    receiverId: Int!
+    total: Int!
+    transactionDetails: [Int!]!
+}
+
+extend type Mutation {
+    createTransaction(transaction: InputTransactionHeader): Boolean!
+}

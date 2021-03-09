@@ -1,0 +1,8 @@
+type PaymentType {
+    id: Int!
+    name: String!
+}
+
+extend type Query {
+    paymentTypes: [PaymentType!]!
+}

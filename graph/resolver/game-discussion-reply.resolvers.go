@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 	"gorm.io/gorm/clause"
@@ -21,9 +22,9 @@ func (r *mutationResolver) InsertCommentByReviewID(ctx context.Context, reviewID
 	var reply model.GameDiscussionReply
 
 	reply = model.GameDiscussionReply{
-		Description:  comment,
-		Discussion:   &model.GameDiscussion{ID: reviewID},
-		User:         &model.User{ID: userID},
+		Description: comment,
+		Discussion:  &model.GameDiscussion{ID: reviewID},
+		User:        &model.User{ID: userID},
 	}
 
 	db.Create(&reply)

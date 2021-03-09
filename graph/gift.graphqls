@@ -1,0 +1,33 @@
+type Gift {
+    id: Int!
+    sender: User!
+    receiver: User!
+    firstName: String!
+    message: String!
+    sentiment: String!
+    signature: String!
+    isComplete: Boolean!
+    isOpen: Boolean!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+input NewGift {
+    senderId: Int!
+    receiverId: Int!
+    firstName: String!
+    message: String!
+    sentiment: String!
+    signature: String!
+}
+
+extend type Query {
+    gifts: [Gift!]!
+    getGiftBySenderId(id: Int!): Gift!
+}
+
+extend type Mutation {
+    createGift(gift: NewGift): Boolean!
+}
