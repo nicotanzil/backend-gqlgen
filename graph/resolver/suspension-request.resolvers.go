@@ -45,6 +45,46 @@ func (r *mutationResolver) CreateSuspensionRequest(ctx context.Context, request 
 	return true, nil
 }
 
+func (r *mutationResolver) ApproveUnsuspend(ctx context.Context, userID int) (bool, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
+	// Unsuspend user
+	var user model.User
+	db.First(&user, userID)
+	user.IsSuspend = false
+	db.Save(&user)
+
+	// Delete all user report
+	db.Where("reported_id = ?", userID).
+		Delete(model.UserReport{})
+
+	// Delete all unsuspend request
+	db.Where("user_id = ?", userID).
+		Delete(model.SuspensionRequest{})
+
+	return true, nil
+}
+
+func (r *mutationResolver) UnApproveUnsuspend(ctx context.Context, userID int) (bool, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
+	// Delete all unsuspend request
+	db.Where("user_id = ?", userID).
+		Delete(model.SuspensionRequest{})
+
+	return true, nil
+}
+
 func (r *queryResolver) SuspensionRequests(ctx context.Context) ([]*model.SuspensionRequest, error) {
 	db, err := database.Connect()
 	if err != nil {

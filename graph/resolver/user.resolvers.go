@@ -232,6 +232,7 @@ func (r *queryResolver) GetUserByURL(ctx context.Context, input *string) (*model
 		Preload("Country").
 		Preload("FeaturedBadge").
 		Preload("Badges").
+		Preload("Games").
 		Preload("Friends").
 		Preload("Friends.MiniProfileBackground").
 		Preload("Friends.AvatarFrame").

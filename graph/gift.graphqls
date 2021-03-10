@@ -26,6 +26,7 @@ input NewGift {
 extend type Query {
     gifts: [Gift!]!
     getGiftBySenderId(id: Int!): Gift!
+    getGiftNotificationCount(receiverId: Int!): Int!
 }
 
 extend type Mutation {

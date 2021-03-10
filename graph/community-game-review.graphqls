@@ -12,11 +12,21 @@ type CommunityGameReview {
     deletedAt: Time!
 }
 
+input CommunityGameReviewInput {
+    description: String!
+    userId: Int!
+    gameId: Int!
+    isRecommended: Boolean!
+}
+
 extend type Query {
     communityGameReviews: [CommunityGameReview!]!
+    getMostUpvotedGameReviews(gameId: Int!): [CommunityGameReview!]!
+    getMostRecentGameReviews(gameId: Int!): [CommunityGameReview!]!
 }
 
 extend type Mutation {
+    createGameReview(input:CommunityGameReviewInput!): Boolean!
     communityReviewHelpful(reviewId: Int!): Int!
     communityReviewNotHelpful(reviewId: Int!): Int!
 }

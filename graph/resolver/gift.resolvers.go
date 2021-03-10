@@ -65,3 +65,22 @@ func (r *queryResolver) GetGiftBySenderID(ctx context.Context, id int) (*model.G
 
 	return &gift, nil
 }
+
+func (r *queryResolver) GetGiftNotificationCount(ctx context.Context, receiverID int) (int, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
+	var count int64
+
+	db.Model(model.Gift{}).
+		Where("receiver_id = ?", receiverID).
+		Where("is_open = false").
+		Where("is_complete = true").
+		Count(&count)
+
+	return int(count), nil
+}

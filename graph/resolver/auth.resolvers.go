@@ -134,6 +134,7 @@ func (r *queryResolver) GetUserAuth(ctx context.Context) (*model.User, error) {
 		Preload("MiniProfileBackground").
 		Preload("Theme").
 		Preload("Country").
+		Preload("Games").
 		Preload("FeaturedBadge").
 		Preload("Badges").
 		Preload("Friends").

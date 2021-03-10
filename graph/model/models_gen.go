@@ -2,6 +2,13 @@
 
 package model
 
+type CommunityGameReviewInput struct {
+	Description   string `json:"description"`
+	UserID        int    `json:"userId"`
+	GameID        int    `json:"gameId"`
+	IsRecommended bool   `json:"isRecommended"`
+}
+
 type InputTransactionHeader struct {
 	PaymentTypeID      int   `json:"paymentTypeId"`
 	SenderID           int   `json:"senderId"`

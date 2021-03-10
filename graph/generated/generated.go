@@ -255,6 +255,7 @@ type ComplexityRoot struct {
 		AddCommentByReviewID      func(childComplexity int, reviewID int, userID int, comment string) int
 		AddFriend                 func(childComplexity int, userID int, friendID int) int
 		AdminLogin                func(childComplexity int, input *model.Login) int
+		ApproveUnsuspend          func(childComplexity int, userID int) int
 		CommunityPostDislike      func(childComplexity int, postID int) int
 		CommunityPostLike         func(childComplexity int, postID int) int
 		CommunityReviewHelpful    func(childComplexity int, reviewID int) int
@@ -262,6 +263,7 @@ type ComplexityRoot struct {
 		CreateDeveloper           func(childComplexity int, input model.NewDeveloper) int
 		CreateFriendRequest       func(childComplexity int, requesterID int, requestedID int) int
 		CreateGame                func(childComplexity int, input model.NewGame) int
+		CreateGameReview          func(childComplexity int, input model.CommunityGameReviewInput) int
 		CreateGenre               func(childComplexity int, input model.NewGenre) int
 		CreateGift                func(childComplexity int, gift *model.NewGift) int
 		CreateOtp                 func(childComplexity int, input model.NewOtp) int
@@ -285,6 +287,7 @@ type ComplexityRoot struct {
 		RemoveGameFromCart        func(childComplexity int, gameID int, userID int) int
 		RemoveGameFromWishlist    func(childComplexity int, gameID int, userID int) int
 		SetGamePromo              func(childComplexity int, gameID int, promoID int) int
+		UnApproveUnsuspend        func(childComplexity int, userID int) int
 		UpdateAccountGeneral      func(childComplexity int, accountName string, profileName string, realName string, customURL string, countryID int, summary string) int
 		UpdateAccountSuspension   func(childComplexity int, id int) int
 		UpdateGame                func(childComplexity int, id int, input model.NewGame) int
@@ -367,6 +370,9 @@ type ComplexityRoot struct {
 		GetGamePaginationAdmin                  func(childComplexity int, page *int) int
 		GetGamesForDiscussions                  func(childComplexity int, keyword string) int
 		GetGiftBySenderID                       func(childComplexity int, id int) int
+		GetGiftNotificationCount                func(childComplexity int, receiverID int) int
+		GetMostRecentGameReviews                func(childComplexity int, gameID int) int
+		GetMostUpvotedGameReviews               func(childComplexity int, gameID int) int
 		GetNewTrendingGame                      func(childComplexity int) int
 		GetOtpByCode                            func(childComplexity int, code *string) int
 		GetPendingFriendRequestCount            func(childComplexity int, id int) int
@@ -552,6 +558,7 @@ type MutationResolver interface {
 	CommunityPostLike(ctx context.Context, postID int) (int, error)
 	CommunityPostDislike(ctx context.Context, postID int) (int, error)
 	AddCommentByReviewID(ctx context.Context, reviewID int, userID int, comment string) (bool, error)
+	CreateGameReview(ctx context.Context, input model.CommunityGameReviewInput) (bool, error)
 	CommunityReviewHelpful(ctx context.Context, reviewID int) (int, error)
 	CommunityReviewNotHelpful(ctx context.Context, reviewID int) (int, error)
 	CreateDeveloper(ctx context.Context, input model.NewDeveloper) (*model.Developer, error)
@@ -577,6 +584,8 @@ type MutationResolver interface {
 	DeletePromo(ctx context.Context, id int) (*model.Promo, error)
 	CreatePublisher(ctx context.Context, input model.NewPublisher) (*model.Publisher, error)
 	CreateSuspensionRequest(ctx context.Context, request model.InputSuspensionRequest) (bool, error)
+	ApproveUnsuspend(ctx context.Context, userID int) (bool, error)
+	UnApproveUnsuspend(ctx context.Context, userID int) (bool, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
 	CreateTransaction(ctx context.Context, transaction *model.InputTransactionHeader) (bool, error)
 	InsertGameToWishlist(ctx context.Context, gameID int, userID int) (bool, error)
@@ -602,6 +611,8 @@ type QueryResolver interface {
 	GetCommunityGameReviewCommentByReviewID(ctx context.Context, reviewID int, page int) ([]*model.CommunityGameReviewComment, error)
 	GetTotalCommentByReviewID(ctx context.Context, reviewID int) (int, error)
 	CommunityGameReviews(ctx context.Context) ([]*model.CommunityGameReview, error)
+	GetMostUpvotedGameReviews(ctx context.Context, gameID int) ([]*model.CommunityGameReview, error)
+	GetMostRecentGameReviews(ctx context.Context, gameID int) ([]*model.CommunityGameReview, error)
 	Countries(ctx context.Context) ([]*model.Country, error)
 	Developers(ctx context.Context) ([]*model.Developer, error)
 	FriendRequests(ctx context.Context) ([]*model.FriendRequest, error)
@@ -626,6 +637,7 @@ type QueryResolver interface {
 	Genres(ctx context.Context) ([]*model.Genre, error)
 	Gifts(ctx context.Context) ([]*model.Gift, error)
 	GetGiftBySenderID(ctx context.Context, id int) (*model.Gift, error)
+	GetGiftNotificationCount(ctx context.Context, receiverID int) (int, error)
 	MiniProfileBackgrounds(ctx context.Context) ([]*model.MiniProfileBackground, error)
 	Otps(ctx context.Context) ([]*model.Otp, error)
 	GetOtpByCode(ctx context.Context, code *string) (*model.Otp, error)
@@ -1760,6 +1772,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AdminLogin(childComplexity, args["input"].(*model.Login)), true
 
+	case "Mutation.approveUnsuspend":
+		if e.complexity.Mutation.ApproveUnsuspend == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_approveUnsuspend_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ApproveUnsuspend(childComplexity, args["userId"].(int)), true
+
 	case "Mutation.communityPostDislike":
 		if e.complexity.Mutation.CommunityPostDislike == nil {
 			break
@@ -1843,6 +1867,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateGame(childComplexity, args["input"].(model.NewGame)), true
+
+	case "Mutation.createGameReview":
+		if e.complexity.Mutation.CreateGameReview == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createGameReview_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateGameReview(childComplexity, args["input"].(model.CommunityGameReviewInput)), true
 
 	case "Mutation.createGenre":
 		if e.complexity.Mutation.CreateGenre == nil {
@@ -2114,6 +2150,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.SetGamePromo(childComplexity, args["gameId"].(int), args["promoId"].(int)), true
+
+	case "Mutation.unApproveUnsuspend":
+		if e.complexity.Mutation.UnApproveUnsuspend == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_unApproveUnsuspend_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UnApproveUnsuspend(childComplexity, args["userId"].(int)), true
 
 	case "Mutation.updateAccountGeneral":
 		if e.complexity.Mutation.UpdateAccountGeneral == nil {
@@ -2662,6 +2710,42 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetGiftBySenderID(childComplexity, args["id"].(int)), true
+
+	case "Query.getGiftNotificationCount":
+		if e.complexity.Query.GetGiftNotificationCount == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getGiftNotificationCount_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetGiftNotificationCount(childComplexity, args["receiverId"].(int)), true
+
+	case "Query.getMostRecentGameReviews":
+		if e.complexity.Query.GetMostRecentGameReviews == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getMostRecentGameReviews_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetMostRecentGameReviews(childComplexity, args["gameId"].(int)), true
+
+	case "Query.getMostUpvotedGameReviews":
+		if e.complexity.Query.GetMostUpvotedGameReviews == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getMostUpvotedGameReviews_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetMostUpvotedGameReviews(childComplexity, args["gameId"].(int)), true
 
 	case "Query.getNewTrendingGame":
 		if e.complexity.Query.GetNewTrendingGame == nil {
@@ -3866,11 +3950,21 @@ extend type Mutation {
     deletedAt: Time!
 }
 
+input CommunityGameReviewInput {
+    description: String!
+    userId: Int!
+    gameId: Int!
+    isRecommended: Boolean!
+}
+
 extend type Query {
     communityGameReviews: [CommunityGameReview!]!
+    getMostUpvotedGameReviews(gameId: Int!): [CommunityGameReview!]!
+    getMostRecentGameReviews(gameId: Int!): [CommunityGameReview!]!
 }
 
 extend type Mutation {
+    createGameReview(input:CommunityGameReviewInput!): Boolean!
     communityReviewHelpful(reviewId: Int!): Int!
     communityReviewNotHelpful(reviewId: Int!): Int!
 }
@@ -4134,6 +4228,7 @@ input NewGift {
 extend type Query {
     gifts: [Gift!]!
     getGiftBySenderId(id: Int!): Gift!
+    getGiftNotificationCount(receiverId: Int!): Int!
 }
 
 extend type Mutation {
@@ -4296,6 +4391,8 @@ extend type Query {
 
 extend type Mutation {
     createSuspensionRequest(request:InputSuspensionRequest!): Boolean!
+    approveUnsuspend(userId:Int!): Boolean!
+    unApproveUnsuspend(userId:Int!): Boolean!
 }`, BuiltIn: false},
 	{Name: "graph/system.graphqls", Input: `type System {
     id: Int!
@@ -4629,6 +4726,21 @@ func (ec *executionContext) field_Mutation_adminLogin_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_approveUnsuspend_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_communityPostDislike_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -4725,6 +4837,21 @@ func (ec *executionContext) field_Mutation_createFriendRequest_args(ctx context.
 		}
 	}
 	args["requestedId"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createGameReview_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.CommunityGameReviewInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCommunityGameReviewInput2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityGameReviewInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -5181,6 +5308,21 @@ func (ec *executionContext) field_Mutation_setGamePromo_args(ctx context.Context
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_unApproveUnsuspend_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateAccountGeneral_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -5619,6 +5761,51 @@ func (ec *executionContext) field_Query_getGiftBySenderId_args(ctx context.Conte
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getGiftNotificationCount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["receiverId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("receiverId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["receiverId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getMostRecentGameReviews_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["gameId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gameId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getMostUpvotedGameReviews_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["gameId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["gameId"] = arg0
 	return args, nil
 }
 
@@ -11652,6 +11839,48 @@ func (ec *executionContext) _Mutation_addCommentByReviewId(ctx context.Context, 
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createGameReview(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createGameReview_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateGameReview(rctx, args["input"].(model.CommunityGameReviewInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_communityReviewHelpful(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -12686,6 +12915,90 @@ func (ec *executionContext) _Mutation_createSuspensionRequest(ctx context.Contex
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().CreateSuspensionRequest(rctx, args["request"].(model.InputSuspensionRequest))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_approveUnsuspend(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_approveUnsuspend_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ApproveUnsuspend(rctx, args["userId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_unApproveUnsuspend(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_unApproveUnsuspend_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UnApproveUnsuspend(rctx, args["userId"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14578,6 +14891,90 @@ func (ec *executionContext) _Query_communityGameReviews(ctx context.Context, fie
 	return ec.marshalNCommunityGameReview2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityGameReviewᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_getMostUpvotedGameReviews(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getMostUpvotedGameReviews_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetMostUpvotedGameReviews(rctx, args["gameId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CommunityGameReview)
+	fc.Result = res
+	return ec.marshalNCommunityGameReview2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityGameReviewᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getMostRecentGameReviews(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getMostRecentGameReviews_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetMostRecentGameReviews(rctx, args["gameId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CommunityGameReview)
+	fc.Result = res
+	return ec.marshalNCommunityGameReview2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityGameReviewᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_countries(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -15493,6 +15890,48 @@ func (ec *executionContext) _Query_getGiftBySenderId(ctx context.Context, field 
 	res := resTmp.(*model.Gift)
 	fc.Result = res
 	return ec.marshalNGift2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGift(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getGiftNotificationCount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getGiftNotificationCount_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetGiftNotificationCount(rctx, args["receiverId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_miniProfileBackgrounds(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -20762,6 +21201,50 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputCommunityGameReviewInput(ctx context.Context, obj interface{}) (model.CommunityGameReviewInput, error) {
+	var it model.CommunityGameReviewInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "userId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			it.UserID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "gameId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameId"))
+			it.GameID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isRecommended":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isRecommended"))
+			it.IsRecommended, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputInputDeveloper(ctx context.Context, obj interface{}) (model.InputDeveloper, error) {
 	var it model.InputDeveloper
 	var asMap = obj.(map[string]interface{})
@@ -22714,6 +23197,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "createGameReview":
+			out.Values[i] = ec._Mutation_createGameReview(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "communityReviewHelpful":
 			out.Values[i] = ec._Mutation_communityReviewHelpful(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -22836,6 +23324,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createSuspensionRequest":
 			out.Values[i] = ec._Mutation_createSuspensionRequest(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "approveUnsuspend":
+			out.Values[i] = ec._Mutation_approveUnsuspend(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "unApproveUnsuspend":
+			out.Values[i] = ec._Mutation_unApproveUnsuspend(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -23401,6 +23899,34 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "getMostUpvotedGameReviews":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getMostUpvotedGameReviews(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getMostRecentGameReviews":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getMostRecentGameReviews(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "countries":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -23732,6 +24258,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getGiftBySenderId(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getGiftNotificationCount":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getGiftNotificationCount(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -25372,6 +25912,11 @@ func (ec *executionContext) marshalNCommunityGameReviewComment2ᚖgithubᚗcom�
 		return graphql.Null
 	}
 	return ec._CommunityGameReviewComment(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNCommunityGameReviewInput2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCommunityGameReviewInput(ctx context.Context, v interface{}) (model.CommunityGameReviewInput, error) {
+	res, err := ec.unmarshalInputCommunityGameReviewInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNCountry2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐCountryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Country) graphql.Marshaler {

@@ -20,4 +20,6 @@ extend type Query {
 
 extend type Mutation {
     createSuspensionRequest(request:InputSuspensionRequest!): Boolean!
+    approveUnsuspend(userId:Int!): Boolean!
+    unApproveUnsuspend(userId:Int!): Boolean!
 }

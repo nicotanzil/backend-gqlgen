@@ -1046,9 +1046,7 @@ func SeedUser(db *gorm.DB) {
 
 			CountryID: 102,
 			Games: []*model.Game{
-				{
-					ID: 1,
-				},
+				{ID: 1},{ID: 6},{ID: 7},
 			},
 			Experience: 550,
 			Badges: []*model.Badge{
@@ -1181,10 +1179,6 @@ func SeedSuspensionRequest(db *gorm.DB) {
 	suspensionRequests := []model.SuspensionRequest{
 		{
 			Description: "Please unsuspend me!",
-			User:        &model.User{ID: 3},
-		},
-		{
-			Description: "Respond please!",
 			User:        &model.User{ID: 3},
 		},
 	}
@@ -1546,13 +1540,13 @@ func SeedPaymentType(db *gorm.DB) {
 func SeedGift(db *gorm.DB) {
 	gifts := []*model.Gift {
 		{
-			Sender:     &model.User{ID: 1},
-			Receiver:   &model.User{ID: 2},
+			Sender:     &model.User{ID: 2},
+			Receiver:   &model.User{ID: 1},
 			FirstName:  "hello",
 			Message:    "this is a gift",
 			Sentiment:  "XOXO",
 			Signature:  "sig",
-			IsComplete: false,
+			IsComplete: true,
 			IsOpen: false,
 		},
 	}
