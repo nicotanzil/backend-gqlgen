@@ -281,6 +281,7 @@ type ComplexityRoot struct {
 		CommunityPostLike         func(childComplexity int, postID int) int
 		CommunityReviewHelpful    func(childComplexity int, reviewID int) int
 		CommunityReviewNotHelpful func(childComplexity int, reviewID int) int
+		CreateCommunityArtPost    func(childComplexity int, input model.InputCommunityArtPost) int
 		CreateDeveloper           func(childComplexity int, input model.NewDeveloper) int
 		CreateFriendRequest       func(childComplexity int, requesterID int, requestedID int) int
 		CreateGame                func(childComplexity int, input model.NewGame) int
@@ -404,6 +405,8 @@ type ComplexityRoot struct {
 		GetPromoPaginationAdmin                 func(childComplexity int, page *int) int
 		GetReportByReported                     func(childComplexity int, id int) int
 		GetSpecialOfferGame                     func(childComplexity int) int
+		GetTopReviewGames                       func(childComplexity int) int
+		GetTopSellerGames                       func(childComplexity int) int
 		GetTotalCommentByReviewID               func(childComplexity int, reviewID int) int
 		GetTotalGame                            func(childComplexity int) int
 		GetTotalItems                           func(childComplexity int, userID int, gameID int, keyword string) int
@@ -496,6 +499,24 @@ type ComplexityRoot struct {
 		UpdatedAt func(childComplexity int) int
 	}
 
+	TopReviewGame struct {
+		GameBanner   func(childComplexity int) int
+		GameDiscount func(childComplexity int) int
+		GameID       func(childComplexity int) int
+		GameName     func(childComplexity int) int
+		GamePrice    func(childComplexity int) int
+		ReviewCount  func(childComplexity int) int
+	}
+
+	TopSellerGame struct {
+		GameBanner    func(childComplexity int) int
+		GameDiscount  func(childComplexity int) int
+		GameID        func(childComplexity int) int
+		GameName      func(childComplexity int) int
+		GamePrice     func(childComplexity int) int
+		PurchaseCount func(childComplexity int) int
+	}
+
 	TransactionDetail struct {
 		Game              func(childComplexity int) int
 		TransactionHeader func(childComplexity int) int
@@ -583,6 +604,7 @@ type MutationResolver interface {
 	InsertGameToCart(ctx context.Context, gameID int, userID int) (bool, error)
 	RemoveGameFromCart(ctx context.Context, gameID int, userID int) (bool, error)
 	AddCommentByPostID(ctx context.Context, postID int, userID int, comment string) (bool, error)
+	CreateCommunityArtPost(ctx context.Context, input model.InputCommunityArtPost) (bool, error)
 	CommunityPostLike(ctx context.Context, postID int) (int, error)
 	CommunityPostDislike(ctx context.Context, postID int) (int, error)
 	AddCommentByReviewID(ctx context.Context, reviewID int, userID int, comment string) (bool, error)
@@ -662,6 +684,8 @@ type QueryResolver interface {
 	GetSpecialOfferGame(ctx context.Context) ([]*model.Game, error)
 	GetNewTrendingGame(ctx context.Context) ([]*model.Game, error)
 	GetGamesForDiscussions(ctx context.Context, keyword string) ([]*model.Game, error)
+	GetTopSellerGames(ctx context.Context) ([]*model.TopSellerGame, error)
+	GetTopReviewGames(ctx context.Context) ([]*model.TopReviewGame, error)
 	Genres(ctx context.Context) ([]*model.Genre, error)
 	Gifts(ctx context.Context) ([]*model.Gift, error)
 	GetGiftBySenderID(ctx context.Context, id int) (*model.Gift, error)
@@ -1971,6 +1995,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CommunityReviewNotHelpful(childComplexity, args["reviewId"].(int)), true
 
+	case "Mutation.createCommunityArtPost":
+		if e.complexity.Mutation.CreateCommunityArtPost == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createCommunityArtPost_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateCommunityArtPost(childComplexity, args["input"].(model.InputCommunityArtPost)), true
+
 	case "Mutation.createDeveloper":
 		if e.complexity.Mutation.CreateDeveloper == nil {
 			break
@@ -2996,6 +3032,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetSpecialOfferGame(childComplexity), true
 
+	case "Query.getTopReviewGames":
+		if e.complexity.Query.GetTopReviewGames == nil {
+			break
+		}
+
+		return e.complexity.Query.GetTopReviewGames(childComplexity), true
+
+	case "Query.getTopSellerGames":
+		if e.complexity.Query.GetTopSellerGames == nil {
+			break
+		}
+
+		return e.complexity.Query.GetTopSellerGames(childComplexity), true
+
 	case "Query.getTotalCommentByReviewId":
 		if e.complexity.Query.GetTotalCommentByReviewID == nil {
 			break
@@ -3560,6 +3610,90 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Theme.UpdatedAt(childComplexity), true
 
+	case "TopReviewGame.game_banner":
+		if e.complexity.TopReviewGame.GameBanner == nil {
+			break
+		}
+
+		return e.complexity.TopReviewGame.GameBanner(childComplexity), true
+
+	case "TopReviewGame.game_discount":
+		if e.complexity.TopReviewGame.GameDiscount == nil {
+			break
+		}
+
+		return e.complexity.TopReviewGame.GameDiscount(childComplexity), true
+
+	case "TopReviewGame.game_id":
+		if e.complexity.TopReviewGame.GameID == nil {
+			break
+		}
+
+		return e.complexity.TopReviewGame.GameID(childComplexity), true
+
+	case "TopReviewGame.game_name":
+		if e.complexity.TopReviewGame.GameName == nil {
+			break
+		}
+
+		return e.complexity.TopReviewGame.GameName(childComplexity), true
+
+	case "TopReviewGame.game_price":
+		if e.complexity.TopReviewGame.GamePrice == nil {
+			break
+		}
+
+		return e.complexity.TopReviewGame.GamePrice(childComplexity), true
+
+	case "TopReviewGame.review_count":
+		if e.complexity.TopReviewGame.ReviewCount == nil {
+			break
+		}
+
+		return e.complexity.TopReviewGame.ReviewCount(childComplexity), true
+
+	case "TopSellerGame.game_banner":
+		if e.complexity.TopSellerGame.GameBanner == nil {
+			break
+		}
+
+		return e.complexity.TopSellerGame.GameBanner(childComplexity), true
+
+	case "TopSellerGame.game_discount":
+		if e.complexity.TopSellerGame.GameDiscount == nil {
+			break
+		}
+
+		return e.complexity.TopSellerGame.GameDiscount(childComplexity), true
+
+	case "TopSellerGame.game_id":
+		if e.complexity.TopSellerGame.GameID == nil {
+			break
+		}
+
+		return e.complexity.TopSellerGame.GameID(childComplexity), true
+
+	case "TopSellerGame.game_name":
+		if e.complexity.TopSellerGame.GameName == nil {
+			break
+		}
+
+		return e.complexity.TopSellerGame.GameName(childComplexity), true
+
+	case "TopSellerGame.game_price":
+		if e.complexity.TopSellerGame.GamePrice == nil {
+			break
+		}
+
+		return e.complexity.TopSellerGame.GamePrice(childComplexity), true
+
+	case "TopSellerGame.purchase_count":
+		if e.complexity.TopSellerGame.PurchaseCount == nil {
+			break
+		}
+
+		return e.complexity.TopSellerGame.PurchaseCount(childComplexity), true
+
 	case "TransactionDetail.game":
 		if e.complexity.TransactionDetail.Game == nil {
 			break
@@ -4121,11 +4255,19 @@ extend type Mutation {
     deletedAt: Time!
 }
 
+input InputCommunityArtPost {
+    description: String!
+    link: String!
+    isImage: Boolean!
+    userId: Int!
+}
+
 extend type Query {
     communityArtPosts: [CommunityArtPost!]!
 }
 
 extend type Mutation {
+    createCommunityArtPost(input:InputCommunityArtPost!): Boolean!
     communityPostLike(postId: Int!): Int!
     communityPostDislike(postId: Int!): Int!
 }`, BuiltIn: false},
@@ -4380,6 +4522,8 @@ extend type Query {
 
     getGamesForDiscussions(keyword:String!): [Game!]!
 
+    getTopSellerGames: [TopSellerGame!]!
+    getTopReviewGames: [TopReviewGame!]!
 }
 
 extend type Mutation {
@@ -4698,6 +4842,22 @@ extend type Mutation {
 
 extend type Query {
     themes: [Theme!]!
+}`, BuiltIn: false},
+	{Name: "graph/top-review-game.graphqls", Input: `type TopReviewGame {
+    game_id: Int!
+    game_name: String!
+    game_price: Int!
+    game_banner: String!
+    game_discount: Int!
+    review_count: Int!
+}`, BuiltIn: false},
+	{Name: "graph/top-seller-game.graphqls", Input: `type TopSellerGame {
+    game_id: Int!
+    game_name: String!
+    game_price: Int!
+    game_banner: String!
+    game_discount: Int!
+    purchase_count: Int!
 }`, BuiltIn: false},
 	{Name: "graph/transaction-detail.graphqls", Input: `type TransactionDetail {
     transactionHeader: TransactionHeader!
@@ -5048,6 +5208,21 @@ func (ec *executionContext) field_Mutation_communityReviewNotHelpful_args(ctx co
 		}
 	}
 	args["reviewId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createCommunityArtPost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.InputCommunityArtPost
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNInputCommunityArtPost2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputCommunityArtPost(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -12626,6 +12801,48 @@ func (ec *executionContext) _Mutation_addCommentByPostId(ctx context.Context, fi
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createCommunityArtPost(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createCommunityArtPost_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateCommunityArtPost(rctx, args["input"].(model.InputCommunityArtPost))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_communityPostLike(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -16693,6 +16910,76 @@ func (ec *executionContext) _Query_getGamesForDiscussions(ctx context.Context, f
 	return ec.marshalNGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_getTopSellerGames(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetTopSellerGames(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.TopSellerGame)
+	fc.Result = res
+	return ec.marshalNTopSellerGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopSellerGameᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getTopReviewGames(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetTopReviewGames(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.TopReviewGame)
+	fc.Result = res
+	return ec.marshalNTopReviewGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopReviewGameᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_genres(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19345,6 +19632,426 @@ func (ec *executionContext) _Theme_deletedAt(ctx context.Context, field graphql.
 	res := resTmp.(*time.Time)
 	fc.Result = res
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopReviewGame_game_id(ctx context.Context, field graphql.CollectedField, obj *model.TopReviewGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopReviewGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopReviewGame_game_name(ctx context.Context, field graphql.CollectedField, obj *model.TopReviewGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopReviewGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopReviewGame_game_price(ctx context.Context, field graphql.CollectedField, obj *model.TopReviewGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopReviewGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GamePrice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopReviewGame_game_banner(ctx context.Context, field graphql.CollectedField, obj *model.TopReviewGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopReviewGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameBanner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopReviewGame_game_discount(ctx context.Context, field graphql.CollectedField, obj *model.TopReviewGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopReviewGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameDiscount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopReviewGame_review_count(ctx context.Context, field graphql.CollectedField, obj *model.TopReviewGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopReviewGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ReviewCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopSellerGame_game_id(ctx context.Context, field graphql.CollectedField, obj *model.TopSellerGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopSellerGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopSellerGame_game_name(ctx context.Context, field graphql.CollectedField, obj *model.TopSellerGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopSellerGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopSellerGame_game_price(ctx context.Context, field graphql.CollectedField, obj *model.TopSellerGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopSellerGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GamePrice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopSellerGame_game_banner(ctx context.Context, field graphql.CollectedField, obj *model.TopSellerGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopSellerGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameBanner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopSellerGame_game_discount(ctx context.Context, field graphql.CollectedField, obj *model.TopSellerGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopSellerGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameDiscount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopSellerGame_purchase_count(ctx context.Context, field graphql.CollectedField, obj *model.TopSellerGame) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopSellerGame",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PurchaseCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _TransactionDetail_transactionHeader(ctx context.Context, field graphql.CollectedField, obj *model.TransactionDetail) (ret graphql.Marshaler) {
@@ -22438,6 +23145,50 @@ func (ec *executionContext) unmarshalInputCommunityGameReviewInput(ctx context.C
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputInputCommunityArtPost(ctx context.Context, obj interface{}) (model.InputCommunityArtPost, error) {
+	var it model.InputCommunityArtPost
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "link":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("link"))
+			it.Link, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isImage":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isImage"))
+			it.IsImage, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "userId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			it.UserID, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputInputDeveloper(ctx context.Context, obj interface{}) (model.InputDeveloper, error) {
 	var it model.InputDeveloper
 	var asMap = obj.(map[string]interface{})
@@ -24494,6 +25245,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "createCommunityArtPost":
+			out.Values[i] = ec._Mutation_createCommunityArtPost(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "communityPostLike":
 			out.Values[i] = ec._Mutation_communityPostLike(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -25533,6 +26289,34 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "getTopSellerGames":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getTopSellerGames(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getTopReviewGames":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getTopReviewGames(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "genres":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -26300,6 +27084,110 @@ func (ec *executionContext) _Theme(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Theme_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var topReviewGameImplementors = []string{"TopReviewGame"}
+
+func (ec *executionContext) _TopReviewGame(ctx context.Context, sel ast.SelectionSet, obj *model.TopReviewGame) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, topReviewGameImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TopReviewGame")
+		case "game_id":
+			out.Values[i] = ec._TopReviewGame_game_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game_name":
+			out.Values[i] = ec._TopReviewGame_game_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game_price":
+			out.Values[i] = ec._TopReviewGame_game_price(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game_banner":
+			out.Values[i] = ec._TopReviewGame_game_banner(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game_discount":
+			out.Values[i] = ec._TopReviewGame_game_discount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "review_count":
+			out.Values[i] = ec._TopReviewGame_review_count(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var topSellerGameImplementors = []string{"TopSellerGame"}
+
+func (ec *executionContext) _TopSellerGame(ctx context.Context, sel ast.SelectionSet, obj *model.TopSellerGame) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, topSellerGameImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TopSellerGame")
+		case "game_id":
+			out.Values[i] = ec._TopSellerGame_game_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game_name":
+			out.Values[i] = ec._TopSellerGame_game_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game_price":
+			out.Values[i] = ec._TopSellerGame_game_price(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game_banner":
+			out.Values[i] = ec._TopSellerGame_game_banner(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game_discount":
+			out.Values[i] = ec._TopSellerGame_game_discount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "purchase_count":
+			out.Values[i] = ec._TopSellerGame_purchase_count(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -27840,6 +28728,11 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
+func (ec *executionContext) unmarshalNInputCommunityArtPost2githubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputCommunityArtPost(ctx context.Context, v interface{}) (model.InputCommunityArtPost, error) {
+	res, err := ec.unmarshalInputInputCommunityArtPost(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNInputDeveloper2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐInputDeveloperᚄ(ctx context.Context, v interface{}) ([]*model.InputDeveloper, error) {
 	var vSlice []interface{}
 	if v != nil {
@@ -28783,6 +29676,100 @@ func (ec *executionContext) marshalNTime2ᚖtimeᚐTime(ctx context.Context, sel
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNTopReviewGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopReviewGameᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TopReviewGame) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTopReviewGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopReviewGame(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNTopReviewGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopReviewGame(ctx context.Context, sel ast.SelectionSet, v *model.TopReviewGame) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._TopReviewGame(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTopSellerGame2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopSellerGameᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TopSellerGame) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTopSellerGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopSellerGame(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNTopSellerGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopSellerGame(ctx context.Context, sel ast.SelectionSet, v *model.TopSellerGame) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._TopSellerGame(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNTransactionDetail2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTransactionDetailᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TransactionDetail) graphql.Marshaler {

@@ -58,6 +58,8 @@ func Seed() {
 
 	SeedPaymentType(db)
 	SeedGift(db)
+	SeedTransactionHeader(db)
+	SeedTransactionDetail(db)
 
 	SeedItem(db)
 	SeedItemTransaction(db)
@@ -726,8 +728,28 @@ func SeedGame(db *gorm.DB) {
 
 	for _, game := range games {
 		db.Create(&game)
-		db.Save(&game)
 	}
+	//for _, game := range games {
+	//	db.Create(&game)
+	//}
+	//for _, game := range games {
+	//	db.Create(&game)
+	//}
+	//for _, game := range games {
+	//	db.Create(&game)
+	//}
+	//for _, game := range games {
+	//	db.Create(&game)
+	//}
+	//for _, game := range games {
+	//	db.Create(&game)
+	//}
+	//for _, game := range games {
+	//	db.Create(&game)
+	//}
+	//for _, game := range games {
+	//	db.Create(&game)
+	//}
 }
 
 func SeedDeveloper(db *gorm.DB) {
@@ -1327,28 +1349,135 @@ func SeedCommunityGameReview(db *gorm.DB) {
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 1},
 			IsRecommended: true,
-			HelpfulCount:  2,
+			HelpfulCount:  45,
 		},
 		{
 			Description:   "Don't play this game",
 			User:          &model.User{ID: 2},
 			Game:          &model.Game{ID: 1},
 			IsRecommended: false,
-			HelpfulCount:  0,
+			HelpfulCount:  73,
 		},
 		{
 			Description:   "Really fun game 3",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 2},
 			IsRecommended: true,
-			HelpfulCount:  0,
+			HelpfulCount:  100,
 		},
 		{
 			Description:   "Really fun game 4",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 3},
 			IsRecommended: true,
-			HelpfulCount:  0,
+			HelpfulCount:  126,
+		},
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 2},
+			Game:          &model.Game{ID: 2},
+			IsRecommended: false,
+			HelpfulCount:  67,
+		},
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 3},
+			Game:          &model.Game{ID: 3},
+			IsRecommended: true,
+			HelpfulCount:  56,
+		},
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 6},
+			IsRecommended: false,
+			HelpfulCount:  23,
+		},
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 7},
+			IsRecommended: true,
+			HelpfulCount:  456,
+		},
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 1},
+			IsRecommended: true,
+			HelpfulCount:  45,
+		},
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 1},
+			IsRecommended: true,
+			HelpfulCount:  45,
+		},
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 4},
+			IsRecommended: true,
+			HelpfulCount:  45,
+		},{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 4},
+			IsRecommended: true,
+			HelpfulCount:  45,
+		},{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 4},
+			IsRecommended: true,
+			HelpfulCount:  45,
+		},
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 4},
+			IsRecommended: true,
+			HelpfulCount:  45,
+		},
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 1},
+			IsRecommended: true,
+			HelpfulCount:  45,
+		},{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 1},
+			IsRecommended: true,
+			HelpfulCount:  45,
+		},{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 1},
+			IsRecommended: true,
+			HelpfulCount:  45,
+		},{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 1},
+			IsRecommended: true,
+			HelpfulCount:  45,
+		},
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 3},
+			Game:          &model.Game{ID: 3},
+			IsRecommended: true,
+			HelpfulCount:  56,
+		},
+		{
+			Description:   "Really fun game",
+			User:          &model.User{ID: 3},
+			Game:          &model.Game{ID: 3},
+			IsRecommended: true,
+			HelpfulCount:  56,
 		},
 	}
 
@@ -1536,6 +1665,113 @@ func SeedPaymentType(db *gorm.DB) {
 
 	for _, paymentType := range paymentTypes {
 		db.Create(&paymentType)
+	}
+}
+
+func SeedTransactionHeader(db *gorm.DB) {
+	transactionHeaders := []*model.TransactionHeader {
+		{
+			PaymentType:        &model.PaymentType{ID: 1},
+			Sender:             &model.User{ID: 1},
+			Receiver:           &model.User{ID: 2},
+			Total:              150000,
+		},
+		{
+			PaymentType:        &model.PaymentType{ID: 1},
+			Sender:             &model.User{ID: 2},
+			Receiver:           &model.User{ID: 3},
+			Total:              150000,
+		},
+		{
+			PaymentType:        &model.PaymentType{ID: 1},
+			Sender:             &model.User{ID: 1},
+			Receiver:           &model.User{ID: 1},
+			Total:              150000,
+		},
+		{
+			PaymentType:        &model.PaymentType{ID: 1},
+			Sender:             &model.User{ID: 2},
+			Receiver:           &model.User{ID: 2},
+			Total:              150000,
+		},
+		{
+			PaymentType:        &model.PaymentType{ID: 1},
+			Sender:             &model.User{ID: 3},
+			Receiver:           &model.User{ID: 2},
+			Total:              150000,
+		},
+	}
+
+	for _, transactionHeader := range transactionHeaders {
+		db.Create(&transactionHeader)
+	}
+}
+
+func SeedTransactionDetail(db *gorm.DB) {
+	transactions := []*model.TransactionDetail {
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 1},
+			Game:                &model.Game{ID: 2},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 1},
+			Game:                &model.Game{ID: 3},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 1},
+			Game:                &model.Game{ID: 4},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 1},
+			Game:                &model.Game{ID: 5},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 1},
+			Game:                &model.Game{ID: 1},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 1},
+			Game:                &model.Game{ID: 2},
+		},{
+			TransactionHeader:   &model.TransactionHeader{ID: 1},
+			Game:                &model.Game{ID: 2},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 1},
+			Game:                &model.Game{ID: 2},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 1},
+			Game:                &model.Game{ID: 3},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 1},
+			Game:                &model.Game{ID: 2},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 1},
+			Game:                &model.Game{ID: 6},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 2},
+			Game:                &model.Game{ID: 2},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 3},
+			Game:                &model.Game{ID: 2},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 4},
+			Game:                &model.Game{ID: 2},
+		},
+		{
+			TransactionHeader:   &model.TransactionHeader{ID: 5},
+			Game:                &model.Game{ID: 2},
+		},
+	}
+
+	for _, transaction := range transactions {
+		db.Create(&transaction)
 	}
 }
 

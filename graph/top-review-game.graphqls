@@ -1,0 +1,8 @@
+type TopReviewGame {
+    game_id: Int!
+    game_name: String!
+    game_price: Int!
+    game_banner: String!
+    game_discount: Int!
+    review_count: Int!
+}

@@ -348,3 +348,62 @@ func (r *queryResolver) GetGamesForDiscussions(ctx context.Context, keyword stri
 
 	return games, nil
 }
+
+func (r *queryResolver) GetTopSellerGames(ctx context.Context) ([]*model.TopSellerGame, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
+	var results []*model.TopSellerGame
+
+	/**
+	SELECT game_id AS gameId, g.name AS game_name, g.original_price AS gamePrice, p.discount_percentage AS gameDiscount, g.banner AS gameBanner,COUNT(game_id) AS purchaseCount
+	FROM transaction_details td
+	JOIN transaction_headers th ON td.transaction_header_id = th.id
+	JOIN games g ON g.id = td.game_id
+	JOIN promos p ON g.promo_id = p.id
+	WHERE th.created_at BETWEEN(now() - '1 week'::interval) AND now()
+	GROUP BY game_id, g.name, g.original_price, g.banner, p.discount_percentage
+	ORDER BY COUNT(game_id) desc
+	 */
+
+	db.Raw("SELECT td.game_id AS game_id, g.name AS game_name, g.original_price AS game_price, p.discount_percentage AS game_discount, g.banner AS game_banner,COUNT(td.game_id) AS purchase_count" +
+		" FROM transaction_details td " +
+		" JOIN transaction_headers th ON td.transaction_header_id = th.id" +
+		" JOIN games g ON g.id = td.game_id" +
+		" JOIN promos p ON g.promo_id = p.id" +
+		" WHERE th.created_at BETWEEN(now() - '1 week'::interval) AND now()" +
+		" GROUP BY game_id, g.name, g.original_price, g.banner, p.discount_percentage" +
+		" ORDER BY COUNT(game_id) desc").
+		Limit(5).
+		Scan(&results)
+
+	return results, nil
+}
+
+func (r *queryResolver) GetTopReviewGames(ctx context.Context) ([]*model.TopReviewGame, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
+	var results []*model.TopReviewGame
+
+	db.Raw("SELECT g.id AS game_id, g.name AS game_name, g.original_price AS game_price, g.banner AS game_banner, " +
+		"\np.discount_percentage AS game_discount, COUNT(is_recommended) AS review_count" +
+		"\nFROM community_game_reviews cgr " +
+		"\nJOIN games g ON cgr.game_id = g.id" +
+		"\nJOIN promos p ON g.promo_id = p.id" +
+		"\nWHERE cgr.is_recommended = true" +
+		"\nGROUP BY g.id, g.name, g.original_price, g.banner, p.discount_percentage" +
+		"\nORDER BY COUNT(is_recommended) DESC").
+		Limit(5).
+		Scan(&results)
+
+	return results, nil
+}

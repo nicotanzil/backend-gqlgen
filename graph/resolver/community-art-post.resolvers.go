@@ -10,6 +10,28 @@ import (
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 )
 
+func (r *mutationResolver) CreateCommunityArtPost(ctx context.Context, input model.InputCommunityArtPost) (bool, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
+	var post model.CommunityArtPost
+
+	post = model.CommunityArtPost{
+		Description: input.Description,
+		Link:        input.Link,
+		IsImage:     input.IsImage,
+		User:        &model.User{ID: input.UserID},
+	}
+
+	db.Create(&post)
+	return true, nil
+}
+
 func (r *mutationResolver) CommunityPostLike(ctx context.Context, postID int) (int, error) {
 	db, err := database.Connect()
 	if err != nil {
@@ -63,7 +85,7 @@ func (r *queryResolver) CommunityArtPosts(ctx context.Context) ([]*model.Communi
 
 	var communityArtPosts []*model.CommunityArtPost
 
-	db.Order("id").
+	db.Order("id desc").
 		Preload("User").
 		Preload("Reviews.User").
 		Find(&communityArtPosts)

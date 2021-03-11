@@ -1,0 +1,8 @@
+type TopSellerGame {
+    game_id: Int!
+    game_name: String!
+    game_price: Int!
+    game_banner: String!
+    game_discount: Int!
+    purchase_count: Int!
+}

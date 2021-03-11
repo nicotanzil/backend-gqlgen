@@ -15,3 +15,10 @@ type CommunityArtPost struct {
 	UpdatedAt   time.Time                 `json:"updatedAt"`
 	DeletedAt   *time.Time                `json:"deletedAt"`
 }
+
+type InputCommunityArtPost struct {
+	Description string `json:"description"`
+	Link        string `json:"link"`
+	IsImage     bool   `json:"isImage"`
+	UserID      int    `json:"userId"`
+}

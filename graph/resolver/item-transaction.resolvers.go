@@ -5,10 +5,10 @@ package resolver
 
 import (
 	"context"
-	"github.com/nicotanzil/backend-gqlgen/database"
-	"gorm.io/gorm/clause"
 
+	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
+	"gorm.io/gorm/clause"
 )
 
 func (r *queryResolver) GetPreviousTransactionData(ctx context.Context, itemID int) ([]*model.ItemTransaction, error) {

@@ -12,11 +12,19 @@ type CommunityArtPost {
     deletedAt: Time!
 }
 
+input InputCommunityArtPost {
+    description: String!
+    link: String!
+    isImage: Boolean!
+    userId: Int!
+}
+
 extend type Query {
     communityArtPosts: [CommunityArtPost!]!
 }
 
 extend type Mutation {
+    createCommunityArtPost(input:InputCommunityArtPost!): Boolean!
     communityPostLike(postId: Int!): Int!
     communityPostDislike(postId: Int!): Int!
 }
