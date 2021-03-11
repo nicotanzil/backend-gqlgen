@@ -121,7 +121,9 @@ func (r *queryResolver) GetPromoPaginationAdmin(ctx context.Context, page *int) 
 
 	var promos []*model.Promo
 
-	db.Preload(clause.Associations).Limit(providers.ADMIN_PROMO_PAGINATION).Offset(providers.ADMIN_PROMO_PAGINATION * (*page - 1)).Find(&promos)
+	db.Preload(clause.Associations).
+		Limit(providers.ADMIN_PROMO_PAGINATION).
+		Offset(providers.ADMIN_PROMO_PAGINATION * (*page - 1)).Find(&promos)
 
 	return promos, nil
 }

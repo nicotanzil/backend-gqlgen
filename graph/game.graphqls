@@ -20,6 +20,8 @@ type Game {
 
     discussions: [GameDiscussion!]!
 
+    items: [Item!]!
+
     createdAt: Time!
     updatedAt: Time!
     deletedAt: Time!

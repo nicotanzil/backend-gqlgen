@@ -16,3 +16,10 @@ type CommunityGameReview struct {
 	UpdatedAt     time.Time                     `json:"updatedAt"`
 	DeletedAt     *time.Time                    `json:"deletedAt"`
 }
+
+type CommunityGameReviewInput struct {
+	Description   string `json:"description"`
+	UserID        int    `json:"userId"`
+	GameID        int    `json:"gameId"`
+	IsRecommended bool   `json:"isRecommended"`
+}

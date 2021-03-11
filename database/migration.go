@@ -22,6 +22,7 @@ func Migrate() {
 	db.Exec("DROP TABLE user_avatar_frames")
 	db.Exec("DROP TABLE user_profile_backgrounds")
 	db.Exec("DROP TABLE user_mini_profile_backgrounds")
+	db.Exec("DROP TABLE user_items")
 
 	db.Exec("DROP TABLE game_users")
 	db.Exec("DROP TABLE game_developers")
@@ -53,6 +54,8 @@ func UserMigrate(db *gorm.DB) {
 		&model.TransactionDetail{},
 		&model.PaymentType{},
 
+		&model.Item{},
+
 		&model.UserReport{},
 		&model.FriendRequest{},
 		&model.UserComment{},
@@ -81,6 +84,8 @@ func UserMigrate(db *gorm.DB) {
 		&model.UserComment{},
 		&model.FriendRequest{},
 		&model.UserReport{},
+
+		&model.Item{},
 
 		&model.PaymentType{},
 		&model.TransactionDetail{},
@@ -134,11 +139,13 @@ func TransactionMigrate(db *gorm.DB) {
 	db.Migrator().DropTable(
 		&model.Cart{},
 		&model.Wishlist{},
+		&model.ItemTransaction{},
 	)
 
 	db.AutoMigrate(
 		&model.Cart{},
 		&model.Wishlist{},
+		&model.ItemTransaction{},
 	)
 }
 

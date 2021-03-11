@@ -1,0 +1,15 @@
+type ItemTransaction {
+    id: Int!
+    item: Item!
+    seller: User!
+    buyer: User!
+    price: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    getPreviousTransactionData(itemId:Int!): [ItemTransaction!]!
+}

@@ -26,6 +26,8 @@ type User {
     games: [Game!]!
     friends: [User!]!
 
+    items: [Item!]!
+
     experience: Int!
     isSuspend: Boolean!
 

@@ -31,6 +31,7 @@ type User struct {
 	Country    *Country `json:"country" gorm:"foreignKey:CountryID"`
 	Games      []*Game  `json:"games" gorm:"many2many:game_users;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Friends    []*User  `json:"friends" gorm:"many2many:user_friends;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Items      []*Item  `json:"items" gorm:"many2many:user_items;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Experience int      `json:"experience"`
 	IsSuspend  bool     `json:"isSuspend"`
 

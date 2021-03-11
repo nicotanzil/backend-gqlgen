@@ -16,3 +16,11 @@ type TransactionHeader struct {
 	UpdatedAt          time.Time            `json:"updatedAt"`
 	DeletedAt          *time.Time           `json:"deletedAt"`
 }
+
+type InputTransactionHeader struct {
+	PaymentTypeID      int   `json:"paymentTypeId"`
+	SenderID           int   `json:"senderId"`
+	ReceiverID         int   `json:"receiverId"`
+	Total              int   `json:"total"`
+	TransactionDetails []int `json:"transactionDetails"`
+}

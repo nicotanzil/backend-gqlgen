@@ -1,0 +1,17 @@
+type Item {
+    id: Int!
+    name: String!
+    summary: String!
+    link: String!
+    game: Game!
+    users: [User!]!
+}
+
+extend type Query {
+    items: [Item!]!
+    itemsPaginate(userId: Int!, gameId: Int!, page: Int!, keyword: String!): [Item!]!
+    getTotalItems(userId: Int!, gameId: Int!, keyword: String!): Int!
+
+    getItemCategoriesByUser(user_id: Int!): [Game!]!
+    getItemByKeywordGame(userId: Int!, gameId:Int!, keyword:String!): [Item!]!
+}
