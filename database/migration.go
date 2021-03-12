@@ -143,12 +143,14 @@ func TransactionMigrate(db *gorm.DB) {
 		&model.Cart{},
 		&model.Wishlist{},
 		&model.ItemTransaction{},
+		&model.WalletCode{},
 	)
 
 	db.AutoMigrate(
 		&model.Cart{},
 		&model.Wishlist{},
 		&model.ItemTransaction{},
+		&model.WalletCode{},
 	)
 }
 

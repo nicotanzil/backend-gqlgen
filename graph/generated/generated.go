@@ -313,6 +313,7 @@ type ComplexityRoot struct {
 		InsertGameVideo           func(childComplexity int, gameVideos []*model.InputGameVideo) int
 		Login                     func(childComplexity int, input *model.Login) int
 		Logout                    func(childComplexity int) int
+		RedeemCode                func(childComplexity int, code string, userID int) int
 		RemoveGameFromCart        func(childComplexity int, gameID int, userID int) int
 		RemoveGameFromWishlist    func(childComplexity int, gameID int, userID int) int
 		SetGamePromo              func(childComplexity int, gameID int, promoID int) int
@@ -612,6 +613,15 @@ type ComplexityRoot struct {
 		UpdatedAt   func(childComplexity int) int
 	}
 
+	WalletCode struct {
+		Balance   func(childComplexity int) int
+		Code      func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+	}
+
 	Wishlist struct {
 		Game func(childComplexity int) int
 		User func(childComplexity int) int
@@ -665,6 +675,7 @@ type MutationResolver interface {
 	UnApproveUnsuspend(ctx context.Context, userID int) (bool, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
 	CreateTransaction(ctx context.Context, transaction *model.InputTransactionHeader) (bool, error)
+	RedeemCode(ctx context.Context, code string, userID int) (bool, error)
 	InsertGameToWishlist(ctx context.Context, gameID int, userID int) (bool, error)
 	RemoveGameFromWishlist(ctx context.Context, gameID int, userID int) (bool, error)
 }
@@ -2352,6 +2363,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Logout(childComplexity), true
+
+	case "Mutation.redeemCode":
+		if e.complexity.Mutation.RedeemCode == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_redeemCode_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RedeemCode(childComplexity, args["code"].(string), args["userId"].(int)), true
 
 	case "Mutation.removeGameFromCart":
 		if e.complexity.Mutation.RemoveGameFromCart == nil {
@@ -4236,6 +4259,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserReport.UpdatedAt(childComplexity), true
 
+	case "WalletCode.balance":
+		if e.complexity.WalletCode.Balance == nil {
+			break
+		}
+
+		return e.complexity.WalletCode.Balance(childComplexity), true
+
+	case "WalletCode.code":
+		if e.complexity.WalletCode.Code == nil {
+			break
+		}
+
+		return e.complexity.WalletCode.Code(childComplexity), true
+
+	case "WalletCode.createdAt":
+		if e.complexity.WalletCode.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.WalletCode.CreatedAt(childComplexity), true
+
+	case "WalletCode.deletedAt":
+		if e.complexity.WalletCode.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.WalletCode.DeletedAt(childComplexity), true
+
+	case "WalletCode.id":
+		if e.complexity.WalletCode.ID == nil {
+			break
+		}
+
+		return e.complexity.WalletCode.ID(childComplexity), true
+
+	case "WalletCode.updatedAt":
+		if e.complexity.WalletCode.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.WalletCode.UpdatedAt(childComplexity), true
+
 	case "Wishlist.game":
 		if e.complexity.Wishlist.Game == nil {
 			break
@@ -5191,6 +5256,19 @@ type UserComment {
     updatedAt: Time!
     deletedAt: Time!
 }`, BuiltIn: false},
+	{Name: "graph/wallet-code.graphqls", Input: `type WalletCode {
+    id: Int!
+    code: String!
+    balance: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Mutation {
+    redeemCode(code: String!, userId: Int!): Boolean!
+}`, BuiltIn: false},
 	{Name: "graph/wishlist.graphqls", Input: `type Wishlist {
     user: User!
     game: Game!
@@ -5878,6 +5956,30 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_redeemCode_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["code"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("code"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["code"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
 	return args, nil
 }
 
@@ -14626,6 +14728,48 @@ func (ec *executionContext) _Mutation_createTransaction(ctx context.Context, fie
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_redeemCode(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_redeemCode_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RedeemCode(rctx, args["code"].(string), args["userId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_insertGameToWishlist(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -22810,6 +22954,216 @@ func (ec *executionContext) _UserReport_deletedAt(ctx context.Context, field gra
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WalletCode_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletCode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WalletCode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WalletCode_code(ctx context.Context, field graphql.CollectedField, obj *model.WalletCode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WalletCode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Code, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WalletCode_balance(ctx context.Context, field graphql.CollectedField, obj *model.WalletCode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WalletCode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Balance, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WalletCode_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.WalletCode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WalletCode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WalletCode_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.WalletCode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WalletCode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WalletCode_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.WalletCode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "WalletCode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Wishlist_user(ctx context.Context, field graphql.CollectedField, obj *model.Wishlist) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -26323,6 +26677,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "redeemCode":
+			out.Values[i] = ec._Mutation_redeemCode(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "insertGameToWishlist":
 			out.Values[i] = ec._Mutation_insertGameToWishlist(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -28612,6 +28971,58 @@ func (ec *executionContext) _UserReport(ctx context.Context, sel ast.SelectionSe
 			}
 		case "deletedAt":
 			out.Values[i] = ec._UserReport_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var walletCodeImplementors = []string{"WalletCode"}
+
+func (ec *executionContext) _WalletCode(ctx context.Context, sel ast.SelectionSet, obj *model.WalletCode) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletCodeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletCode")
+		case "id":
+			out.Values[i] = ec._WalletCode_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "code":
+			out.Values[i] = ec._WalletCode_code(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "balance":
+			out.Values[i] = ec._WalletCode_balance(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._WalletCode_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._WalletCode_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._WalletCode_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

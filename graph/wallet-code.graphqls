@@ -1,0 +1,13 @@
+type WalletCode {
+    id: Int!
+    code: String!
+    balance: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Mutation {
+    redeemCode(code: String!, userId: Int!): Boolean!
+}

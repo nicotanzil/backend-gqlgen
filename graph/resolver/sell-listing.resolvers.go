@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
@@ -22,7 +23,6 @@ func (r *mutationResolver) CreateSellListing(ctx context.Context, itemID int, se
 	var sellListing model.SellListing
 
 	db.First(&sellListing, "item_id = ?", itemID)
-
 
 	if sellListing.ItemID != 0 {
 		// Item already exists in

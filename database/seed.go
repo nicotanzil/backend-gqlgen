@@ -66,6 +66,8 @@ func Seed() {
 	SeedItemTransaction(db)
 	SeedSellListing(db)
 
+	SeedWalletCode(db)
+
 	fmt.Println("[INFO] SEEDED.")
 }
 
@@ -2181,5 +2183,25 @@ func SeedSellListing(db *gorm.DB) {
 	}
 	for _, sellListing := range sellListings {
 		db.Create(&sellListing)
+	}
+}
+
+func SeedWalletCode(db *gorm.DB) {
+	walletCodes := []model.WalletCode {
+		{
+			Code:      "abc",
+			Balance:   15000,
+		},
+		{
+			Code:      "qwe",
+			Balance:   15000,
+		},
+		{
+			Code:      "asd",
+			Balance:   15000,
+		},
+	}
+	for _, code := range walletCodes {
+		db.Create(&code)
 	}
 }
