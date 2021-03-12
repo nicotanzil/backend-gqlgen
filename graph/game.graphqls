@@ -41,6 +41,7 @@ input NewGame {
 extend type Query {
     games: [Game!]!
     gameById(id: Int!): Game!
+    gameByMultipleId(ids: [Int!]!): [Game!]!
     getGameByPromoId(id: Int!): Game!
     getGamePaginationAdmin(page: Int): [Game!]!
     getTotalGame: Int!

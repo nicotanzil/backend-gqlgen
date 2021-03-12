@@ -203,6 +203,25 @@ func (r *queryResolver) GameByID(ctx context.Context, id int) (*model.Game, erro
 	return &game, nil
 }
 
+func (r *queryResolver) GameByMultipleID(ctx context.Context, ids []int) ([]*model.Game, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
+	var games []*model.Game
+
+	for _, id := range ids {
+		var temp model.Game
+		db.Preload(clause.Associations).First(&temp, "id = ?", id)
+		games = append(games, &temp)
+	}
+
+	return games, nil
+}
+
 func (r *queryResolver) GetGameByPromoID(ctx context.Context, id int) (*model.Game, error) {
 	db, err := database.Connect()
 	if err != nil {
@@ -368,7 +387,7 @@ func (r *queryResolver) GetTopSellerGames(ctx context.Context) ([]*model.TopSell
 	WHERE th.created_at BETWEEN(now() - '1 week'::interval) AND now()
 	GROUP BY game_id, g.name, g.original_price, g.banner, p.discount_percentage
 	ORDER BY COUNT(game_id) desc
-	 */
+	*/
 
 	db.Raw("SELECT td.game_id AS game_id, g.name AS game_name, g.original_price AS game_price, p.discount_percentage AS game_discount, g.banner AS game_banner,COUNT(td.game_id) AS purchase_count" +
 		" FROM transaction_details td " +
