@@ -1,0 +1,4 @@
+type GraphData {
+    price: Int!
+    date: Time!
+}
