@@ -2,6 +2,8 @@
 
 package model
 
+
+
 type TopReviewGame struct {
 	GameID       int    `json:"game_id"`
 	GameName     string `json:"game_name"`

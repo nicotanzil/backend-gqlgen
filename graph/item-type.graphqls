@@ -1,0 +1,8 @@
+type ItemType {
+    id: Int!
+    name: String!
+    summary: String!
+    link: String!
+    game: Game!
+    items: [Item!]!
+}

@@ -162,7 +162,7 @@ type ComplexityRoot struct {
 		Genres        func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Images        func(childComplexity int) int
-		Items         func(childComplexity int) int
+		ItemTypes     func(childComplexity int) int
 		Name          func(childComplexity int) int
 		OriginalPrice func(childComplexity int) int
 		Promo         func(childComplexity int) int
@@ -241,12 +241,9 @@ type ComplexityRoot struct {
 	}
 
 	Item struct {
-		Game    func(childComplexity int) int
-		ID      func(childComplexity int) int
-		Link    func(childComplexity int) int
-		Name    func(childComplexity int) int
-		Summary func(childComplexity int) int
-		Users   func(childComplexity int) int
+		ID       func(childComplexity int) int
+		ItemType func(childComplexity int) int
+		User     func(childComplexity int) int
 	}
 
 	ItemTransaction struct {
@@ -258,6 +255,15 @@ type ComplexityRoot struct {
 		Price     func(childComplexity int) int
 		Seller    func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
+	}
+
+	ItemType struct {
+		Game    func(childComplexity int) int
+		ID      func(childComplexity int) int
+		Items   func(childComplexity int) int
+		Link    func(childComplexity int) int
+		Name    func(childComplexity int) int
+		Summary func(childComplexity int) int
 	}
 
 	MiniProfileBackground struct {
@@ -1324,12 +1330,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Game.Images(childComplexity), true
 
-	case "Game.items":
-		if e.complexity.Game.Items == nil {
+	case "Game.itemTypes":
+		if e.complexity.Game.ItemTypes == nil {
 			break
 		}
 
-		return e.complexity.Game.Items(childComplexity), true
+		return e.complexity.Game.ItemTypes(childComplexity), true
 
 	case "Game.name":
 		if e.complexity.Game.Name == nil {
@@ -1730,13 +1736,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Gift.UpdatedAt(childComplexity), true
 
-	case "Item.game":
-		if e.complexity.Item.Game == nil {
-			break
-		}
-
-		return e.complexity.Item.Game(childComplexity), true
-
 	case "Item.id":
 		if e.complexity.Item.ID == nil {
 			break
@@ -1744,33 +1743,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Item.ID(childComplexity), true
 
-	case "Item.link":
-		if e.complexity.Item.Link == nil {
+	case "Item.itemType":
+		if e.complexity.Item.ItemType == nil {
 			break
 		}
 
-		return e.complexity.Item.Link(childComplexity), true
+		return e.complexity.Item.ItemType(childComplexity), true
 
-	case "Item.name":
-		if e.complexity.Item.Name == nil {
+	case "Item.user":
+		if e.complexity.Item.User == nil {
 			break
 		}
 
-		return e.complexity.Item.Name(childComplexity), true
-
-	case "Item.summary":
-		if e.complexity.Item.Summary == nil {
-			break
-		}
-
-		return e.complexity.Item.Summary(childComplexity), true
-
-	case "Item.users":
-		if e.complexity.Item.Users == nil {
-			break
-		}
-
-		return e.complexity.Item.Users(childComplexity), true
+		return e.complexity.Item.User(childComplexity), true
 
 	case "ItemTransaction.buyer":
 		if e.complexity.ItemTransaction.Buyer == nil {
@@ -1827,6 +1812,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ItemTransaction.UpdatedAt(childComplexity), true
+
+	case "ItemType.game":
+		if e.complexity.ItemType.Game == nil {
+			break
+		}
+
+		return e.complexity.ItemType.Game(childComplexity), true
+
+	case "ItemType.id":
+		if e.complexity.ItemType.ID == nil {
+			break
+		}
+
+		return e.complexity.ItemType.ID(childComplexity), true
+
+	case "ItemType.items":
+		if e.complexity.ItemType.Items == nil {
+			break
+		}
+
+		return e.complexity.ItemType.Items(childComplexity), true
+
+	case "ItemType.link":
+		if e.complexity.ItemType.Link == nil {
+			break
+		}
+
+		return e.complexity.ItemType.Link(childComplexity), true
+
+	case "ItemType.name":
+		if e.complexity.ItemType.Name == nil {
+			break
+		}
+
+		return e.complexity.ItemType.Name(childComplexity), true
+
+	case "ItemType.summary":
+		if e.complexity.ItemType.Summary == nil {
+			break
+		}
+
+		return e.complexity.ItemType.Summary(childComplexity), true
 
 	case "MiniProfileBackground.createdAt":
 		if e.complexity.MiniProfileBackground.CreatedAt == nil {
@@ -4503,7 +4530,7 @@ extend type Mutation {
 
     discussions: [GameDiscussion!]!
 
-    items: [Item!]!
+    itemTypes: [ItemType!]!
 
     createdAt: Time!
     updatedAt: Time!
@@ -4623,13 +4650,18 @@ extend type Mutation {
 extend type Query {
     getPreviousTransactionData(itemId:Int!): [ItemTransaction!]!
 }`, BuiltIn: false},
-	{Name: "graph/item.graphqls", Input: `type Item {
+	{Name: "graph/item-type.graphqls", Input: `type ItemType {
     id: Int!
     name: String!
     summary: String!
     link: String!
     game: Game!
-    users: [User!]!
+    items: [Item!]!
+}`, BuiltIn: false},
+	{Name: "graph/item.graphqls", Input: `type Item {
+    id: Int!
+    itemType: ItemType!
+    user: User!
 }
 
 extend type Query {
@@ -9856,7 +9888,7 @@ func (ec *executionContext) _Game_discussions(ctx context.Context, field graphql
 	return ec.marshalNGameDiscussion2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGameDiscussionᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Game_items(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+func (ec *executionContext) _Game_itemTypes(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9874,7 +9906,7 @@ func (ec *executionContext) _Game_items(ctx context.Context, field graphql.Colle
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Items, nil
+		return obj.ItemTypes, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9886,9 +9918,9 @@ func (ec *executionContext) _Game_items(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Item)
+	res := resTmp.([]*model.ItemType)
 	fc.Result = res
-	return ec.marshalNItem2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐItemᚄ(ctx, field.Selections, res)
+	return ec.marshalNItemType2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐItemTypeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Game_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
@@ -9991,9 +10023,9 @@ func (ec *executionContext) _Game_deletedAt(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _GameDiscussion_id(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussion) (ret graphql.Marshaler) {
@@ -11676,7 +11708,7 @@ func (ec *executionContext) _Item_id(ctx context.Context, field graphql.Collecte
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Item_name(ctx context.Context, field graphql.CollectedField, obj *model.Item) (ret graphql.Marshaler) {
+func (ec *executionContext) _Item_itemType(ctx context.Context, field graphql.CollectedField, obj *model.Item) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11694,7 +11726,7 @@ func (ec *executionContext) _Item_name(ctx context.Context, field graphql.Collec
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
+		return obj.ItemType, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11706,12 +11738,12 @@ func (ec *executionContext) _Item_name(ctx context.Context, field graphql.Collec
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.ItemType)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNItemType2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐItemType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Item_summary(ctx context.Context, field graphql.CollectedField, obj *model.Item) (ret graphql.Marshaler) {
+func (ec *executionContext) _Item_user(ctx context.Context, field graphql.CollectedField, obj *model.Item) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11729,7 +11761,7 @@ func (ec *executionContext) _Item_summary(ctx context.Context, field graphql.Col
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Summary, nil
+		return obj.User, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11741,114 +11773,9 @@ func (ec *executionContext) _Item_summary(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Item_link(ctx context.Context, field graphql.CollectedField, obj *model.Item) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Item",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Link, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Item_game(ctx context.Context, field graphql.CollectedField, obj *model.Item) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Item",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Game, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Game)
-	fc.Result = res
-	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Item_users(ctx context.Context, field graphql.CollectedField, obj *model.Item) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Item",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Users, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ItemTransaction_id(ctx context.Context, field graphql.CollectedField, obj *model.ItemTransaction) (ret graphql.Marshaler) {
@@ -12129,6 +12056,216 @@ func (ec *executionContext) _ItemTransaction_deletedAt(ctx context.Context, fiel
 	res := resTmp.(*time.Time)
 	fc.Result = res
 	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ItemType_id(ctx context.Context, field graphql.CollectedField, obj *model.ItemType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ItemType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ItemType_name(ctx context.Context, field graphql.CollectedField, obj *model.ItemType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ItemType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ItemType_summary(ctx context.Context, field graphql.CollectedField, obj *model.ItemType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ItemType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Summary, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ItemType_link(ctx context.Context, field graphql.CollectedField, obj *model.ItemType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ItemType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Link, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ItemType_game(ctx context.Context, field graphql.CollectedField, obj *model.ItemType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ItemType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Game, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Game)
+	fc.Result = res
+	return ec.marshalNGame2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐGame(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ItemType_items(ctx context.Context, field graphql.CollectedField, obj *model.ItemType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ItemType",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Item)
+	fc.Result = res
+	return ec.marshalNItem2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐItemᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _MiniProfileBackground_id(ctx context.Context, field graphql.CollectedField, obj *model.MiniProfileBackground) (ret graphql.Marshaler) {
@@ -24678,8 +24815,8 @@ func (ec *executionContext) _Game(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "items":
-			out.Values[i] = ec._Game_items(ctx, field, obj)
+		case "itemTypes":
+			out.Values[i] = ec._Game_itemTypes(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -25092,28 +25229,13 @@ func (ec *executionContext) _Item(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "name":
-			out.Values[i] = ec._Item_name(ctx, field, obj)
+		case "itemType":
+			out.Values[i] = ec._Item_itemType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "summary":
-			out.Values[i] = ec._Item_summary(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "link":
-			out.Values[i] = ec._Item_link(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "game":
-			out.Values[i] = ec._Item_game(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "users":
-			out.Values[i] = ec._Item_users(ctx, field, obj)
+		case "user":
+			out.Values[i] = ec._Item_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -25176,6 +25298,58 @@ func (ec *executionContext) _ItemTransaction(ctx context.Context, sel ast.Select
 			}
 		case "deletedAt":
 			out.Values[i] = ec._ItemTransaction_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var itemTypeImplementors = []string{"ItemType"}
+
+func (ec *executionContext) _ItemType(ctx context.Context, sel ast.SelectionSet, obj *model.ItemType) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, itemTypeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ItemType")
+		case "id":
+			out.Values[i] = ec._ItemType_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._ItemType_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "summary":
+			out.Values[i] = ec._ItemType_summary(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "link":
+			out.Values[i] = ec._ItemType_link(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game":
+			out.Values[i] = ec._ItemType_game(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "items":
+			out.Values[i] = ec._ItemType_items(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -29096,6 +29270,53 @@ func (ec *executionContext) marshalNItemTransaction2ᚖgithubᚗcomᚋnicotanzil
 		return graphql.Null
 	}
 	return ec._ItemTransaction(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNItemType2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐItemTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ItemType) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNItemType2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐItemType(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNItemType2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐItemType(ctx context.Context, sel ast.SelectionSet, v *model.ItemType) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ItemType(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNMiniProfileBackground2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐMiniProfileBackgroundᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MiniProfileBackground) graphql.Marshaler {

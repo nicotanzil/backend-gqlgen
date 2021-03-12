@@ -61,6 +61,7 @@ func Seed() {
 	SeedTransactionHeader(db)
 	SeedTransactionDetail(db)
 
+	SeedItemType(db)
 	SeedItem(db)
 	SeedItemTransaction(db)
 
@@ -1794,151 +1795,130 @@ func SeedGift(db *gorm.DB) {
 	}
 }
 
-func SeedItem(db *gorm.DB) {
-	items := []model.Item{
+func SeedItemType(db *gorm.DB) {
+	itemTypes := []model.ItemType {
 		{
 			Name:    "Profane Union",
 			Summary: "Already an unnatural mingling of two separate minds inhabiting a single form, N'aix finds nothing distasteful in augmenting that form ever further to suit their twisted needs. ",
 			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2Fprofane%20union.png?alt=media&token=84fdcdcb-c6e7-435f-a432-4eba978f1814",
 			Game:    &model.Game{ID: 1},
-			Users: []*model.User{
-				{ID: 1}, {ID: 2},
-			},
 		},
 		{
 			Name:    "Profane Union 123",
 			Summary: "Already an unnatural mingling of two separate minds inhabiting a single form, N'aix finds nothing distasteful in augmenting that form ever further to suit their twisted needs. ",
 			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2Fprofane%20union.png?alt=media&token=84fdcdcb-c6e7-435f-a432-4eba978f1814",
 			Game:    &model.Game{ID: 1},
-			Users: []*model.User{
-				{ID: 1}, {ID: 2},
-			},
-		},
-		{
-			Name:    "Profane Union 456456",
-			Summary: "Already an unnatural mingling of two separate minds inhabiting a single form, N'aix finds nothing distasteful in augmenting that form ever further to suit their twisted needs. ",
-			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2Fprofane%20union.png?alt=media&token=84fdcdcb-c6e7-435f-a432-4eba978f1814",
-			Game:    &model.Game{ID: 1},
-			Users: []*model.User{
-				{ID: 1}, {ID: 2},
-			},
 		},
 		{
 			Name:    "Razor Spines of the Sunken Gaoler",
 			Summary: "During his long-ago tenure as a Dark Reef Enforcer, Slardar sharpened his spines breaking up escape attempts and quelling constant insurrections.",
 			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FRazor%20Spines%20of%20the%20Sunken%20Gaoler.png?alt=media&token=cc0c7647-cfe1-4d31-bb7a-02c9aa0eafbb",
 			Game:    &model.Game{ID: 1},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 2},
-			},
 		},
 		{
 			Name:    "Plates of the Sunken Gaoler",
 			Summary: "During his long-ago tenure as a Dark Reef Enforcer, Slardar sharpened his spines breaking up escape attempts and quelling constant insurrections.",
 			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FBlastforge%20Exhaler.png?alt=media&token=3a886e22-77b0-43c2-86cc-221a14fc969e",
 			Game:    &model.Game{ID: 1},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 2}, {ID: 3},
-			},
 		},
 		{
 			Name:    "Lost Shield",
 			Summary: "Carved from the oldest trees of the thousand-league wood, this shield will protect old bones from attack.",
 			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FLost%20Hills%20Shield.png?alt=media&token=b7281274-4911-4800-9e84-13ec358ae170",
 			Game:    &model.Game{ID: 2},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 3},
-			},
-		},
-		{
-			Name:    "Lost Shield 2",
-			Summary: "Carved from the oldest trees of the thousand-league wood, this shield will protect old bones from attack.",
-			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FLost%20Hills%20Shield.png?alt=media&token=b7281274-4911-4800-9e84-13ec358ae170",
-			Game:    &model.Game{ID: 2},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 2},
-			},
-		},
-		{
-			Name:    "Lost Shield 3",
-			Summary: "Carved from the oldest trees of the thousand-league wood, this shield will protect old bones from attack.",
-			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FLost%20Hills%20Shield.png?alt=media&token=b7281274-4911-4800-9e84-13ec358ae170",
-			Game:    &model.Game{ID: 2},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 3},
-			},
-		},
-		{
-			Name:    "Lost Shield 4",
-			Summary: "Carved from the oldest trees of the thousand-league wood, this shield will protect old bones from attack.",
-			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FLost%20Hills%20Shield.png?alt=media&token=b7281274-4911-4800-9e84-13ec358ae170",
-			Game:    &model.Game{ID: 2},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 2},
-			},
 		},
 		{
 			Name:    "The International 2017 Emoticon Pack II",
 			Summary: "Unlocks 7 emoticons earned via The International Battle Pass 2017.",
 			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FLost%20Hills%20Shield.png?alt=media&token=b7281274-4911-4800-9e84-13ec358ae170",
 			Game:    &model.Game{ID: 3},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 2},
-			},
-		},
-		{
-			Name:    "The International 2017 Emoticon Pack II 2",
-			Summary: "Unlocks 7 emoticons earned via The International Battle Pass 2017.",
-			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FLost%20Hills%20Shield.png?alt=media&token=b7281274-4911-4800-9e84-13ec358ae170",
-			Game:    &model.Game{ID: 3},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 3},
-			},
-		},
-		{
-			Name:    "The International 2017 Emoticon Pack II 3",
-			Summary: "Unlocks 7 emoticons earned via The International Battle Pass 2017.",
-			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FLost%20Hills%20Shield.png?alt=media&token=b7281274-4911-4800-9e84-13ec358ae170",
-			Game:    &model.Game{ID: 3},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 3},
-			},
 		},
 		{
 			Name:    "Yulsaria's Mantle",
 			Summary: "In an age now lost to time, the Frozen Witch Yulsaria ruled the whitelands, summoning blizzards and hail storms upon those who displeased her, while an army of ice golems roamed the lands to snuff out all warmth. In time, her southward expansion angered the Eldwurm Slyrak who, in his terrible rage, melted Yulsaria's armies with his endless flame before conquering the Frozen Witch herself. Now, centuries later, shifts in the ice have uncovered yet another shard of her empire: her frosty mantle. ",
 			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FYulsaria's%20Mantle.png?alt=media&token=83ce7f54-1001-4174-8605-114c8a1ee717",
 			Game:    &model.Game{ID: 4},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 3},
-			},
+		},
+	}
+
+	for _, itemType := range itemTypes {
+		db.Create(&itemType)
+	}
+}
+
+func SeedItem(db *gorm.DB) {
+	items := []model.Item{
+		{
+			ItemType:   &model.ItemType{ID: 1},
+			User:       &model.User{ID: 1},
 		},
 		{
-			Name:    "Yulsaria's Mantle 2",
-			Summary: "In an age now lost to time, the Frozen Witch Yulsaria ruled the whitelands, summoning blizzards and hail storms upon those who displeased her, while an army of ice golems roamed the lands to snuff out all warmth. In time, her southward expansion angered the Eldwurm Slyrak who, in his terrible rage, melted Yulsaria's armies with his endless flame before conquering the Frozen Witch herself. Now, centuries later, shifts in the ice have uncovered yet another shard of her empire: her frosty mantle. ",
-			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FYulsaria's%20Mantle.png?alt=media&token=83ce7f54-1001-4174-8605-114c8a1ee717",
-			Game:    &model.Game{ID: 4},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 2},
-			},
+			ItemType:   &model.ItemType{ID: 1},
+			User:       &model.User{ID: 1},
 		},
 		{
-			Name:    "Yulsaria's Mantle 3",
-			Summary: "In an age now lost to time, the Frozen Witch Yulsaria ruled the whitelands, summoning blizzards and hail storms upon those who displeased her, while an army of ice golems roamed the lands to snuff out all warmth. In time, her southward expansion angered the Eldwurm Slyrak who, in his terrible rage, melted Yulsaria's armies with his endless flame before conquering the Frozen Witch herself. Now, centuries later, shifts in the ice have uncovered yet another shard of her empire: her frosty mantle. ",
-			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FYulsaria's%20Mantle.png?alt=media&token=83ce7f54-1001-4174-8605-114c8a1ee717",
-			Game:    &model.Game{ID: 4},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 2}, {ID: 3},
-			},
+			ItemType:   &model.ItemType{ID: 1},
+			User:       &model.User{ID: 1},
 		},
 		{
-			Name:    "Yulsaria's Mantle 4",
-			Summary: "In an age now lost to time, the Frozen Witch Yulsaria ruled the whitelands, summoning blizzards and hail storms upon those who displeased her, while an army of ice golems roamed the lands to snuff out all warmth. In time, her southward expansion angered the Eldwurm Slyrak who, in his terrible rage, melted Yulsaria's armies with his endless flame before conquering the Frozen Witch herself. Now, centuries later, shifts in the ice have uncovered yet another shard of her empire: her frosty mantle. ",
-			Link:    "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fitems%2FYulsaria's%20Mantle.png?alt=media&token=83ce7f54-1001-4174-8605-114c8a1ee717",
-			Game:    &model.Game{ID: 4},
-			Users:   []*model.User{
-				{ID: 1}, {ID: 3},
-			},
+			ItemType:   &model.ItemType{ID: 1},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 2},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 2},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 2},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 3},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 3},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 3},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 4},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 4},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 4},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 5},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 6},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 6},
+			User:       &model.User{ID: 2},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 7},
+			User:       &model.User{ID: 1},
+		},
+		{
+			ItemType:   &model.ItemType{ID: 7},
+			User:       &model.User{ID: 3},
 		},
 	}
 	for _, item := range items {

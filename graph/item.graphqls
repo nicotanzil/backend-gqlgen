@@ -1,10 +1,7 @@
 type Item {
     id: Int!
-    name: String!
-    summary: String!
-    link: String!
-    game: Game!
-    users: [User!]!
+    itemType: ItemType!
+    user: User!
 }
 
 extend type Query {
