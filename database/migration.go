@@ -53,6 +53,7 @@ func UserMigrate(db *gorm.DB) {
 		&model.TransactionDetail{},
 		&model.PaymentType{},
 
+		&model.SellListing{},
 		&model.Item{},
 		&model.ItemType{},
 
@@ -87,6 +88,7 @@ func UserMigrate(db *gorm.DB) {
 
 		&model.ItemType{},
 		&model.Item{},
+		&model.SellListing{},
 
 		&model.PaymentType{},
 		&model.TransactionDetail{},

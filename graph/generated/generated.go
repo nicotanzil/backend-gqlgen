@@ -297,6 +297,7 @@ type ComplexityRoot struct {
 		CreateOtp                 func(childComplexity int, input model.NewOtp) int
 		CreatePromo               func(childComplexity int, input model.NewPromo) int
 		CreatePublisher           func(childComplexity int, input model.NewPublisher) int
+		CreateSellListing         func(childComplexity int, itemID int, sell int) int
 		CreateSuspensionRequest   func(childComplexity int, request model.InputSuspensionRequest) int
 		CreateTag                 func(childComplexity int, input model.NewTag) int
 		CreateTransaction         func(childComplexity int, transaction *model.InputTransactionHeader) int
@@ -419,6 +420,7 @@ type ComplexityRoot struct {
 		GetTotalItems                           func(childComplexity int, userID int, gameID int, keyword string) int
 		GetTotalPromo                           func(childComplexity int) int
 		GetTotalReviewsByPostID                 func(childComplexity int, postID int) int
+		GetTotalTopTransactionItemTypes         func(childComplexity int) int
 		GetTotalUser                            func(childComplexity int) int
 		GetUseByAccountName                     func(childComplexity int, accountName string) int
 		GetUserAuth                             func(childComplexity int) int
@@ -443,6 +445,7 @@ type ComplexityRoot struct {
 		Systems                                 func(childComplexity int) int
 		Tags                                    func(childComplexity int) int
 		Themes                                  func(childComplexity int) int
+		TopTransactionItemTypes                 func(childComplexity int, page int) int
 		Users                                   func(childComplexity int) int
 		ValidateFriendRequestExists             func(childComplexity int, requesterID int, requestedID int) int
 		Wishlists                               func(childComplexity int) int
@@ -467,6 +470,14 @@ type ComplexityRoot struct {
 		UpdatedAt  func(childComplexity int) int
 		UserID     func(childComplexity int) int
 		VoteStatus func(childComplexity int) int
+	}
+
+	SellListing struct {
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		Item      func(childComplexity int) int
+		Sell      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
 	}
 
 	SuspensionRequest struct {
@@ -522,6 +533,14 @@ type ComplexityRoot struct {
 		GameName      func(childComplexity int) int
 		GamePrice     func(childComplexity int) int
 		PurchaseCount func(childComplexity int) int
+	}
+
+	TopTransactionItem struct {
+		GameName         func(childComplexity int) int
+		ItemLink         func(childComplexity int) int
+		ItemName         func(childComplexity int) int
+		ItemTypeID       func(childComplexity int) int
+		TransactionCount func(childComplexity int) int
 	}
 
 	TransactionDetail struct {
@@ -640,6 +659,7 @@ type MutationResolver interface {
 	UpdatePromo(ctx context.Context, input model.NewPromo, id int) (*model.Promo, error)
 	DeletePromo(ctx context.Context, id int) (*model.Promo, error)
 	CreatePublisher(ctx context.Context, input model.NewPublisher) (*model.Publisher, error)
+	CreateSellListing(ctx context.Context, itemID int, sell int) (bool, error)
 	CreateSuspensionRequest(ctx context.Context, request model.InputSuspensionRequest) (bool, error)
 	ApproveUnsuspend(ctx context.Context, userID int) (bool, error)
 	UnApproveUnsuspend(ctx context.Context, userID int) (bool, error)
@@ -716,6 +736,8 @@ type QueryResolver interface {
 	Publishers(ctx context.Context) ([]*model.Publisher, error)
 	Reviews(ctx context.Context) ([]*model.Review, error)
 	GetVotesByReviewID(ctx context.Context, input *string) ([]*model.ReviewVote, error)
+	TopTransactionItemTypes(ctx context.Context, page int) ([]*model.TopTransactionItem, error)
+	GetTotalTopTransactionItemTypes(ctx context.Context) (int, error)
 	SuspensionRequests(ctx context.Context) ([]*model.SuspensionRequest, error)
 	SuspensionRequestsByUserID(ctx context.Context, id int) ([]*model.SuspensionRequest, error)
 	Systems(ctx context.Context) ([]*model.System, error)
@@ -2144,6 +2166,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreatePublisher(childComplexity, args["input"].(model.NewPublisher)), true
 
+	case "Mutation.createSellListing":
+		if e.complexity.Mutation.CreateSellListing == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createSellListing_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateSellListing(childComplexity, args["itemId"].(int), args["sell"].(int)), true
+
 	case "Mutation.createSuspensionRequest":
 		if e.complexity.Mutation.CreateSuspensionRequest == nil {
 			break
@@ -3137,6 +3171,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetTotalReviewsByPostID(childComplexity, args["postId"].(int)), true
 
+	case "Query.getTotalTopTransactionItemTypes":
+		if e.complexity.Query.GetTotalTopTransactionItemTypes == nil {
+			break
+		}
+
+		return e.complexity.Query.GetTotalTopTransactionItemTypes(childComplexity), true
+
 	case "Query.getTotalUser":
 		if e.complexity.Query.GetTotalUser == nil {
 			break
@@ -3345,6 +3386,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Themes(childComplexity), true
 
+	case "Query.topTransactionItemTypes":
+		if e.complexity.Query.TopTransactionItemTypes == nil {
+			break
+		}
+
+		args, err := ec.field_Query_topTransactionItemTypes_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.TopTransactionItemTypes(childComplexity, args["page"].(int)), true
+
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
 			break
@@ -3475,6 +3528,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ReviewVote.VoteStatus(childComplexity), true
+
+	case "SellListing.createdAt":
+		if e.complexity.SellListing.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.SellListing.CreatedAt(childComplexity), true
+
+	case "SellListing.deletedAt":
+		if e.complexity.SellListing.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.SellListing.DeletedAt(childComplexity), true
+
+	case "SellListing.item":
+		if e.complexity.SellListing.Item == nil {
+			break
+		}
+
+		return e.complexity.SellListing.Item(childComplexity), true
+
+	case "SellListing.sell":
+		if e.complexity.SellListing.Sell == nil {
+			break
+		}
+
+		return e.complexity.SellListing.Sell(childComplexity), true
+
+	case "SellListing.updatedAt":
+		if e.complexity.SellListing.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.SellListing.UpdatedAt(childComplexity), true
 
 	case "SuspensionRequest.createdAt":
 		if e.complexity.SuspensionRequest.CreatedAt == nil {
@@ -3734,6 +3822,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TopSellerGame.PurchaseCount(childComplexity), true
+
+	case "TopTransactionItem.game_name":
+		if e.complexity.TopTransactionItem.GameName == nil {
+			break
+		}
+
+		return e.complexity.TopTransactionItem.GameName(childComplexity), true
+
+	case "TopTransactionItem.item_link":
+		if e.complexity.TopTransactionItem.ItemLink == nil {
+			break
+		}
+
+		return e.complexity.TopTransactionItem.ItemLink(childComplexity), true
+
+	case "TopTransactionItem.item_name":
+		if e.complexity.TopTransactionItem.ItemName == nil {
+			break
+		}
+
+		return e.complexity.TopTransactionItem.ItemName(childComplexity), true
+
+	case "TopTransactionItem.item_type_id":
+		if e.complexity.TopTransactionItem.ItemTypeID == nil {
+			break
+		}
+
+		return e.complexity.TopTransactionItem.ItemTypeID(childComplexity), true
+
+	case "TopTransactionItem.transaction_count":
+		if e.complexity.TopTransactionItem.TransactionCount == nil {
+			break
+		}
+
+		return e.complexity.TopTransactionItem.TransactionCount(childComplexity), true
 
 	case "TransactionDetail.game":
 		if e.complexity.TransactionDetail.Game == nil {
@@ -4807,7 +4930,26 @@ extend type Query {
 extend type Query {
     getVotesByReviewId(input: String): [ReviewVote!]!
 }`, BuiltIn: false},
-	{Name: "graph/sell-listing.graphqls", Input: ``, BuiltIn: false},
+	{Name: "graph/sell-listing.graphqls", Input: `type SellListing {
+    item: Item!
+    sell: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    topTransactionItemTypes(page:Int!): [TopTransactionItem!]!
+    getTotalTopTransactionItemTypes: Int!
+}
+
+extend type Mutation {
+    createSellListing(itemId: Int!, sell: Int!): Boolean!
+}
+
+
+`, BuiltIn: false},
 	{Name: "graph/suspension-request.graphqls", Input: `type SuspensionRequest {
     id: Int!
     description: String!
@@ -4905,6 +5047,13 @@ extend type Query {
     game_banner: String!
     game_discount: Int!
     purchase_count: Int!
+}`, BuiltIn: false},
+	{Name: "graph/top-transaction-item.graphqls", Input: `type TopTransactionItem {
+    item_type_id: Int!
+    item_name: String!
+    item_link: String!
+    game_name: String!
+    transaction_count: Int!
 }`, BuiltIn: false},
 	{Name: "graph/transaction-detail.graphqls", Input: `type TransactionDetail {
     transactionHeader: TransactionHeader!
@@ -5414,6 +5563,30 @@ func (ec *executionContext) field_Mutation_createPublisher_args(ctx context.Cont
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createSellListing_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["itemId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("itemId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["itemId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["sell"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sell"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["sell"] = arg1
 	return args, nil
 }
 
@@ -6641,6 +6814,21 @@ func (ec *executionContext) field_Query_suspensionRequestsByUserId_args(ctx cont
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_topTransactionItemTypes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["page"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["page"] = arg0
 	return args, nil
 }
 
@@ -10023,9 +10211,9 @@ func (ec *executionContext) _Game_deletedAt(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _GameDiscussion_id(ctx context.Context, field graphql.CollectedField, obj *model.GameDiscussion) (ret graphql.Marshaler) {
@@ -14186,6 +14374,48 @@ func (ec *executionContext) _Mutation_createPublisher(ctx context.Context, field
 	return ec.marshalNPublisher2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐPublisher(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createSellListing(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createSellListing_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateSellListing(rctx, args["itemId"].(int), args["sell"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createSuspensionRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18036,6 +18266,83 @@ func (ec *executionContext) _Query_getVotesByReviewId(ctx context.Context, field
 	return ec.marshalNReviewVote2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐReviewVoteᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_topTransactionItemTypes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_topTransactionItemTypes_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().TopTransactionItemTypes(rctx, args["page"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.TopTransactionItem)
+	fc.Result = res
+	return ec.marshalNTopTransactionItem2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopTransactionItemᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getTotalTopTransactionItemTypes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetTotalTopTransactionItemTypes(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_suspensionRequests(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18942,6 +19249,181 @@ func (ec *executionContext) _ReviewVote_deletedAt(ctx context.Context, field gra
 	}()
 	fc := &graphql.FieldContext{
 		Object:     "ReviewVote",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SellListing_item(ctx context.Context, field graphql.CollectedField, obj *model.SellListing) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SellListing",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Item, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Item)
+	fc.Result = res
+	return ec.marshalNItem2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐItem(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SellListing_sell(ctx context.Context, field graphql.CollectedField, obj *model.SellListing) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SellListing",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sell, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SellListing_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.SellListing) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SellListing",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SellListing_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.SellListing) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SellListing",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SellListing_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.SellListing) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SellListing",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -20247,6 +20729,181 @@ func (ec *executionContext) _TopSellerGame_purchase_count(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.PurchaseCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopTransactionItem_item_type_id(ctx context.Context, field graphql.CollectedField, obj *model.TopTransactionItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopTransactionItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ItemTypeID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopTransactionItem_item_name(ctx context.Context, field graphql.CollectedField, obj *model.TopTransactionItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopTransactionItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ItemName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopTransactionItem_item_link(ctx context.Context, field graphql.CollectedField, obj *model.TopTransactionItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopTransactionItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ItemLink, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopTransactionItem_game_name(ctx context.Context, field graphql.CollectedField, obj *model.TopTransactionItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopTransactionItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopTransactionItem_transaction_count(ctx context.Context, field graphql.CollectedField, obj *model.TopTransactionItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopTransactionItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TransactionCount, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -25636,6 +26293,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "createSellListing":
+			out.Values[i] = ec._Mutation_createSellListing(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createSuspensionRequest":
 			out.Values[i] = ec._Mutation_createSuspensionRequest(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -26885,6 +27547,34 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "topTransactionItemTypes":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_topTransactionItemTypes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getTotalTopTransactionItemTypes":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getTotalTopTransactionItemTypes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "suspensionRequests":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -27131,6 +27821,53 @@ func (ec *executionContext) _ReviewVote(ctx context.Context, sel ast.SelectionSe
 			}
 		case "deletedAt":
 			out.Values[i] = ec._ReviewVote_deletedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var sellListingImplementors = []string{"SellListing"}
+
+func (ec *executionContext) _SellListing(ctx context.Context, sel ast.SelectionSet, obj *model.SellListing) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sellListingImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SellListing")
+		case "item":
+			out.Values[i] = ec._SellListing_item(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "sell":
+			out.Values[i] = ec._SellListing_sell(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._SellListing_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._SellListing_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._SellListing_deletedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -27448,6 +28185,53 @@ func (ec *executionContext) _TopSellerGame(ctx context.Context, sel ast.Selectio
 			}
 		case "purchase_count":
 			out.Values[i] = ec._TopSellerGame_purchase_count(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var topTransactionItemImplementors = []string{"TopTransactionItem"}
+
+func (ec *executionContext) _TopTransactionItem(ctx context.Context, sel ast.SelectionSet, obj *model.TopTransactionItem) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, topTransactionItemImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TopTransactionItem")
+		case "item_type_id":
+			out.Values[i] = ec._TopTransactionItem_item_type_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "item_name":
+			out.Values[i] = ec._TopTransactionItem_item_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "item_link":
+			out.Values[i] = ec._TopTransactionItem_item_link(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "game_name":
+			out.Values[i] = ec._TopTransactionItem_game_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "transaction_count":
+			out.Values[i] = ec._TopTransactionItem_transaction_count(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -30077,6 +30861,53 @@ func (ec *executionContext) marshalNTopSellerGame2ᚖgithubᚗcomᚋnicotanzil�
 		return graphql.Null
 	}
 	return ec._TopSellerGame(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTopTransactionItem2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopTransactionItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TopTransactionItem) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTopTransactionItem2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopTransactionItem(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNTopTransactionItem2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTopTransactionItem(ctx context.Context, sel ast.SelectionSet, v *model.TopTransactionItem) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._TopTransactionItem(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNTransactionDetail2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐTransactionDetailᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TransactionDetail) graphql.Marshaler {

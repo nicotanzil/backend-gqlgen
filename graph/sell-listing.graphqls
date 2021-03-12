@@ -1,0 +1,19 @@
+type SellListing {
+    item: Item!
+    sell: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    topTransactionItemTypes(page:Int!): [TopTransactionItem!]!
+    getTotalTopTransactionItemTypes: Int!
+}
+
+extend type Mutation {
+    createSellListing(itemId: Int!, sell: Int!): Boolean!
+}
+
+

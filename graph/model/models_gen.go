@@ -2,8 +2,6 @@
 
 package model
 
-
-
 type TopReviewGame struct {
 	GameID       int    `json:"game_id"`
 	GameName     string `json:"game_name"`
@@ -20,4 +18,12 @@ type TopSellerGame struct {
 	GameBanner    string `json:"game_banner"`
 	GameDiscount  int    `json:"game_discount"`
 	PurchaseCount int    `json:"purchase_count"`
+}
+
+type TopTransactionItem struct {
+	ItemTypeID       int    `json:"item_type_id"`
+	ItemName         string `json:"item_name"`
+	ItemLink         string `json:"item_link"`
+	GameName         string `json:"game_name"`
+	TransactionCount int    `json:"transaction_count"`
 }

@@ -1,0 +1,7 @@
+type TopTransactionItem {
+    item_type_id: Int!
+    item_name: String!
+    item_link: String!
+    game_name: String!
+    transaction_count: Int!
+}

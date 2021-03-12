@@ -64,6 +64,7 @@ func Seed() {
 	SeedItemType(db)
 	SeedItem(db)
 	SeedItemTransaction(db)
+	SeedSellListing(db)
 
 	fmt.Println("[INFO] SEEDED.")
 }
@@ -1999,8 +2000,6 @@ func SeedItemTransaction(db *gorm.DB) {
 			Buyer:     &model.User{ID: 2},
 			Price:     250,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 1),
-			UpdatedAt: time.Time{},
-			DeletedAt: nil,
 		},
 		{
 			Item:      &model.Item{ID: 1},
@@ -2008,12 +2007,179 @@ func SeedItemTransaction(db *gorm.DB) {
 			Buyer:     &model.User{ID: 2},
 			Price:     250,
 			CreatedAt: time.Now().Add(-time.Hour),
-			UpdatedAt: time.Time{},
-			DeletedAt: nil,
+		},
+		{
+			Item:      &model.Item{ID: 10},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 7),
+		},
+		{
+			Item:      &model.Item{ID: 2},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 6),
+		},
+		{
+			Item:      &model.Item{ID: 15},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 5),
+		},
+		{
+			Item:      &model.Item{ID: 35},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
+		},
+		{
+			Item:      &model.Item{ID: 50},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
+		},
+		{
+			Item:      &model.Item{ID: 85},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
+		},
+		{
+			Item:      &model.Item{ID: 75},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
+		},
+		{
+			Item:      &model.Item{ID: 3},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
+		},
+		{
+			Item:      &model.Item{ID: 4},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
+		},
+		{
+			Item:      &model.Item{ID: 4},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
+		},
+		{
+			Item:      &model.Item{ID: 10},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
+		},
+		{
+			Item:      &model.Item{ID: 36},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
+		},
+		{
+			Item:      &model.Item{ID: 54},
+			Seller:    &model.User{ID: 1},
+			Buyer:     &model.User{ID: 2},
+			Price:     150,
+			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
 		},
 	}
 
 	for _, transaction := range transactions {
 		db.Create(&transaction)
+	}
+}
+
+func SeedSellListing(db *gorm.DB) {
+	sellListings := []model.SellListing {
+		{
+			Item:      &model.Item{ID: 1},
+			Sell:      250,
+		},
+		{
+			Item:      &model.Item{ID: 2},
+			Sell:      150,
+		},
+
+		{
+			Item:      &model.Item{ID: 3},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 4},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 5},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 6},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 7},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 8},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 10},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 15},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 30},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 40},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 50},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 60},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 70},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 80},
+			Sell:      150,
+		},
+		{
+			Item:      &model.Item{ID: 90},
+			Sell:      150,
+		},
+
+	}
+	for _, sellListing := range sellListings {
+		db.Create(&sellListing)
 	}
 }

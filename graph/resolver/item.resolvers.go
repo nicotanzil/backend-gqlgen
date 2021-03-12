@@ -5,8 +5,8 @@ package resolver
 
 import (
 	"context"
-	"github.com/nicotanzil/backend-gqlgen/app/providers"
 
+	"github.com/nicotanzil/backend-gqlgen/app/providers"
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 	"gorm.io/gorm/clause"
