@@ -20,9 +20,9 @@ func (r *mutationResolver) CreateBuyListing(ctx context.Context, bidID int, buy 
 	dbClose, _ := db.DB()
 	defer dbClose.Close()
 
-	var buyListing model.BuyListing
-
-	db.Preload(clause.Associations).First(&buyListing, "bid_id = ?", bidID)
+	//var buyListing model.BuyListing
+	//
+	//db.Preload(clause.Associations).First(&buyListing, "bid_id = ?", bidID)
 
 	//if buyListing.BidID != 0 {
 	//	// Item already exists in
@@ -78,6 +78,13 @@ func (r *mutationResolver) CreateBuyListing(ctx context.Context, bidID int, buy 
 		// Change item's ownership
 		item.User = &model.User{ID: buyer.ID}
 		db.Save(&item)
+
+		var emailTransaction model.ItemTransaction
+		db.Preload(clause.Associations).Last(&emailTransaction)
+
+		// Send email to both user
+		model.SendItemPurchaseReceipt(emailTransaction)
+		model.SendItemSellEmail(emailTransaction)
 
 		// Delete sellListing and buyListing
 		db.Delete(model.SellListing{}, "item_id = ?", sellListingValidate.Item.ID)

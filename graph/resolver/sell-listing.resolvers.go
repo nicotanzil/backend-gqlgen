@@ -82,6 +82,13 @@ func (r *mutationResolver) CreateSellListing(ctx context.Context, itemID int, se
 		item.User = &model.User{ID: buyer.ID}
 		db.Save(&item)
 
+		var emailTransaction model.ItemTransaction
+		db.Preload(clause.Associations).Last(&emailTransaction)
+
+		// Send email to both user
+		model.SendItemPurchaseReceipt(newItemTransaction)
+		model.SendItemSellEmail(newItemTransaction)
+
 		// Delete sellListing and buyListing
 		db.Delete(model.SellListing{}, "item_id = ?", newSellListing.Item.ID)
 		db.Delete(model.BuyListing{}, "bid_id = ?", buyListingValidate.Bid.ID)
