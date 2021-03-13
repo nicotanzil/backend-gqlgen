@@ -6,3 +6,7 @@ type ItemType {
     game: Game!
     items: [Item!]!
 }
+
+extend type Query {
+    getItemType(id:Int!): ItemType
+}

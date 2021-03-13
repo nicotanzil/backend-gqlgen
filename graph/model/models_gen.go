@@ -2,6 +2,25 @@
 
 package model
 
+import (
+	"time"
+)
+
+type GraphData struct {
+	Price int       `json:"price"`
+	Date  time.Time `json:"date"`
+}
+
+type HighestBuyListing struct {
+	Price        int `json:"price"`
+	ListingCount int `json:"listing_count"`
+}
+
+type LowestSellListing struct {
+	Price        int `json:"price"`
+	ListingCount int `json:"listing_count"`
+}
+
 type TopReviewGame struct {
 	GameID       int    `json:"game_id"`
 	GameName     string `json:"game_name"`
@@ -27,5 +46,3 @@ type TopTransactionItem struct {
 	GameName         string `json:"game_name"`
 	TransactionCount int    `json:"transaction_count"`
 }
-
-

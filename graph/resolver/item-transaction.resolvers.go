@@ -5,13 +5,19 @@ package resolver
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/nicotanzil/backend-gqlgen/database"
+	"github.com/nicotanzil/backend-gqlgen/graph/generated"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
-	"gorm.io/gorm/clause"
 )
 
-func (r *queryResolver) GetPreviousTransactionData(ctx context.Context, itemID int) ([]*model.ItemTransaction, error) {
+func (r *itemTransactionResolver) DeletedAt(ctx context.Context, obj *model.ItemTransaction) (*time.Time, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) GetPreviousTransactionData(ctx context.Context, typeID int) ([]*model.GraphData, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
@@ -20,13 +26,30 @@ func (r *queryResolver) GetPreviousTransactionData(ctx context.Context, itemID i
 	dbClose, _ := db.DB()
 	defer dbClose.Close()
 
-	var transactions []*model.ItemTransaction
+	//var transactions []*model.ItemTransaction
 
-	db.Order("created_at asc").
-		Where("item_id = ?", itemID).
-		Where("created_at BETWEEN (now() - '1 week'::interval) AND now()").
-		Preload(clause.Associations).
-		Find(&transactions)
+	var graphDatas []*model.GraphData
 
-	return transactions, nil
+	//db.Order("created_at asc").
+	//	Where("item_id = ?", typeID).
+	//	Where("created_at BETWEEN (now() - '1 week'::interval) AND now()").
+	//	Preload(clause.Associations).
+	//	Find(&transactions)
+
+	db.Raw("SELECT AVG(price)::numeric(10,0) AS price, DATE(created_at) as date"+
+		"\nFROM item_transactions it JOIN items i ON it.item_id = i.id"+
+		"\nWHERE created_at BETWEEN (now() - '1 week'::interval) AND now()"+
+		"\nAND item_type_id = ?"+
+		"\nGROUP BY DATE(created_at)"+
+		"\nORDER BY DATE(created_at) asc", typeID).
+		Scan(&graphDatas)
+
+	return graphDatas, nil
 }
+
+// ItemTransaction returns generated.ItemTransactionResolver implementation.
+func (r *Resolver) ItemTransaction() generated.ItemTransactionResolver {
+	return &itemTransactionResolver{r}
+}
+
+type itemTransactionResolver struct{ *Resolver }

@@ -11,5 +11,5 @@ type ItemTransaction {
 }
 
 extend type Query {
-    getPreviousTransactionData(itemId:Int!): [ItemTransaction!]!
+    getPreviousTransactionData(typeId:Int!): [GraphData!]!
 }

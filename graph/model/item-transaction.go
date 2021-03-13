@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type ItemTransaction struct {
 	ID        int        `json:"id" gorm:"primaryKey"`
@@ -13,5 +16,5 @@ type ItemTransaction struct {
 	Price     int        `json:"price"`
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt time.Time  `json:"updatedAt"`
-	DeletedAt *time.Time `json:"deletedAt"`
+	DeletedAt gorm.DeletedAt
 }

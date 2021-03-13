@@ -1,0 +1,20 @@
+type BuyListing {
+    bid: Bid!
+    buy: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    getHighestBuyListings: [BuyListing!]!
+
+    getBuyListingsData(typeId:Int!): [HighestBuyListing!]!
+
+    getBuyListingsByUser(userId: Int!, typeId:Int!): [BuyListing!]!
+}
+
+extend type Mutation {
+    createBuyListing(bidId: Int!, buy: Int!): Boolean!
+}

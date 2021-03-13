@@ -1,0 +1,4 @@
+type HighestBuyListing {
+    price: Int!
+    listing_count: Int!
+}

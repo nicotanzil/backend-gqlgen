@@ -1,0 +1,4 @@
+type LowestSellListing {
+    price: Int!
+    listing_count: Int!
+}

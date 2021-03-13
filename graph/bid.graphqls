@@ -1,0 +1,9 @@
+type Bid {
+    id: Int!
+    itemType: ItemType!
+    user: User!
+}
+
+extend type Mutation {
+    createBid(typeId: Int!, userId: Int!): Bid!
+}

@@ -10,6 +10,12 @@ type SellListing {
 extend type Query {
     topTransactionItemTypes(page:Int!): [TopTransactionItem!]!
     getTotalTopTransactionItemTypes: Int!
+
+    getLowestSellListings: [SellListing!]!
+
+    getSellListingsData(typeId:Int!): [LowestSellListing!]!
+
+    getSellListingsByUser(userId: Int!, typeId:Int!): [SellListing!]!
 }
 
 extend type Mutation {

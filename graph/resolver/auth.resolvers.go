@@ -61,6 +61,8 @@ func (r *mutationResolver) Login(ctx context.Context, input *model.Login) (strin
 		//Expires:  time.Now().Add(time.Minute * 5), // expiration time 5 minutes
 		Expires:  time.Now().Add(time.Hour * 24),
 		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
 	}
 
 	w := *middleware.WForContext(ctx)

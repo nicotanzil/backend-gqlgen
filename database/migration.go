@@ -54,8 +54,10 @@ func UserMigrate(db *gorm.DB) {
 		&model.PaymentType{},
 
 		&model.SellListing{},
+		&model.BuyListing{},
 		&model.Item{},
 		&model.ItemType{},
+		&model.Bid{},
 
 		&model.UserReport{},
 		&model.FriendRequest{},
@@ -88,7 +90,9 @@ func UserMigrate(db *gorm.DB) {
 
 		&model.ItemType{},
 		&model.Item{},
+		&model.Bid{},
 		&model.SellListing{},
+		&model.BuyListing{},
 
 		&model.PaymentType{},
 		&model.TransactionDetail{},
@@ -130,6 +134,7 @@ func GameMigrate(db *gorm.DB) {
 		&model.ReviewVote{},
 		&model.Publisher{},
 		&model.Genre{},
+		&model.Genre{},
 		&model.Promo{},
 		&model.Developer{},
 		&model.GameImage{},
@@ -144,6 +149,7 @@ func TransactionMigrate(db *gorm.DB) {
 		&model.Wishlist{},
 		&model.ItemTransaction{},
 		&model.WalletCode{},
+
 	)
 
 	db.AutoMigrate(

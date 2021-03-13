@@ -63,8 +63,10 @@ func Seed() {
 
 	SeedItemType(db)
 	SeedItem(db)
+	SeedBid(db)
 	SeedItemTransaction(db)
 	SeedSellListing(db)
+	SeedBuyListing(db)
 
 	SeedWalletCode(db)
 
@@ -1424,20 +1426,13 @@ func SeedCommunityGameReview(db *gorm.DB) {
 			Game:          &model.Game{ID: 4},
 			IsRecommended: true,
 			HelpfulCount:  45,
-		},{
+		}, {
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 4},
 			IsRecommended: true,
 			HelpfulCount:  45,
-		},{
-			Description:   "Really fun game",
-			User:          &model.User{ID: 1},
-			Game:          &model.Game{ID: 4},
-			IsRecommended: true,
-			HelpfulCount:  45,
-		},
-		{
+		}, {
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 4},
@@ -1447,22 +1442,29 @@ func SeedCommunityGameReview(db *gorm.DB) {
 		{
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
-			Game:          &model.Game{ID: 1},
+			Game:          &model.Game{ID: 4},
 			IsRecommended: true,
 			HelpfulCount:  45,
-		},{
+		},
+		{
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 1},
 			IsRecommended: true,
 			HelpfulCount:  45,
-		},{
+		}, {
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 1},
 			IsRecommended: true,
 			HelpfulCount:  45,
-		},{
+		}, {
+			Description:   "Really fun game",
+			User:          &model.User{ID: 1},
+			Game:          &model.Game{ID: 1},
+			IsRecommended: true,
+			HelpfulCount:  45,
+		}, {
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 1},
@@ -1673,36 +1675,36 @@ func SeedPaymentType(db *gorm.DB) {
 }
 
 func SeedTransactionHeader(db *gorm.DB) {
-	transactionHeaders := []*model.TransactionHeader {
+	transactionHeaders := []*model.TransactionHeader{
 		{
-			PaymentType:        &model.PaymentType{ID: 1},
-			Sender:             &model.User{ID: 1},
-			Receiver:           &model.User{ID: 2},
-			Total:              150000,
+			PaymentType: &model.PaymentType{ID: 1},
+			Sender:      &model.User{ID: 1},
+			Receiver:    &model.User{ID: 2},
+			Total:       150000,
 		},
 		{
-			PaymentType:        &model.PaymentType{ID: 1},
-			Sender:             &model.User{ID: 2},
-			Receiver:           &model.User{ID: 3},
-			Total:              150000,
+			PaymentType: &model.PaymentType{ID: 1},
+			Sender:      &model.User{ID: 2},
+			Receiver:    &model.User{ID: 3},
+			Total:       150000,
 		},
 		{
-			PaymentType:        &model.PaymentType{ID: 1},
-			Sender:             &model.User{ID: 1},
-			Receiver:           &model.User{ID: 1},
-			Total:              150000,
+			PaymentType: &model.PaymentType{ID: 1},
+			Sender:      &model.User{ID: 1},
+			Receiver:    &model.User{ID: 1},
+			Total:       150000,
 		},
 		{
-			PaymentType:        &model.PaymentType{ID: 1},
-			Sender:             &model.User{ID: 2},
-			Receiver:           &model.User{ID: 2},
-			Total:              150000,
+			PaymentType: &model.PaymentType{ID: 1},
+			Sender:      &model.User{ID: 2},
+			Receiver:    &model.User{ID: 2},
+			Total:       150000,
 		},
 		{
-			PaymentType:        &model.PaymentType{ID: 1},
-			Sender:             &model.User{ID: 3},
-			Receiver:           &model.User{ID: 2},
-			Total:              150000,
+			PaymentType: &model.PaymentType{ID: 1},
+			Sender:      &model.User{ID: 3},
+			Receiver:    &model.User{ID: 2},
+			Total:       150000,
 		},
 	}
 
@@ -1712,65 +1714,65 @@ func SeedTransactionHeader(db *gorm.DB) {
 }
 
 func SeedTransactionDetail(db *gorm.DB) {
-	transactions := []*model.TransactionDetail {
+	transactions := []*model.TransactionDetail{
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 1},
-			Game:                &model.Game{ID: 2},
+			TransactionHeader: &model.TransactionHeader{ID: 1},
+			Game:              &model.Game{ID: 2},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 1},
-			Game:                &model.Game{ID: 3},
+			TransactionHeader: &model.TransactionHeader{ID: 1},
+			Game:              &model.Game{ID: 3},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 1},
-			Game:                &model.Game{ID: 4},
+			TransactionHeader: &model.TransactionHeader{ID: 1},
+			Game:              &model.Game{ID: 4},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 1},
-			Game:                &model.Game{ID: 5},
+			TransactionHeader: &model.TransactionHeader{ID: 1},
+			Game:              &model.Game{ID: 5},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 1},
-			Game:                &model.Game{ID: 1},
+			TransactionHeader: &model.TransactionHeader{ID: 1},
+			Game:              &model.Game{ID: 1},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 1},
-			Game:                &model.Game{ID: 2},
-		},{
-			TransactionHeader:   &model.TransactionHeader{ID: 1},
-			Game:                &model.Game{ID: 2},
+			TransactionHeader: &model.TransactionHeader{ID: 1},
+			Game:              &model.Game{ID: 2},
+		}, {
+			TransactionHeader: &model.TransactionHeader{ID: 1},
+			Game:              &model.Game{ID: 2},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 1},
-			Game:                &model.Game{ID: 2},
+			TransactionHeader: &model.TransactionHeader{ID: 1},
+			Game:              &model.Game{ID: 2},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 1},
-			Game:                &model.Game{ID: 3},
+			TransactionHeader: &model.TransactionHeader{ID: 1},
+			Game:              &model.Game{ID: 3},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 1},
-			Game:                &model.Game{ID: 2},
+			TransactionHeader: &model.TransactionHeader{ID: 1},
+			Game:              &model.Game{ID: 2},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 1},
-			Game:                &model.Game{ID: 6},
+			TransactionHeader: &model.TransactionHeader{ID: 1},
+			Game:              &model.Game{ID: 6},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 2},
-			Game:                &model.Game{ID: 2},
+			TransactionHeader: &model.TransactionHeader{ID: 2},
+			Game:              &model.Game{ID: 2},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 3},
-			Game:                &model.Game{ID: 2},
+			TransactionHeader: &model.TransactionHeader{ID: 3},
+			Game:              &model.Game{ID: 2},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 4},
-			Game:                &model.Game{ID: 2},
+			TransactionHeader: &model.TransactionHeader{ID: 4},
+			Game:              &model.Game{ID: 2},
 		},
 		{
-			TransactionHeader:   &model.TransactionHeader{ID: 5},
-			Game:                &model.Game{ID: 2},
+			TransactionHeader: &model.TransactionHeader{ID: 5},
+			Game:              &model.Game{ID: 2},
 		},
 	}
 
@@ -1799,7 +1801,7 @@ func SeedGift(db *gorm.DB) {
 }
 
 func SeedItemType(db *gorm.DB) {
-	itemTypes := []model.ItemType {
+	itemTypes := []model.ItemType{
 		{
 			Name:    "Profane Union",
 			Summary: "Already an unnatural mingling of two separate minds inhabiting a single form, N'aix finds nothing distasteful in augmenting that form ever further to suit their twisted needs. ",
@@ -1852,76 +1854,76 @@ func SeedItemType(db *gorm.DB) {
 func SeedItem(db *gorm.DB) {
 	items := []model.Item{
 		{
-			ItemType:   &model.ItemType{ID: 1},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 1},
+			User:     &model.User{ID: 1},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 1},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 1},
+			User:     &model.User{ID: 1},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 1},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 1},
+			User:     &model.User{ID: 1},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 1},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 1},
+			User:     &model.User{ID: 2},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 2},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 2},
+			User:     &model.User{ID: 1},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 2},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 2},
+			User:     &model.User{ID: 2},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 2},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 2},
+			User:     &model.User{ID: 2},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 3},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 3},
+			User:     &model.User{ID: 1},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 3},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 3},
+			User:     &model.User{ID: 1},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 3},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 3},
+			User:     &model.User{ID: 1},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 4},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 4},
+			User:     &model.User{ID: 1},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 4},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 4},
+			User:     &model.User{ID: 1},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 4},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 4},
+			User:     &model.User{ID: 2},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 5},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 5},
+			User:     &model.User{ID: 2},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 6},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 6},
+			User:     &model.User{ID: 1},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 6},
-			User:       &model.User{ID: 2},
+			ItemType: &model.ItemType{ID: 6},
+			User:     &model.User{ID: 2},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 7},
-			User:       &model.User{ID: 1},
+			ItemType: &model.ItemType{ID: 7},
+			User:     &model.User{ID: 1},
 		},
 		{
-			ItemType:   &model.ItemType{ID: 7},
-			User:       &model.User{ID: 3},
+			ItemType: &model.ItemType{ID: 7},
+			User:     &model.User{ID: 3},
 		},
 	}
 	for _, item := range items {
@@ -1944,161 +1946,206 @@ func SeedItem(db *gorm.DB) {
 	}
 }
 
+func SeedBid(db *gorm.DB) {
+	bids := []model.Bid{
+		//{
+		//	ItemType: &model.ItemType{ID: 1},
+		//	User:     &model.User{ID: 1},
+		//},
+		{
+			ItemType: &model.ItemType{ID: 1},
+			User:     &model.User{ID: 2},
+		},
+		{
+			ItemType: &model.ItemType{ID: 1},
+			User:     &model.User{ID: 3},
+		},
+		{
+			ItemType: &model.ItemType{ID: 2},
+			User:     &model.User{ID: 1},
+		},
+		{
+			ItemType: &model.ItemType{ID: 3},
+			User:     &model.User{ID: 1},
+		},
+		{
+			ItemType: &model.ItemType{ID: 4},
+			User:     &model.User{ID: 1},
+		},
+		{
+			ItemType: &model.ItemType{ID: 5},
+			User:     &model.User{ID: 1},
+		},
+		{
+			ItemType: &model.ItemType{ID: 7},
+			User:     &model.User{ID: 1},
+		},
+	}
+
+	for _, bid := range bids {
+		db.Create(&bid)
+	}
+	for _, bid := range bids {
+		db.Create(&bid)
+	}
+	for _, bid := range bids {
+		db.Create(&bid)
+	}
+	for _, bid := range bids {
+		db.Create(&bid)
+	}
+	for _, bid := range bids {
+		db.Create(&bid)
+	}
+	for _, bid := range bids {
+		db.Create(&bid)
+	}
+}
+
 func SeedItemTransaction(db *gorm.DB) {
-	transactions := []model.ItemTransaction {
+	transactions := []model.ItemTransaction{
 		{
 			Item:      &model.Item{ID: 1},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 7),
-			UpdatedAt: time.Time{},
-			DeletedAt: nil,
 		},
 		{
 			Item:      &model.Item{ID: 1},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     235,
+			Price:     235000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 6),
-			UpdatedAt: time.Time{},
-			DeletedAt: nil,
 		},
 		{
 			Item:      &model.Item{ID: 1},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     175,
+			Price:     175000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 5),
-			UpdatedAt: time.Time{},
-			DeletedAt: nil,
-		},{
+		}, {
 			Item:      &model.Item{ID: 1},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     350,
+			Price:     350000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
-			UpdatedAt: time.Time{},
-			DeletedAt: nil,
-		},{
+		}, {
 			Item:      &model.Item{ID: 1},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     375,
+			Price:     375000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 3),
-			UpdatedAt: time.Time{},
-			DeletedAt: nil,
-		},{
+		}, {
 			Item:      &model.Item{ID: 1},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     200,
+			Price:     200000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 2),
-			UpdatedAt: time.Time{},
-			DeletedAt: nil,
-		},{
+		},
+		{
 			Item:      &model.Item{ID: 1},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     250,
+			Price:     250000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 1),
 		},
 		{
 			Item:      &model.Item{ID: 1},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     250,
+			Price:     250000,
 			CreatedAt: time.Now().Add(-time.Hour),
 		},
 		{
 			Item:      &model.Item{ID: 10},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 7),
 		},
 		{
 			Item:      &model.Item{ID: 2},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 6),
 		},
 		{
 			Item:      &model.Item{ID: 15},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 5),
 		},
 		{
 			Item:      &model.Item{ID: 35},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
 		},
 		{
 			Item:      &model.Item{ID: 50},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
 		},
 		{
 			Item:      &model.Item{ID: 85},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
 		},
 		{
 			Item:      &model.Item{ID: 75},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
 		},
 		{
 			Item:      &model.Item{ID: 3},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
 		},
 		{
 			Item:      &model.Item{ID: 4},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
 		},
 		{
 			Item:      &model.Item{ID: 4},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
 		},
 		{
 			Item:      &model.Item{ID: 10},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
 		},
 		{
 			Item:      &model.Item{ID: 36},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
 		},
 		{
 			Item:      &model.Item{ID: 54},
 			Seller:    &model.User{ID: 1},
 			Buyer:     &model.User{ID: 2},
-			Price:     150,
+			Price:     150000,
 			CreatedAt: time.Now().Add(-time.Hour * 24 * 4),
 		},
 	}
@@ -2109,96 +2156,188 @@ func SeedItemTransaction(db *gorm.DB) {
 }
 
 func SeedSellListing(db *gorm.DB) {
-	sellListings := []model.SellListing {
+	sellListings := []model.SellListing{
+		//{
+		//	Item: &model.Item{ID: 1},
+		//	Sell: 250,
+		//},
 		{
-			Item:      &model.Item{ID: 1},
-			Sell:      250,
-		},
-		{
-			Item:      &model.Item{ID: 2},
-			Sell:      150,
-		},
-
-		{
-			Item:      &model.Item{ID: 3},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 4},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 5},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 6},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 7},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 8},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 10},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 15},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 30},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 40},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 50},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 60},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 70},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 80},
-			Sell:      150,
-		},
-		{
-			Item:      &model.Item{ID: 90},
-			Sell:      150,
+			Item: &model.Item{ID: 2},
+			Sell: 350000,
 		},
 
+		{
+			Item: &model.Item{ID: 3},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 4},
+			Sell: 400000,
+		},
+		{
+			Item: &model.Item{ID: 5},
+			Sell: 175000,
+		},
+		{
+			Item: &model.Item{ID: 6},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 7},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 8},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 10},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 15},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 19},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 20},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 21},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 22},
+			Sell: 160000,
+		},
+		{
+			Item: &model.Item{ID: 30},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 40},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 50},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 60},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 70},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 80},
+			Sell: 150000,
+		},
+		{
+			Item: &model.Item{ID: 90},
+			Sell: 150000,
+		},
 	}
 	for _, sellListing := range sellListings {
 		db.Create(&sellListing)
 	}
 }
 
+func SeedBuyListing(db *gorm.DB) {
+	buyListings := []model.BuyListing{
+		//{
+		//	Bid: &model.Bid{ID: 1},
+		//	Buy: 125,
+		//},
+		{
+			Bid: &model.Bid{ID: 2},
+			Buy: 140000,
+		},
+		{
+			Bid: &model.Bid{ID: 3},
+			Buy: 140000,
+		},
+		{
+			Bid: &model.Bid{ID: 4},
+			Buy: 100000,
+		},
+		{
+			Bid: &model.Bid{ID: 5},
+			Buy: 100000,
+		},
+		{
+			Bid: &model.Bid{ID: 6},
+			Buy: 124000,
+		},
+		{
+			Bid: &model.Bid{ID: 7},
+			Buy: 150000,
+		},
+		{
+			Bid: &model.Bid{ID: 8},
+			Buy: 110000,
+		},
+		{
+			Bid: &model.Bid{ID: 9},
+			Buy: 110000,
+		},
+		{
+			Bid: &model.Bid{ID: 10},
+			Buy: 110000,
+		},
+		{
+			Bid: &model.Bid{ID: 11},
+			Buy: 90000,
+		},
+		{
+			Bid: &model.Bid{ID: 17},
+			Buy: 100000,
+		},
+		{
+			Bid: &model.Bid{ID: 18},
+			Buy: 90000,
+		},
+		{
+			Bid: &model.Bid{ID: 19},
+			Buy: 90000,
+		},
+		{
+			Bid: &model.Bid{ID: 25},
+			Buy: 85000,
+		},
+		{
+			Bid: &model.Bid{ID: 26},
+			Buy: 85000,
+		},
+		{
+			Bid: &model.Bid{ID: 27},
+			Buy: 95000,
+		},
+	}
+
+	for _, buyListing := range buyListings {
+		db.Create(&buyListing)
+	}
+}
+
 func SeedWalletCode(db *gorm.DB) {
-	walletCodes := []model.WalletCode {
+	walletCodes := []model.WalletCode{
 		{
-			Code:      "abc",
-			Balance:   15000,
+			Code:    "abc",
+			Balance: 15000,
 		},
 		{
-			Code:      "qwe",
-			Balance:   15000,
+			Code:    "qwe",
+			Balance: 15000,
 		},
 		{
-			Code:      "asd",
-			Balance:   15000,
+			Code:    "asd",
+			Balance: 15000,
 		},
 	}
 	for _, code := range walletCodes {
