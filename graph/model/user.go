@@ -26,6 +26,8 @@ type User struct {
 	AvatarFrames            []*AvatarFrame           `json:"avatarFrames" gorm:"many2many:user_avatarFrames;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	ProfileBackgrounds      []*ProfileBackground     `json:"profileBackgrounds" gorm:"many2many:user_profileBackgrounds;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	MiniProfileBackgrounds  []*MiniProfileBackground `json:"miniProfileBackgrounds" gorm:"many2many:user_miniProfileBackgrounds;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	ChatStickers            []*ChatSticker           `json:"chatStickers" gorm:"many2many:user_chatStickers;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	AnimatedAvatars         []*AnimatedAvatar        `json:"animatedAvatars" gorm:"many2many:user_animatedAvatars;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	CountryID  int      `json:"countryId"`
 	Country    *Country `json:"country" gorm:"foreignKey:CountryID"`

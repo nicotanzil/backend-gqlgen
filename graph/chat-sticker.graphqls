@@ -1,4 +1,4 @@
-type AvatarFrame {
+type ChatSticker {
     id: Int!
     name: String!
     link: String!
@@ -10,10 +10,10 @@ type AvatarFrame {
 }
 
 extend type Query {
-    avatarFrames: [AvatarFrame!]!
-    excludeAvatarFrames(userId: Int!): [AvatarFrame!]!
+    chatStickers: [ChatSticker!]!
+    excludeChatStickers(userId: Int!): [ChatSticker!]!
 }
 
 extend type Mutation {
-    buyAvatarFrame(userId: Int!, id: Int!): Boolean!
+    buyChatSticker(userId: Int!, id: Int!): Boolean!
 }

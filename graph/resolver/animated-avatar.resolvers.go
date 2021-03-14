@@ -5,13 +5,12 @@ package resolver
 
 import (
 	"context"
-
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 	"gorm.io/gorm/clause"
 )
 
-func (r *mutationResolver) BuyProfileBackground(ctx context.Context, userID int, id int) (bool, error) {
+func (r *mutationResolver) BuyAnimatedAvatars(ctx context.Context, userID int, id int) (bool, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
@@ -22,7 +21,7 @@ func (r *mutationResolver) BuyProfileBackground(ctx context.Context, userID int,
 	// Validate wallet
 	var user model.User
 	db.Preload(clause.Associations).First(&user, userID)
-	var item model.ProfileBackground
+	var item model.AnimatedAvatar
 	db.Preload(clause.Associations).First(&item, id)
 
 	if user.Points < item.Price {
@@ -33,14 +32,14 @@ func (r *mutationResolver) BuyProfileBackground(ctx context.Context, userID int,
 	user.Points = user.Points - item.Price
 
 	// Allocate item
-	db.Exec("INSERT INTO user_profile_backgrounds VALUES (?, ?)", userID, id)
+	db.Exec("INSERT INTO user_animated_avatars VALUES (?, ?)", userID, id)
 
 	db.Save(&user)
 
 	return true, nil
 }
 
-func (r *queryResolver) ProfileBackgrounds(ctx context.Context) ([]*model.ProfileBackground, error) {
+func (r *queryResolver) AnimatedAvatars(ctx context.Context) ([]*model.AnimatedAvatar, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
@@ -48,14 +47,14 @@ func (r *queryResolver) ProfileBackgrounds(ctx context.Context) ([]*model.Profil
 	dbClose, _ := db.DB()
 	defer dbClose.Close()
 
-	var backgrounds []*model.ProfileBackground
+	var animatedAvatars []*model.AnimatedAvatar
 
-	db.Find(&backgrounds)
+	db.Preload(clause.Associations).Find(&animatedAvatars)
 
-	return backgrounds, nil
+	return animatedAvatars, nil
 }
 
-func (r *queryResolver) ExcludeProfileBackground(ctx context.Context, userID int) ([]*model.ProfileBackground, error) {
+func (r *queryResolver) ExcludeAnimatedAvatars(ctx context.Context, userID int) ([]*model.AnimatedAvatar, error) {
 	db, err := database.Connect()
 	if err != nil {
 		panic(err)
@@ -65,15 +64,15 @@ func (r *queryResolver) ExcludeProfileBackground(ctx context.Context, userID int
 
 	var owned []int
 
-	db.Raw("select profile_background_id from "+
-		"user_profile_backgrounds where user_id = ?", userID).
+	db.Raw("select animated_avatar_id from "+
+		"user_animated_avatars where user_id = ?", userID).
 		Scan(&owned)
 
-	var backgrounds []*model.ProfileBackground
+	var avatars []*model.AnimatedAvatar
 
 	db.Preload(clause.Associations).
 		Where("id NOT IN ?", owned).
-		Find(&backgrounds)
+		Find(&avatars)
 
-	return backgrounds, nil
+	return avatars, nil
 }

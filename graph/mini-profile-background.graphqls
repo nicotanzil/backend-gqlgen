@@ -11,4 +11,9 @@ type MiniProfileBackground {
 
 extend type Query {
     miniProfileBackgrounds: [MiniProfileBackground!]!
+    excludeMiniProfileBackgrounds(userId: Int!): [MiniProfileBackground!]!
+}
+
+extend type Mutation {
+    buyMiniProfileBackground(userId: Int!, id: Int!): Boolean!
 }

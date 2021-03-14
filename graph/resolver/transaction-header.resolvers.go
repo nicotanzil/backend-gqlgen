@@ -62,6 +62,10 @@ func (r *mutationResolver) CreateTransaction(ctx context.Context, transaction *m
 	prev := sender.Balance
 	prev -= float64(latest.Total)
 	sender.Balance = prev
+
+	// Add points shop balance to user
+	point := latest.Total / 15000
+	sender.Points += point * 100
 	db.Save(&sender)
 
 	// Set gift to complete

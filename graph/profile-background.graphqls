@@ -11,4 +11,9 @@ type ProfileBackground {
 
 extend type Query {
     profileBackgrounds: [ProfileBackground!]!
+    excludeProfileBackground(userId: Int!): [ProfileBackground!]!
+}
+
+extend type Mutation {
+    buyProfileBackground(userId: Int!, id: Int!): Boolean!
 }

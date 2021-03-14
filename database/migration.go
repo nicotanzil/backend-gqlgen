@@ -22,6 +22,8 @@ func Migrate() {
 	db.Exec("DROP TABLE user_avatar_frames")
 	db.Exec("DROP TABLE user_profile_backgrounds")
 	db.Exec("DROP TABLE user_mini_profile_backgrounds")
+	db.Exec("DROP TABLE user_chat_stickers")
+	db.Exec("DROP TABLE user_animated_avatars")
 
 	db.Exec("DROP TABLE game_users")
 	db.Exec("DROP TABLE game_developers")
@@ -71,6 +73,8 @@ func UserMigrate(db *gorm.DB) {
 		&model.ProfileBackground{},
 		&model.MiniProfileBackground{},
 		&model.Theme{},
+		&model.ChatSticker{},
+		&model.AnimatedAvatar{},
 	)
 
 	// CREATING ALL TABLE
@@ -80,6 +84,8 @@ func UserMigrate(db *gorm.DB) {
 		&model.ProfileBackground{},
 		&model.MiniProfileBackground{},
 		&model.Theme{},
+		&model.ChatSticker{},
+		&model.AnimatedAvatar{},
 		&model.Admin{},
 		&model.SuspensionRequest{},
 		&model.Country{},

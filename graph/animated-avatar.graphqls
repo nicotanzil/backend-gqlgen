@@ -1,0 +1,19 @@
+type AnimatedAvatar {
+    id: Int!
+    name: String!
+    link: String!
+    price: Int!
+
+    createdAt: Time!
+    updatedAt: Time!
+    deletedAt: Time!
+}
+
+extend type Query {
+    animatedAvatars: [AnimatedAvatar!]!
+    excludeAnimatedAvatars(userId: Int!): [AnimatedAvatar!]!
+}
+
+extend type Mutation {
+    buyAnimatedAvatars(userId: Int!, id: Int!): Boolean!
+}

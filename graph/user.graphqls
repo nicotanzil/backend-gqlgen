@@ -21,6 +21,8 @@ type User {
     avatarFrames: [AvatarFrame!]!
     profileBackgrounds: [ProfileBackground!]!
     miniProfileBackgrounds: [MiniProfileBackground!]!
+    chatStickers: [ChatSticker!]!
+    animatedAvatars: [AnimatedAvatar!]!
 
     country: Country!
     games: [Game!]!
