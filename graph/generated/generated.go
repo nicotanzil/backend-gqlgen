@@ -347,6 +347,7 @@ type ComplexityRoot struct {
 		CreateCommunityArtPost    func(childComplexity int, input model.InputCommunityArtPost) int
 		CreateDeveloper           func(childComplexity int, input model.NewDeveloper) int
 		CreateFriendRequest       func(childComplexity int, requesterID int, requestedID int) int
+		CreateFriendRequestCode   func(childComplexity int, requesterID int, code int) int
 		CreateGame                func(childComplexity int, input model.NewGame) int
 		CreateGameReview          func(childComplexity int, input model.CommunityGameReviewInput) int
 		CreateGenre               func(childComplexity int, input model.NewGenre) int
@@ -359,8 +360,11 @@ type ComplexityRoot struct {
 		CreateTag                 func(childComplexity int, input model.NewTag) int
 		CreateTransaction         func(childComplexity int, transaction *model.InputTransactionHeader) int
 		CreateUser                func(childComplexity int, user *model.NewUser, otp *model.NewOtp) int
+		CreateUserReport          func(childComplexity int, reporterID int, reportedID int, description string) int
+		DeclineFriendRequest      func(childComplexity int, id int) int
 		DeleteGame                func(childComplexity int, id int) int
 		DeletePromo               func(childComplexity int, id int) int
+		IgnoreFriendRequest       func(childComplexity int, id int) int
 		InsertCommentByReviewID   func(childComplexity int, reviewID int, userID int, comment string) int
 		InsertDiscussionThread    func(childComplexity int, title string, description string, gameID int, userID int) int
 		InsertGameBanner          func(childComplexity int, id int, link string) int
@@ -462,6 +466,7 @@ type ComplexityRoot struct {
 		GetCommunityArtPostReviewsByPostID      func(childComplexity int, postID int, page int) int
 		GetCommunityGameReviewCommentByReviewID func(childComplexity int, reviewID int, page int) int
 		GetFriendRequestByRequestedID           func(childComplexity int, id int) int
+		GetFriendRequestByRequesterID           func(childComplexity int, id int) int
 		GetGameByPromoID                        func(childComplexity int, id int) int
 		GetGameDiscussionByDiscussionID         func(childComplexity int, id int) int
 		GetGamePaginationAdmin                  func(childComplexity int, page *int) int
@@ -730,7 +735,10 @@ type MutationResolver interface {
 	CommunityReviewNotHelpful(ctx context.Context, reviewID int) (int, error)
 	CreateDeveloper(ctx context.Context, input model.NewDeveloper) (*model.Developer, error)
 	CreateFriendRequest(ctx context.Context, requesterID int, requestedID int) (bool, error)
+	CreateFriendRequestCode(ctx context.Context, requesterID int, code int) (bool, error)
 	AcceptFriendRequest(ctx context.Context, id int) (bool, error)
+	DeclineFriendRequest(ctx context.Context, id int) (bool, error)
+	IgnoreFriendRequest(ctx context.Context, id int) (bool, error)
 	InsertCommentByReviewID(ctx context.Context, reviewID int, userID int, comment string) (bool, error)
 	InsertDiscussionThread(ctx context.Context, title string, description string, gameID int, userID int) (bool, error)
 	InsertGameImage(ctx context.Context, gameImages []*model.InputGameImage) (bool, error)
@@ -758,6 +766,7 @@ type MutationResolver interface {
 	UnApproveUnsuspend(ctx context.Context, userID int) (bool, error)
 	CreateTag(ctx context.Context, input model.NewTag) (*model.Tag, error)
 	CreateTransaction(ctx context.Context, transaction *model.InputTransactionHeader) (bool, error)
+	CreateUserReport(ctx context.Context, reporterID int, reportedID int, description string) (bool, error)
 	RedeemCode(ctx context.Context, code string, userID int) (bool, error)
 	InsertGameToWishlist(ctx context.Context, gameID int, userID int) (bool, error)
 	RemoveGameFromWishlist(ctx context.Context, gameID int, userID int) (bool, error)
@@ -796,6 +805,7 @@ type QueryResolver interface {
 	Developers(ctx context.Context) ([]*model.Developer, error)
 	FriendRequests(ctx context.Context) ([]*model.FriendRequest, error)
 	GetFriendRequestByRequestedID(ctx context.Context, id int) ([]*model.FriendRequest, error)
+	GetFriendRequestByRequesterID(ctx context.Context, id int) ([]*model.FriendRequest, error)
 	ValidateFriendRequestExists(ctx context.Context, requesterID int, requestedID int) (bool, error)
 	GetPendingFriendRequestCount(ctx context.Context, id int) (int, error)
 	GameDiscussionReplies(ctx context.Context) ([]*model.GameDiscussionReply, error)
@@ -2470,6 +2480,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateFriendRequest(childComplexity, args["requesterId"].(int), args["requestedId"].(int)), true
 
+	case "Mutation.createFriendRequestCode":
+		if e.complexity.Mutation.CreateFriendRequestCode == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createFriendRequestCode_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateFriendRequestCode(childComplexity, args["requesterId"].(int), args["code"].(int)), true
+
 	case "Mutation.createGame":
 		if e.complexity.Mutation.CreateGame == nil {
 			break
@@ -2614,6 +2636,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["user"].(*model.NewUser), args["otp"].(*model.NewOtp)), true
 
+	case "Mutation.createUserReport":
+		if e.complexity.Mutation.CreateUserReport == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createUserReport_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateUserReport(childComplexity, args["reporterId"].(int), args["reportedId"].(int), args["description"].(string)), true
+
+	case "Mutation.declineFriendRequest":
+		if e.complexity.Mutation.DeclineFriendRequest == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_declineFriendRequest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeclineFriendRequest(childComplexity, args["id"].(int)), true
+
 	case "Mutation.deleteGame":
 		if e.complexity.Mutation.DeleteGame == nil {
 			break
@@ -2637,6 +2683,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeletePromo(childComplexity, args["id"].(int)), true
+
+	case "Mutation.ignoreFriendRequest":
+		if e.complexity.Mutation.IgnoreFriendRequest == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_ignoreFriendRequest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.IgnoreFriendRequest(childComplexity, args["id"].(int)), true
 
 	case "Mutation.insertCommentByReviewId":
 		if e.complexity.Mutation.InsertCommentByReviewID == nil {
@@ -3398,6 +3456,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetFriendRequestByRequestedID(childComplexity, args["id"].(int)), true
+
+	case "Query.getFriendRequestByRequesterId":
+		if e.complexity.Query.GetFriendRequestByRequesterID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getFriendRequestByRequesterId_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetFriendRequestByRequesterID(childComplexity, args["id"].(int)), true
 
 	case "Query.getGameByPromoId":
 		if e.complexity.Query.GetGameByPromoID == nil {
@@ -5212,6 +5282,8 @@ extend type Mutation {
 extend type Query {
     friendRequests: [FriendRequest!]!
     getFriendRequestByRequestedId(id:Int!): [FriendRequest!]!
+    getFriendRequestByRequesterId(id: Int!): [FriendRequest!]!
+
     validateFriendRequestExists(requesterId:Int!, requestedId:Int!): Boolean!
 
     getPendingFriendRequestCount(id:Int!): Int!
@@ -5219,7 +5291,11 @@ extend type Query {
 
 extend type Mutation {
     createFriendRequest(requesterId:Int!, requestedId:Int!): Boolean!
+    createFriendRequestCode(requesterId: Int!, code: Int!): Boolean!
+
     acceptFriendRequest(id:Int!): Boolean!
+    declineFriendRequest(id: Int!): Boolean!
+    ignoreFriendRequest(id: Int!): Boolean!
 }`, BuiltIn: false},
 	{Name: "graph/game-discussion-reply.graphqls", Input: `type GameDiscussionReply {
     id: Int!
@@ -5802,9 +5878,14 @@ extend type Mutation {
     deletedAt: Time!
 }
 
+
 extend type Query {
     reports: [UserReport!]!
     getReportByReported(id: Int!): [UserReport!]!
+}
+
+extend type Mutation {
+    createUserReport(reporterId: Int!, reportedId: Int!, description: String!): Boolean!
 }`, BuiltIn: false},
 	{Name: "graph/user.graphqls", Input: `scalar Time
 
@@ -6328,6 +6409,30 @@ func (ec *executionContext) field_Mutation_createDeveloper_args(ctx context.Cont
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createFriendRequestCode_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["requesterId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("requesterId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["requesterId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["code"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("code"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["code"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createFriendRequest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -6526,6 +6631,39 @@ func (ec *executionContext) field_Mutation_createTransaction_args(ctx context.Co
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createUserReport_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["reporterId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reporterId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["reporterId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["reportedId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reportedId"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["reportedId"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["description"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["description"] = arg2
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -6550,6 +6688,21 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_declineFriendRequest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteGame_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -6566,6 +6719,21 @@ func (ec *executionContext) field_Mutation_deleteGame_args(ctx context.Context, 
 }
 
 func (ec *executionContext) field_Mutation_deletePromo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_ignoreFriendRequest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -7364,6 +7532,21 @@ func (ec *executionContext) field_Query_getCommunityGameReviewCommentByReviewId_
 }
 
 func (ec *executionContext) field_Query_getFriendRequestByRequestedId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getFriendRequestByRequesterId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -15807,6 +15990,48 @@ func (ec *executionContext) _Mutation_createFriendRequest(ctx context.Context, f
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_createFriendRequestCode(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createFriendRequestCode_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateFriendRequestCode(rctx, args["requesterId"].(int), args["code"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_acceptFriendRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -15833,6 +16058,90 @@ func (ec *executionContext) _Mutation_acceptFriendRequest(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().AcceptFriendRequest(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_declineFriendRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_declineFriendRequest_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeclineFriendRequest(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_ignoreFriendRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_ignoreFriendRequest_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().IgnoreFriendRequest(rctx, args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16967,6 +17276,48 @@ func (ec *executionContext) _Mutation_createTransaction(ctx context.Context, fie
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().CreateTransaction(rctx, args["transaction"].(*model.InputTransactionHeader))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createUserReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createUserReport_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateUserReport(rctx, args["reporterId"].(int), args["reportedId"].(int), args["description"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19347,6 +19698,48 @@ func (ec *executionContext) _Query_getFriendRequestByRequestedId(ctx context.Con
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().GetFriendRequestByRequestedID(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.FriendRequest)
+	fc.Result = res
+	return ec.marshalNFriendRequest2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐFriendRequestᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getFriendRequestByRequesterId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getFriendRequestByRequesterId_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetFriendRequestByRequesterID(rctx, args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -29757,8 +30150,23 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "createFriendRequestCode":
+			out.Values[i] = ec._Mutation_createFriendRequestCode(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "acceptFriendRequest":
 			out.Values[i] = ec._Mutation_acceptFriendRequest(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "declineFriendRequest":
+			out.Values[i] = ec._Mutation_declineFriendRequest(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "ignoreFriendRequest":
+			out.Values[i] = ec._Mutation_ignoreFriendRequest(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -29894,6 +30302,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createTransaction":
 			out.Values[i] = ec._Mutation_createTransaction(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createUserReport":
+			out.Values[i] = ec._Mutation_createUserReport(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -30645,6 +31058,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getFriendRequestByRequestedId(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getFriendRequestByRequesterId":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getFriendRequestByRequesterId(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

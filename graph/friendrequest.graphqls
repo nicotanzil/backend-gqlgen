@@ -11,6 +11,8 @@ type FriendRequest {
 extend type Query {
     friendRequests: [FriendRequest!]!
     getFriendRequestByRequestedId(id:Int!): [FriendRequest!]!
+    getFriendRequestByRequesterId(id: Int!): [FriendRequest!]!
+
     validateFriendRequestExists(requesterId:Int!, requestedId:Int!): Boolean!
 
     getPendingFriendRequestCount(id:Int!): Int!
@@ -18,5 +20,9 @@ extend type Query {
 
 extend type Mutation {
     createFriendRequest(requesterId:Int!, requestedId:Int!): Boolean!
+    createFriendRequestCode(requesterId: Int!, code: Int!): Boolean!
+
     acceptFriendRequest(id:Int!): Boolean!
+    declineFriendRequest(id: Int!): Boolean!
+    ignoreFriendRequest(id: Int!): Boolean!
 }

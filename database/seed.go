@@ -235,31 +235,31 @@ func SeedTheme(db *gorm.DB) {
 }
 
 func SeedChatSticker(db *gorm.DB) {
-	chatStickers := []model.ChatSticker {
+	chatStickers := []model.ChatSticker{
 		{
-			Name:      "Chicken Dance",
-			Link:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fchat-sticker%2Fchicken%20dance.png?alt=media&token=dfda536e-c6f0-45b3-95a8-990d7cefdef7",
-			Price:     1000,
+			Name:  "Chicken Dance",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fchat-sticker%2Fchicken%20dance.png?alt=media&token=dfda536e-c6f0-45b3-95a8-990d7cefdef7",
+			Price: 1000,
 		},
 		{
-			Name:      "Goose Chase",
-			Link:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fchat-sticker%2Fgoose%20chase.png?alt=media&token=95454cd7-f75d-4b61-b1bb-c98ef4691f30",
-			Price:     1000,
+			Name:  "Goose Chase",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fchat-sticker%2Fgoose%20chase.png?alt=media&token=95454cd7-f75d-4b61-b1bb-c98ef4691f30",
+			Price: 1000,
 		},
 		{
-			Name:      "Pyro",
-			Link:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fchat-sticker%2Fpyro.png?alt=media&token=3bbce705-e807-48e9-8faa-02a84266b4d7",
-			Price:     1000,
+			Name:  "Pyro",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fchat-sticker%2Fpyro.png?alt=media&token=3bbce705-e807-48e9-8faa-02a84266b4d7",
+			Price: 1000,
 		},
 		{
-			Name:      "Rock On",
-			Link:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fchat-sticker%2Frock%20on.png?alt=media&token=7bd44412-ea08-4aec-acc0-bdb534e31b45",
-			Price:     1000,
+			Name:  "Rock On",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fchat-sticker%2Frock%20on.png?alt=media&token=7bd44412-ea08-4aec-acc0-bdb534e31b45",
+			Price: 1000,
 		},
 		{
-			Name:      "Toast",
-			Link:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fchat-sticker%2Ftoast.png?alt=media&token=3ec82f5f-cfbe-4f68-8616-54aff957bd2f",
-			Price:     1000,
+			Name:  "Toast",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fchat-sticker%2Ftoast.png?alt=media&token=3ec82f5f-cfbe-4f68-8616-54aff957bd2f",
+			Price: 1000,
 		},
 	}
 
@@ -269,36 +269,36 @@ func SeedChatSticker(db *gorm.DB) {
 }
 
 func SeedAnimatedAvatar(db *gorm.DB) {
-	animatedAvatars := []model.AnimatedAvatar {
+	animatedAvatars := []model.AnimatedAvatar{
 		{
-			Name:      "Ignis Sanat",
-			Link:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fignis%20sanat.gif?alt=media&token=2550c338-3f48-4003-a1c3-0078d5fbad7e",
-			Price:     3000,
+			Name:  "Ignis Sanat",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fignis%20sanat.gif?alt=media&token=2550c338-3f48-4003-a1c3-0078d5fbad7e",
+			Price: 3000,
 		},
 		{
-			Name:      "Shadow Demon",
-			Link:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fshadow%20demon.gif?alt=media&token=b127ad3d-9f43-4139-af47-18c013ae8fb0",
-			Price:     3000,
+			Name:  "Shadow Demon",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fshadow%20demon.gif?alt=media&token=b127ad3d-9f43-4139-af47-18c013ae8fb0",
+			Price: 3000,
 		},
 		{
-			Name:      "Shadow Fiend",
-			Link:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fshadow%20fiend.gif?alt=media&token=d3aa6193-d9a3-4b13-b4bd-6b1b86813479",
-			Price:     3000,
+			Name:  "Shadow Fiend",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fshadow%20fiend.gif?alt=media&token=d3aa6193-d9a3-4b13-b4bd-6b1b86813479",
+			Price: 3000,
 		},
 		{
-			Name:      "Space Sphere",
-			Link:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fspace%20sphere.gif?alt=media&token=4eb27ffc-b9b5-4d67-bff5-520aeaf70f67",
-			Price:     3000,
+			Name:  "Space Sphere",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fspace%20sphere.gif?alt=media&token=4eb27ffc-b9b5-4d67-bff5-520aeaf70f67",
+			Price: 3000,
 		},
 		{
-			Name:      "Wheatley",
-			Link:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fwheatley.gif?alt=media&token=4bb97ee0-08a1-4dae-92b8-5d56bdce0865",
-			Price:     3000,
+			Name:  "Wheatley",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fwheatley.gif?alt=media&token=4bb97ee0-08a1-4dae-92b8-5d56bdce0865",
+			Price: 3000,
 		},
 		{
-			Name:      "Wizard Skull",
-			Link:      "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fwizard%20skull.gif?alt=media&token=7816d970-0bd8-457a-ad6e-e56fdf3cf77a",
-			Price:     3000,
+			Name:  "Wizard Skull",
+			Link:  "https://firebasestorage.googleapis.com/v0/b/staem-web.appspot.com/o/assets%2Fanimated_avatars%2Fwizard%20skull.gif?alt=media&token=7816d970-0bd8-457a-ad6e-e56fdf3cf77a",
+			Price: 3000,
 		},
 	}
 
@@ -1146,10 +1146,10 @@ func SeedUser(db *gorm.DB) {
 			MiniProfileBackgroundID: 1,
 			AvatarFrameID:           1,
 			ThemeID:                 1,
-			AnimatedAvatars: []*model.AnimatedAvatar {
+			AnimatedAvatars: []*model.AnimatedAvatar{
 				{ID: 1},
 			},
-			ChatStickers: []*model.ChatSticker {
+			ChatStickers: []*model.ChatSticker{
 				{ID: 1},
 			},
 
@@ -1158,6 +1158,7 @@ func SeedUser(db *gorm.DB) {
 				{ID: 1}, {ID: 6}, {ID: 7},
 			},
 			Experience: 550,
+
 			Badges: []*model.Badge{
 				{ID: 1},
 				{ID: 2},
@@ -1172,7 +1173,7 @@ func SeedUser(db *gorm.DB) {
 			Email:       "will@mail.com",
 			Password:    providers.HashPassword("password"),
 			Balance:     100,
-			Points: 15000,
+			Points:      15000,
 			CustomURL:   "william",
 			Summary:     "No information given.",
 			Avatar:      firebase_data.Avatar,
@@ -1194,10 +1195,10 @@ func SeedUser(db *gorm.DB) {
 			},
 			AvatarFrameID: 1,
 			ThemeID:       1,
-			AnimatedAvatars: []*model.AnimatedAvatar {
+			AnimatedAvatars: []*model.AnimatedAvatar{
 				{ID: 1},
 			},
-			ChatStickers: []*model.ChatSticker {
+			ChatStickers: []*model.ChatSticker{
 				{ID: 1},
 			},
 
@@ -1216,8 +1217,93 @@ func SeedUser(db *gorm.DB) {
 			RealName:    "Ricko Adrio",
 			Email:       "rick@mail.com",
 			Password:    providers.HashPassword("password"),
-			Balance:     100,
+			Balance:     250000,
 			CustomURL:   "rick",
+			Summary:     "No information given.",
+			Avatar:      firebase_data.Avatar,
+
+			ProfileBackgrounds: []*model.ProfileBackground{
+				{ID: 1},
+				{ID: 2},
+				{ID: 3},
+			},
+			ProfileBackgroundID: 1,
+			MiniProfileBackgrounds: []*model.MiniProfileBackground{
+				{ID: 1},
+				{ID: 3},
+			},
+			MiniProfileBackgroundID: 3,
+			AvatarFrames: []*model.AvatarFrame{
+				{ID: 1},
+				{ID: 2},
+			},
+			AvatarFrameID: 1,
+			ThemeID:       1,
+			AnimatedAvatars: []*model.AnimatedAvatar{
+				{ID: 1},
+			},
+			ChatStickers: []*model.ChatSticker{
+				{ID: 1},
+			},
+			CountryID:     3,
+			IsSuspend:     true,
+			FeaturedBadge: &model.Badge{ID: 1},
+			Badges: []*model.Badge{
+				{ID: 1}, {ID: 2},
+			},
+		},
+		{
+			AccountName: "leo",
+			ProfileName: "Leo",
+			RealName:    "Leonardo",
+			Email:       "leo@mail.com",
+			Password:    providers.HashPassword("password"),
+			Balance:     150000,
+			CustomURL:   "leo",
+			Summary:     "No information given.",
+			Avatar:      firebase_data.Avatar,
+
+			ProfileBackgrounds: []*model.ProfileBackground{
+				{ID: 1},
+				{ID: 2},
+				{ID: 3},
+			},
+			ProfileBackgroundID: 1,
+			MiniProfileBackgrounds: []*model.MiniProfileBackground{
+				{ID: 1},
+				{ID: 3},
+			},
+			MiniProfileBackgroundID: 2,
+			AvatarFrames: []*model.AvatarFrame{
+				{ID: 1},
+				{ID: 2},
+			},
+			AvatarFrameID: 1,
+			ThemeID:       1,
+			AnimatedAvatars: []*model.AnimatedAvatar{
+				{ID: 1},
+			},
+			ChatStickers: []*model.ChatSticker{
+				{ID: 1},
+			},
+			Friends: []*model.User{
+				{ID: 1},
+			},
+			CountryID:     3,
+			IsSuspend:     false,
+			FeaturedBadge: &model.Badge{ID: 2},
+			Badges: []*model.Badge{
+				{ID: 1}, {ID: 2},
+			},
+		},
+		{
+			AccountName: "elisa",
+			ProfileName: "Elisa",
+			RealName:    "Elisa Pat",
+			Email:       "elisa@mail.com",
+			Password:    providers.HashPassword("password"),
+			Balance:     150000,
+			CustomURL:   "elisa",
 			Summary:     "No information given.",
 			Avatar:      firebase_data.Avatar,
 
@@ -1238,15 +1324,57 @@ func SeedUser(db *gorm.DB) {
 			},
 			AvatarFrameID: 1,
 			ThemeID:       1,
-			AnimatedAvatars: []*model.AnimatedAvatar {
+			AnimatedAvatars: []*model.AnimatedAvatar{
 				{ID: 1},
 			},
-			ChatStickers: []*model.ChatSticker {
+			ChatStickers: []*model.ChatSticker{
 				{ID: 1},
 			},
-
 			CountryID:     3,
-			IsSuspend:     true,
+			IsSuspend:     false,
+			FeaturedBadge: &model.Badge{ID: 2},
+			Badges: []*model.Badge{
+				{ID: 1}, {ID: 2},
+			},
+		},
+		{
+			AccountName: "nando",
+			ProfileName: "Fernando",
+			RealName:    "Fernando FM",
+			Email:       "nando@mail.com",
+			Password:    providers.HashPassword("password"),
+			Balance:     150000,
+			CustomURL:   "nando",
+			Summary:     "No information given.",
+			Avatar:      firebase_data.Avatar,
+
+			ProfileBackgrounds: []*model.ProfileBackground{
+				{ID: 1},
+				{ID: 2},
+				{ID: 3},
+			},
+			ProfileBackgroundID: 1,
+			MiniProfileBackgrounds: []*model.MiniProfileBackground{
+				{ID: 1},
+				{ID: 2},
+				{ID: 3},
+			},
+			MiniProfileBackgroundID: 2,
+			AvatarFrames: []*model.AvatarFrame{
+				{ID: 1},
+				{ID: 2},
+				{ID: 3},
+			},
+			AvatarFrameID: 2,
+			ThemeID:       1,
+			AnimatedAvatars: []*model.AnimatedAvatar{
+				{ID: 1},
+			},
+			ChatStickers: []*model.ChatSticker{
+				{ID: 1},
+			},
+			CountryID:     101,
+			IsSuspend:     false,
 			FeaturedBadge: &model.Badge{ID: 1},
 			Badges: []*model.Badge{
 				{ID: 1}, {ID: 2},
@@ -1260,7 +1388,10 @@ func SeedUser(db *gorm.DB) {
 
 	var user model.User
 	db.First(&user, "id = ?", 1)
-	user.Friends = []*model.User{{ID: 2}}
+	user.Friends = []*model.User{
+		{ID: 2},
+		{ID: 4},
+	}
 	db.Save(&user)
 }
 
@@ -1268,6 +1399,16 @@ func SeedFriendRequest(db *gorm.DB) {
 	friendRequests := []model.FriendRequest{
 		{
 			RequesterID: 3,
+			RequestedID: 1,
+			Status:      "Pending",
+		},
+		{
+			RequesterID: 1,
+			RequestedID: 5,
+			Status:      "Ignored",
+		},
+		{
+			RequesterID: 6,
 			RequestedID: 1,
 			Status:      "Pending",
 		},

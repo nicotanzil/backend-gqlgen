@@ -5,8 +5,12 @@ package resolver
 
 import (
 	"context"
+	"log"
+	"strconv"
+	"time"
 
 	"github.com/nicotanzil/backend-gqlgen/app/providers"
+	facades "github.com/nicotanzil/backend-gqlgen/app/upstash"
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 	"gorm.io/gorm/clause"
@@ -89,9 +93,22 @@ func (r *queryResolver) GetTotalPromo(ctx context.Context) (int, error) {
 	dbClose, _ := db.DB()
 	defer dbClose.Close()
 
+	cached, err := facades.UseCache().Get(ctx, "1").Result()
+
+	if err == nil {
+		temp, _ := strconv.Atoi(cached)
+		return temp, nil
+	}
+
 	var count int64
 
 	db.Model(&model.Promo{}).Count(&count)
+
+	if err := facades.UseCache().Set(ctx,
+		"1", int(count),
+		10*time.Second).Err(); err != nil {
+		log.Fatal(err)
+	}
 
 	return int(count), nil
 }

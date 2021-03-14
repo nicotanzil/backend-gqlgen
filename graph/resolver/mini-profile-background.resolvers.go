@@ -5,10 +5,10 @@ package resolver
 
 import (
 	"context"
-	"gorm.io/gorm/clause"
 
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
+	"gorm.io/gorm/clause"
 )
 
 func (r *mutationResolver) BuyMiniProfileBackground(ctx context.Context, userID int, id int) (bool, error) {

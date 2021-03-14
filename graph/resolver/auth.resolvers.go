@@ -130,8 +130,7 @@ func (r *queryResolver) GetUserAuth(ctx context.Context) (*model.User, error) {
 
 	var fetchUser model.User
 
-	db.Preload("Avatar").
-		Preload("AvatarFrame").
+	db.Preload("AvatarFrame").
 		Preload("ProfileBackground").
 		Preload("MiniProfileBackground").
 		Preload("Theme").

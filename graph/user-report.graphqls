@@ -9,7 +9,12 @@ type UserReport {
     deletedAt: Time!
 }
 
+
 extend type Query {
     reports: [UserReport!]!
     getReportByReported(id: Int!): [UserReport!]!
+}
+
+extend type Mutation {
+    createUserReport(reporterId: Int!, reportedId: Int!, description: String!): Boolean!
 }
