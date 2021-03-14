@@ -1,0 +1,9 @@
+type NewItemNotification {
+    id: Int!
+    item: Item!
+    isOpen: Boolean!
+}
+
+extend type Query {
+    getNewItemNotificationCount(userId:Int!): Int!
+}

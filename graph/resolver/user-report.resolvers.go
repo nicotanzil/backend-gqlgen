@@ -6,6 +6,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 	"gorm.io/gorm/clause"

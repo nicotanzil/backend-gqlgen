@@ -389,6 +389,12 @@ type ComplexityRoot struct {
 		UpdateUser                func(childComplexity int, user model.UpdateUser) int
 	}
 
+	NewItemNotification struct {
+		ID     func(childComplexity int) int
+		IsOpen func(childComplexity int) int
+		Item   func(childComplexity int) int
+	}
+
 	Otp struct {
 		Code       func(childComplexity int) int
 		CountryId  func(childComplexity int) int
@@ -480,6 +486,7 @@ type ComplexityRoot struct {
 		GetLowestSellListings                   func(childComplexity int) int
 		GetMostRecentGameReviews                func(childComplexity int, gameID int) int
 		GetMostUpvotedGameReviews               func(childComplexity int, gameID int) int
+		GetNewItemNotificationCount             func(childComplexity int, userID int) int
 		GetNewTrendingGame                      func(childComplexity int) int
 		GetOtpByCode                            func(childComplexity int, code *string) int
 		GetPendingFriendRequestCount            func(childComplexity int, id int) int
@@ -839,6 +846,7 @@ type QueryResolver interface {
 	GetItemByKeywordGame(ctx context.Context, userID int, gameID int, keyword string) ([]*model.Item, error)
 	MiniProfileBackgrounds(ctx context.Context) ([]*model.MiniProfileBackground, error)
 	ExcludeMiniProfileBackgrounds(ctx context.Context, userID int) ([]*model.MiniProfileBackground, error)
+	GetNewItemNotificationCount(ctx context.Context, userID int) (int, error)
 	Otps(ctx context.Context) ([]*model.Otp, error)
 	GetOtpByCode(ctx context.Context, code *string) (*model.Otp, error)
 	PaymentTypes(ctx context.Context) ([]*model.PaymentType, error)
@@ -2955,6 +2963,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["user"].(model.UpdateUser)), true
 
+	case "NewItemNotification.id":
+		if e.complexity.NewItemNotification.ID == nil {
+			break
+		}
+
+		return e.complexity.NewItemNotification.ID(childComplexity), true
+
+	case "NewItemNotification.isOpen":
+		if e.complexity.NewItemNotification.IsOpen == nil {
+			break
+		}
+
+		return e.complexity.NewItemNotification.IsOpen(childComplexity), true
+
+	case "NewItemNotification.item":
+		if e.complexity.NewItemNotification.Item == nil {
+			break
+		}
+
+		return e.complexity.NewItemNotification.Item(childComplexity), true
+
 	case "Otp.code":
 		if e.complexity.Otp.Code == nil {
 			break
@@ -3614,6 +3643,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetMostUpvotedGameReviews(childComplexity, args["gameId"].(int)), true
+
+	case "Query.getNewItemNotificationCount":
+		if e.complexity.Query.GetNewItemNotificationCount == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getNewItemNotificationCount_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetNewItemNotificationCount(childComplexity, args["userId"].(int)), true
 
 	case "Query.getNewTrendingGame":
 		if e.complexity.Query.GetNewTrendingGame == nil {
@@ -5581,6 +5622,15 @@ extend type Query {
 
 extend type Mutation {
     buyMiniProfileBackground(userId: Int!, id: Int!): Boolean!
+}`, BuiltIn: false},
+	{Name: "graph/new-item-notification.graphqls", Input: `type NewItemNotification {
+    id: Int!
+    item: Item!
+    isOpen: Boolean!
+}
+
+extend type Query {
+    getNewItemNotificationCount(userId:Int!): Int!
 }`, BuiltIn: false},
 	{Name: "graph/otp.graphqls", Input: `type Otp {
     id: Int!
@@ -7741,6 +7791,21 @@ func (ec *executionContext) field_Query_getMostUpvotedGameReviews_args(ctx conte
 		}
 	}
 	args["gameId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getNewItemNotificationCount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg0
 	return args, nil
 }
 
@@ -17460,6 +17525,111 @@ func (ec *executionContext) _Mutation_removeGameFromWishlist(ctx context.Context
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _NewItemNotification_id(ctx context.Context, field graphql.CollectedField, obj *model.NewItemNotification) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "NewItemNotification",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _NewItemNotification_item(ctx context.Context, field graphql.CollectedField, obj *model.NewItemNotification) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "NewItemNotification",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Item, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Item)
+	fc.Result = res
+	return ec.marshalNItem2ᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐItem(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _NewItemNotification_isOpen(ctx context.Context, field graphql.CollectedField, obj *model.NewItemNotification) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "NewItemNotification",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsOpen, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Otp_id(ctx context.Context, field graphql.CollectedField, obj *model.Otp) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -21039,6 +21209,48 @@ func (ec *executionContext) _Query_excludeMiniProfileBackgrounds(ctx context.Con
 	res := resTmp.([]*model.MiniProfileBackground)
 	fc.Result = res
 	return ec.marshalNMiniProfileBackground2ᚕᚖgithubᚗcomᚋnicotanzilᚋbackendᚑgqlgenᚋgraphᚋmodelᚐMiniProfileBackgroundᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getNewItemNotificationCount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getNewItemNotificationCount_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetNewItemNotificationCount(rctx, args["userId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_otps(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -30336,6 +30548,43 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	return out
 }
 
+var newItemNotificationImplementors = []string{"NewItemNotification"}
+
+func (ec *executionContext) _NewItemNotification(ctx context.Context, sel ast.SelectionSet, obj *model.NewItemNotification) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, newItemNotificationImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("NewItemNotification")
+		case "id":
+			out.Values[i] = ec._NewItemNotification_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "item":
+			out.Values[i] = ec._NewItemNotification_item(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isOpen":
+			out.Values[i] = ec._NewItemNotification_isOpen(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var otpImplementors = []string{"Otp"}
 
 func (ec *executionContext) _Otp(ctx context.Context, sel ast.SelectionSet, obj *model.Otp) graphql.Marshaler {
@@ -31531,6 +31780,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_excludeMiniProfileBackgrounds(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getNewItemNotificationCount":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getNewItemNotificationCount(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

@@ -80,6 +80,14 @@ func (r *mutationResolver) CreateBuyListing(ctx context.Context, bidID int, buy 
 		item.User = &model.User{ID: buyer.ID}
 		db.Save(&item)
 
+		// Create new item notification for buyer
+		var itemNotification model.NewItemNotification
+		itemNotification = model.NewItemNotification{
+			Item:   &model.Item{ID: item.ID},
+			IsOpen: false,
+		}
+		db.Create(&itemNotification)
+
 		var emailTransaction model.ItemTransaction
 		db.Preload(clause.Associations).Last(&emailTransaction)
 

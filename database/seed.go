@@ -69,6 +69,7 @@ func Seed() {
 	SeedItemTransaction(db)
 	SeedSellListing(db)
 	SeedBuyListing(db)
+	SeedNewItemNotification(db)
 
 	SeedWalletCode(db)
 
@@ -2574,5 +2575,18 @@ func SeedWalletCode(db *gorm.DB) {
 	}
 	for _, code := range walletCodes {
 		db.Create(&code)
+	}
+}
+
+func SeedNewItemNotification(db *gorm.DB) {
+	newItemNotifications := []model.NewItemNotification {
+		{
+			Item:   &model.Item{ID: 2},
+			IsOpen: false,
+		},
+	}
+
+	for _, notification := range newItemNotifications {
+		db.Create(&notification)
 	}
 }

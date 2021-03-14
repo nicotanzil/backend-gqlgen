@@ -55,6 +55,7 @@ func UserMigrate(db *gorm.DB) {
 		&model.TransactionDetail{},
 		&model.PaymentType{},
 
+		&model.NewItemNotification{},
 		&model.SellListing{},
 		&model.BuyListing{},
 		&model.Item{},
@@ -99,6 +100,7 @@ func UserMigrate(db *gorm.DB) {
 		&model.Bid{},
 		&model.SellListing{},
 		&model.BuyListing{},
+		&model.NewItemNotification{},
 
 		&model.PaymentType{},
 		&model.TransactionDetail{},

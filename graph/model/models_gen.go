@@ -21,6 +21,7 @@ type LowestSellListing struct {
 	ListingCount int `json:"listing_count"`
 }
 
+
 type TopReviewGame struct {
 	GameID       int    `json:"game_id"`
 	GameName     string `json:"game_name"`
