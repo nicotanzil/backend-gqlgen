@@ -306,6 +306,7 @@ func (r *queryResolver) GameSearchPage(ctx context.Context, keyword string, page
 			Where("LOWER(name) LIKE LOWER(?)", keyword).
 			Where("original_price <= ?", price).
 			Where("game_tags.tag_id IN ?", tagsId).
+			Group("games.id").
 			Find(&games)
 	} else {
 		keyword = "%" + keyword + "%"
@@ -314,6 +315,7 @@ func (r *queryResolver) GameSearchPage(ctx context.Context, keyword string, page
 			Offset(providers.GAME_SEARCH_PAGE_LIMIT*(page-1)).
 			Where("LOWER(name) LIKE LOWER(?)", keyword).
 			Where("original_price <= ?", price).
+			Group("games.id").
 			Find(&games)
 	}
 
@@ -452,10 +454,10 @@ func (r *queryResolver) GetTopCountries(ctx context.Context, gameID int) ([]*mod
 		"\nJOIN game_users gu ON g.id = gu.game_id" +
 		"\nJOIN users u ON gu.user_id = u.id" +
 		"\nJOIN countries c ON u.country_id = c.id" +
-		"\nWHERE g.id = 1" +
+		"\nWHERE g.id = ?" +
 		"\nGROUP BY c.id" +
 		"\nORDER BY COUNT(c.id) DESC" +
-		"\nLIMIT(5)").Scan(&results)
+		"\nLIMIT(5)", gameID).Scan(&results)
 
 	return results, nil
 }

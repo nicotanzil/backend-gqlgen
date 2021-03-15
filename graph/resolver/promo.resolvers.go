@@ -93,7 +93,7 @@ func (r *queryResolver) GetTotalPromo(ctx context.Context) (int, error) {
 	dbClose, _ := db.DB()
 	defer dbClose.Close()
 
-	cached, err := facades.UseCache().Get(ctx, "1").Result()
+	cached, err := facades.UseCache().Get(ctx, "KEY").Result()
 
 	if err == nil {
 		temp, _ := strconv.Atoi(cached)
@@ -105,7 +105,7 @@ func (r *queryResolver) GetTotalPromo(ctx context.Context) (int, error) {
 	db.Model(&model.Promo{}).Count(&count)
 
 	if err := facades.UseCache().Set(ctx,
-		"1", int(count),
+		"KEY", int(count),
 		10*time.Second).Err(); err != nil {
 		log.Fatal(err)
 	}

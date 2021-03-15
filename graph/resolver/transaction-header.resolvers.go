@@ -6,13 +6,12 @@ package resolver
 import (
 	"context"
 	"fmt"
-	"log"
-	"strconv"
-
 	mailjet "github.com/mailjet/mailjet-apiv3-go"
 	"github.com/nicotanzil/backend-gqlgen/database"
 	"github.com/nicotanzil/backend-gqlgen/graph/model"
 	"gorm.io/gorm/clause"
+	"log"
+	"strconv"
 )
 
 func (r *mutationResolver) CreateTransaction(ctx context.Context, transaction *model.InputTransactionHeader) (bool, error) {
@@ -51,13 +50,19 @@ func (r *mutationResolver) CreateTransaction(ctx context.Context, transaction *m
 	latest.TransactionDetails = details
 	db.Save(&latest)
 
-	// Clear cart
-	db.Where("user_id = ?", transaction.SenderID).Delete(&model.Cart{})
-
 	// Deduct wallet balance
 	var sender model.User
-	db.Where("id = ?", transaction.SenderID).
-		First(&sender)
+	if transaction.PaymentTypeID == 1 {
+		db.Where("id = ?", transaction.SenderID).
+			First(&sender)
+
+		if sender.Balance - float64(latest.Total) < 0 {
+			return false, nil
+		}
+	}
+
+	// Clear cart
+	db.Where("user_id = ?", transaction.SenderID).Delete(&model.Cart{})
 
 	prev := sender.Balance
 	prev -= float64(latest.Total)
@@ -123,13 +128,28 @@ func SendPurchaseReceipt(transaction model.TransactionHeader) {
 			},
 			Subject:  "Greetings from Staem.",
 			TextPart: "My first Mailjet email",
-			HTMLPart: "<div style=\"padding: 10px 20px\">\n  " +
-				"<div>Hello " + transaction.Sender.ProfileName + "</div>\n  " +
-				"<div>Thank you for your recent transaction on Staem.</div>\n  " +
-				"<div>Account name: " + transaction.Sender.AccountName + "</div>\n  " +
-				"<div>Payment method: " + transaction.PaymentType.Name + "</div>\n  " +
-				"<div>Transaction ID: " + strconv.Itoa(transaction.ID) + "</div>\n  " +
-				"<div>Your total for this transaction: Rp. " + strconv.Itoa(transaction.Total) + "</div>\n</div>\n",
+			HTMLPart: "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Document</title>\n    <style>\n        .container {\n            background-color:#1B2838;\n            color: #C5C3C0;\n            padding: 10px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            flex-direction: column;\n            border-radius: 5px;\n            width: 30%;\n        }\n        .header {\n            font-size: 18px;\n            text-transform: uppercase;\n        }\n        .content {\n            font-size: 14px;\n            text-align: center;\n        }\n    </style>\n</head>" +
+				"\n<body>" +
+				"\n    <div class=\"container\">" +
+				"\n        <div class=\"header\">Hello" + transaction.Sender.ProfileName + "</div>" +
+				"\n        <div class=\"content\">" +
+				"\n            <br>Thank you for your recent transaction on Staem" +
+				"\n            <br>Account name: " + transaction.Sender.AccountName +
+				"\n            <br>Payment Method: " + transaction.PaymentType.Name +
+				"\n            <br>Transaction ID: " + strconv.Itoa(transaction.ID) +
+				"\n            <br>Your total for this transaction: Rp." + strconv.Itoa(transaction.Total) +
+				"\n        </div>" +
+				"\n    </div>" +
+				"\n</body>" +
+				"\n</html>",
+			//HTMLPart: "<div style=\"padding: 10px 20px\">\n  " +
+			//	"<div>Hello " + transaction.Sender.ProfileName + "</div>\n  " +
+			//	"<div>Thank you for your recent transaction on Staem.</div>\n  " +
+			//	"<div>Account name: " + transaction.Sender.AccountName + "</div>\n  " +
+			//	"<div>Payment method: " + transaction.PaymentType.Name + "</div>\n  " +
+			//	"<div>Transaction ID: " + strconv.Itoa(transaction.ID) + "</div>\n  " +
+			//	"<div>Your total for this transaction: Rp. " + strconv.Itoa(transaction.Total) + "</div>\n</div>\n",
+
 			CustomID: "AppGettingStartedTest",
 		},
 	}

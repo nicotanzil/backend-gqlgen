@@ -1157,7 +1157,7 @@ func SeedUser(db *gorm.DB) {
 
 			CountryID: 99,
 			Games: []*model.Game{
-				{ID: 1}, {ID: 2}, {ID: 6}, {ID: 7},
+				{ID: 1}, {ID: 2}, {ID: 7},
 			},
 			Experience: 550,
 
@@ -1172,9 +1172,9 @@ func SeedUser(db *gorm.DB) {
 			AccountName: "william",
 			ProfileName: "William",
 			RealName:    "William Martin",
-			Email:       "will@mail.com",
+			Email:       "tanzilclementius@rocketmail.com",
 			Password:    providers.HashPassword("password"),
-			Balance:     100,
+			Balance:     1500000,
 			Points:      15000,
 			CustomURL:   "william",
 			Summary:     "No information given.",
@@ -1611,7 +1611,7 @@ func SeedCommunityGameReview(db *gorm.DB) {
 			User:          &model.User{ID: 2},
 			Game:          &model.Game{ID: 1},
 			IsRecommended: false,
-			HelpfulCount:  73,
+			HelpfulCount:  730,
 		},
 		{
 			Description:   "Really fun game 3",
@@ -1667,58 +1667,58 @@ func SeedCommunityGameReview(db *gorm.DB) {
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 1},
 			IsRecommended: true,
-			HelpfulCount:  45,
+			HelpfulCount:  456,
 		},
 		{
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 4},
 			IsRecommended: true,
-			HelpfulCount:  45,
+			HelpfulCount:  123,
 		}, {
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 4},
 			IsRecommended: true,
-			HelpfulCount:  45,
+			HelpfulCount:  231,
 		}, {
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 4},
 			IsRecommended: true,
-			HelpfulCount:  45,
+			HelpfulCount:  653,
 		},
 		{
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 4},
 			IsRecommended: true,
-			HelpfulCount:  45,
+			HelpfulCount:  234,
 		},
 		{
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 1},
 			IsRecommended: true,
-			HelpfulCount:  45,
+			HelpfulCount:  98,
 		}, {
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 1},
 			IsRecommended: true,
-			HelpfulCount:  45,
+			HelpfulCount:  12,
 		}, {
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 1},
 			IsRecommended: true,
-			HelpfulCount:  45,
+			HelpfulCount:  49,
 		}, {
 			Description:   "Really fun game",
 			User:          &model.User{ID: 1},
 			Game:          &model.Game{ID: 1},
 			IsRecommended: true,
-			HelpfulCount:  45,
+			HelpfulCount:  87,
 		},
 		{
 			Description:   "Really fun game",
@@ -1732,7 +1732,7 @@ func SeedCommunityGameReview(db *gorm.DB) {
 			User:          &model.User{ID: 3},
 			Game:          &model.Game{ID: 3},
 			IsRecommended: true,
-			HelpfulCount:  56,
+			HelpfulCount:  19,
 		},
 	}
 
@@ -2108,7 +2108,7 @@ func SeedItem(db *gorm.DB) {
 		},
 		{
 			ItemType: &model.ItemType{ID: 1},
-			User:     &model.User{ID: 1},
+			User:     &model.User{ID: 2},
 		},
 		{
 			ItemType: &model.ItemType{ID: 1},
@@ -2412,7 +2412,7 @@ func SeedSellListing(db *gorm.DB) {
 		//},
 		{
 			Item: &model.Item{ID: 2},
-			Sell: 350000,
+			Sell: 145000,
 		},
 
 		{

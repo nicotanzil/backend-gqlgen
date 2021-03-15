@@ -225,8 +225,11 @@ func (r *queryResolver) GetUserByURL(ctx context.Context, input *string) (*model
 	var user model.User
 
 	db.Preload("AvatarFrame").
+		Preload("AvatarFrames").
 		Preload("ProfileBackground").
+		Preload("ProfileBackgrounds").
 		Preload("MiniProfileBackground").
+		Preload("MiniProfileBackgrounds").
 		Preload("Theme").
 		Preload("Country").
 		Preload("FeaturedBadge").
