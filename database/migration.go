@@ -24,6 +24,7 @@ func Migrate() {
 	db.Exec("DROP TABLE user_mini_profile_backgrounds")
 	db.Exec("DROP TABLE user_chat_stickers")
 	db.Exec("DROP TABLE user_animated_avatars")
+	db.Exec("DROP TABLE user_reports")
 
 	db.Exec("DROP TABLE game_users")
 	db.Exec("DROP TABLE game_developers")
