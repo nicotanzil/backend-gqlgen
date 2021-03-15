@@ -40,7 +40,7 @@ func Seed() {
 	SeedGame(db)
 	SeedGameImage(db)
 	SeedGameVideo(db)
-	SeedCountry(db)
+	//SeedCountry(db)
 	SeedUser(db)
 	SeedSuspensionRequest(db)
 	SeedFriendRequest(db)
