@@ -1,9 +1,7 @@
-type Country {
+type TopCountriesGame {
     id: Int!
     name: String!
     latitude: Float!
     longitude: Float!
-}
-extend type Query {
-    countries: [Country!]!
+    number_of_players: Int!
 }

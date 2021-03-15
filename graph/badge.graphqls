@@ -3,6 +3,7 @@ type Badge {
     name: String!
     link: String!
     xp: Int!
+    game: Game!
 
     createdAt: Time!
     updatedAt: Time!

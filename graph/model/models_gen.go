@@ -6,6 +6,13 @@ import (
 	"time"
 )
 
+type GameCard struct {
+	ID   int    `json:"id"`
+	Game *Game  `json:"game"`
+	Name string `json:"name"`
+	Link string `json:"link"`
+}
+
 type GraphData struct {
 	Price int       `json:"price"`
 	Date  time.Time `json:"date"`
@@ -21,6 +28,13 @@ type LowestSellListing struct {
 	ListingCount int `json:"listing_count"`
 }
 
+type TopCountriesGame struct {
+	ID              int     `json:"id"`
+	Name            string  `json:"name"`
+	Latitude        float64 `json:"latitude"`
+	Longitude       float64 `json:"longitude"`
+	NumberOfPlayers int     `json:"number_of_players"`
+}
 
 type TopReviewGame struct {
 	GameID       int    `json:"game_id"`

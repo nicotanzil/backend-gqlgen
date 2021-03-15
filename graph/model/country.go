@@ -1,13 +1,8 @@
 package model
 
-import (
-	"time"
-)
-
 type Country struct {
-	ID   int 				`json:"id" gorm:"primaryKey"`
-	Name string 			`json:"name"`
-	CreatedAt time.Time 	`json:"createdAt"`
-	UpdatedAt time.Time 	`json:"updatedAt"`
-	DeletedAt *time.Time 	`json:"deletedAt"`
+	ID        int     `json:"id" gorm:"primaryKey"`
+	Name      string  `json:"name"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
 }

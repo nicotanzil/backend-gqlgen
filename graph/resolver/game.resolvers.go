@@ -426,3 +426,36 @@ func (r *queryResolver) GetTopReviewGames(ctx context.Context) ([]*model.TopRevi
 
 	return results, nil
 }
+
+func (r *queryResolver) GetTopCountries(ctx context.Context, gameID int) ([]*model.TopCountriesGame, error) {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+	dbClose, _ := db.DB()
+	defer dbClose.Close()
+
+	var results []*model.TopCountriesGame
+
+	//SELECT c.id, c.name, c.latitude, c.longitude, COUNT(c.id) as number_of_players
+	//FROM games g
+	//JOIN game_users gu ON g.id = gu.game_id
+	//JOIN users u ON gu.user_id = u.id
+	//JOIN countries c ON u.country_id = c.id
+	//WHERE g.id = 1
+	//GROUP BY c.id
+	//ORDER BY COUNT(c.id) DESC
+	//LIMIT(5)
+
+	db.Raw("SELECT c.id, c.name, c.latitude, c.longitude, COUNT(c.id) as number_of_players" +
+		"\nFROM games g" +
+		"\nJOIN game_users gu ON g.id = gu.game_id" +
+		"\nJOIN users u ON gu.user_id = u.id" +
+		"\nJOIN countries c ON u.country_id = c.id" +
+		"\nWHERE g.id = 1" +
+		"\nGROUP BY c.id" +
+		"\nORDER BY COUNT(c.id) DESC" +
+		"\nLIMIT(5)").Scan(&results)
+
+	return results, nil
+}

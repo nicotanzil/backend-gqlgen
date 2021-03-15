@@ -1,0 +1,6 @@
+type GameCard {
+    id: Int!
+    game: Game!
+    name: String!
+    link: String!
+}

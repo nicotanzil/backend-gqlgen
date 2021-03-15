@@ -56,6 +56,8 @@ extend type Query {
 
     getTopSellerGames: [TopSellerGame!]!
     getTopReviewGames: [TopReviewGame!]!
+
+    getTopCountries(gameId:Int!): [TopCountriesGame!]!
 }
 
 extend type Mutation {
